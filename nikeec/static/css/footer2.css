@@ -1,0 +1,96 @@
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Đảm bảo các phần tử xuống dòng khi màn hình hẹp */
+    padding: 20px 0;
+}
+
+.footer-list {
+    flex-basis: 25%; /* Mỗi phần sẽ chiếm 25% chiều rộng trên màn hình lớn */
+    margin-bottom: 20px; /* Thêm khoảng cách giữa các phần */
+}
+
+.footer-list h4 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.footer-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-list li {
+    margin-bottom: 10px;
+}
+
+.footer-list a {
+    text-decoration: none;
+    color: #333;
+}
+
+.footer-vietnam {
+    justify-content: flex-end;
+}
+
+.folder {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
+
+.folder p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.folder a {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center; /* Căn giữa các phần tử cho màn hình nhỏ */
+    }
+
+    .footer-list, .footer-vietnam {
+        flex-basis: 100%;
+        text-align: center;
+    }
+
+    .footer-vietnam {
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .folder {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .folder a {
+        margin-bottom: 10px;
+    }
+
+    .folder p {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-list h4 {
+        font-size: 1rem;
+    }
+
+    .footer-list li {
+        font-size: 0.9rem;
+    }
+
+    .folder p, .folder a {
+        font-size: 0.8rem;
+    }
+}

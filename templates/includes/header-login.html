@@ -1,0 +1,39 @@
+{% load static %}
+{% comment %} header login {% endcomment %}
+<div class="container-fluid" style="background-color: #f5f5f5">
+    <div class="headerlogin">
+      <!-- Logo -->
+      <div class="logo_img">
+        <img src="{% static 'images/jordanlogo.png' %}" alt="Logo" />
+      </div>
+      <!-- Links -->
+      <div class="login_infor text-dark">
+        <a href="#">Find a Store</a>
+        <div class="help-container">
+          <a href="#" class="help-link">Help</a>
+          <div class="help-hover-box">
+            <p class="text-dark fs-5 mb-0">Help</p>
+            <ul>
+              <li><a href="#">Order Status</a></li>
+              <li><a href="#">Dispatch and Delivery</a></li>
+              <li><a href="#">Returns</a></li>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Sale</a></li>
+              <li><a href="#">Terms of Use</a></li>
+              <li><a href="#">Send Us Feedback</a></li>
+            </ul>
+          </div>
+        </div>
+        {% if user.id is not None %}
+        <a href="">Dashboard</a>
+        <a href="#">Welcome {{ user.first_name }}</a>
+        <a href="">Logout</a>
+        {% else %}
+        <a href="">Join Us</a>
+        <a href="">Sign In</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% comment %} header login {% endcomment %}

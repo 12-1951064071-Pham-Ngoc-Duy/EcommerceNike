@@ -1,0 +1,209 @@
+{% load static %}
+{% comment %} header navbar {% endcomment %}
+<div class="container-fluid">
+    <nav class="navbar bg-white pt-3 pb-3">
+            <div class="logo_img_nike">
+                <a href="">
+                  <img src="{% static 'images/nikelogo.png' %}" alt="Logo" />
+                </a>
+            </div>
+            <div class="box-categories-product">
+                <div class="categories_product">
+                    <a href="#">New & Featured</a>
+                    <a href="#">Men</a>
+                    <a href="#">Women</a>
+                    <a href="#">Kids</a>
+                    <a href="#">Sale</a>
+                </div>
+            </div>
+                <div class="d-flex">
+                    <div class="navbar-toggler-search shadow-none ps-2 pe-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSearch" aria-controls="offcanvasSearch" aria-label="Toggle search">
+                        <i class="bi bi-search fs-4 text-dark" style="cursor: pointer"></i>
+                    </div>
+                    <div class="box-search-web position-relative ms-2 me-2">
+                        <form action="" class="search" method="GET">
+                          <button type="submit" style="position: absolute; top: 55%; left: 0px; transform: translateY(-50%); border-radius: 50%; border: 0; background-color: transparent;">
+                            <i class="bi bi-search fs-4 text-dark search-icon"></i>
+                          </button>
+                          <input class="form-control ps-5" placeholder="Search" name="keyword">
+                        </form>
+                    </div>
+                    <div class="navbar-toggler shadow-none border-0 mt-1">
+                        <i class="bi bi-heart fs-4 text-dark"></i>
+                    </div>
+                    <div class="navbar-toggler shadow-none border-0">
+                      <a href="" class="position-relative">
+                          <i class="bi bi-bag fs-4 text-dark">
+                              <span id="cart-count" class="cart-count position-absolute-cart badge rounded-pill">
+                                  {{ cart_count }}
+                              </span>
+                          </i>
+                      </a>
+                    </div>
+                    <div class="icon-header-bar">
+                        <button class="navbar-toggler shadow-none border-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                </div>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasSearch" aria-labelledby="offcanvasSearchLabel">
+            <div class="offcanvas-header">
+               <!-- FORM SEARCH PRODUCT-->
+                <div class="position-relative w-100 me-2">
+                  <form action="" method="GET">
+                    <button type="submit" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); border-radius: 50%; border: 0; background-color: transparent;">
+                      <i class="bi bi-search fs-5" style="background-color: transparent; pointer-events: none"></i>
+                    </button>
+                    <input name="keyword" class="form-control ps-5" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px" />
+                  </form>
+                </div>
+                <!-- FORM SEARCH PRODUCT-->
+              
+      
+                <!-- Nút Cancel bên phải -->
+                <button class="ms-auto " style="border: none; background: none" type="button" data-bs-dismiss="offcanvas" aria-label="Close">
+                   Cancel
+                </button>
+            </div>
+        <div class="offcanvas-body"></div>
+          </div>
+      
+          <!-- Offcanvas for Navbar -->
+          <div class="offcanvas offcanvas-end ps-3 pe-3 pt-3" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+              <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <!-- Navigation Links -->
+              <ul class="navbar-nav justify-content-end flex-grow-1">
+                <!-- Home link triggers offcanvas -->
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasHome"
+                    aria-controls="offcanvasHome"
+                  >
+                    New & Featured
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                  >
+                    Men
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                  >
+                    Women
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                  >
+                    Kids
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                  >
+                    Sale
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                  >
+                    Customise
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link d-flex justify-content-between align-items-center fs-4 fw-bold text-dark"
+                    href="#"
+                  >
+                    SNKRS
+                  </a>
+                </li>
+                <div class="logo-jordan mt-4">
+                  <a href="#" class="nav-link fs-5 fw-bold text-dark">
+                    <img
+                      src="{% static 'images/icon-favicon-jd.png' %}"
+                      style="max-width: 15%; height: auto"
+                    />
+                    Jordan
+                  </a>
+                </div>
+                <div class="text-infor mt-4">
+                  <h6 class="fs-5">
+                    Become a Nike Member for the best products, <br />inspiration and
+                    stories in sport.
+                    <a href="#" class="text-dark text-decoration-none fw-bold"
+                      >Learn more</a
+                    >
+                  </h6>
+                </div>
+                <div class="button-join-signin mt-4">
+                  <a href="" class="btn btn-dark" style="border-radius: 15px">Join Us</a>
+                  <a href="" class="btn btn-light" style="border: 1px solid gray; border-radius: 30px"> Sign In</a>
+                </div>
+                <div class="item-infor mt-4">
+                  <ul class="navbar-nav justify-content-end flex-grow-1">
+                    <li class="nav-item">
+                      <a class="nav-link fw-bold text-dark" href="#">
+                        <i class="bi bi-question-circle"></i> Help
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link fw-bold text-dark" href="#">
+                        <i class="bi bi-bag"></i> Bag
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link fw-bold text-dark" href="#">
+                        <i class="bi bi-box2"></i> Orders
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link fw-bold text-dark" href="#">
+                        <i class="bi bi-shop"></i> Find a Store
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </ul>
+            </div>
+          </div>
+          <!-- Offcanvas for Home Section -->
+          <div  class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasHome" aria-labelledby="offcanvasHomeLabel">
+            <div class="offcanvas-header">
+              <a class="nav-link text-dark" id="backToNavbar" style="cursor: pointer">
+                  <i class="bi bi-chevron-left"></i> All
+              </a>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <p>This is the content of the Home section.</p>
+            </div>
+          </div>
+      
+        </div>
+      </nav>
+</div>
+{% comment %} header navbar {% endcomment %}

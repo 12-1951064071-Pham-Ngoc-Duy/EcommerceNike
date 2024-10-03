@@ -1,0 +1,83 @@
+.swiper {
+    width: 100%;
+    height: 300px; /* Chiều cao mới cho toàn bộ swiper */
+}
+
+.swiper-slide {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 10px;
+}
+.swiper-slide a{
+    text-decoration: none;
+}
+.swiper-slide img {
+    width: auto;
+    max-height: 200px; /* Giới hạn chiều cao của ảnh mà vẫn giữ tỷ lệ */
+    object-fit: contain; /* Đảm bảo ảnh giữ tỷ lệ mà không bị cắt */
+}
+
+.swiper-slide h3 {
+    font-size: 18px; /* Kích thước chữ của tiêu đề */
+    color: #333;
+}
+
+
+/* Styling for pagination bullets */
+.swiper-pagination-bullet {
+    background-color: #333;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+    top: 45%;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+    font-size: 24px; /* Đặt kích thước của mũi tên */
+}
+
+.custom-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 10%; /* Tooltip ở phía trên thẻ a */
+    right: 2%; /* Căn giữa theo chiều ngang */
+    transform: translateX(-50%); /* Đảm bảo tooltip nằm chính giữa thẻ a */
+    background-color: #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 100;
+    text-align: center;
+}
+
+/* Mũi tên dưới tooltip */
+.custom-tooltip::before {
+    content: "";
+    position: absolute;
+    top: 50%; /* Đặt mũi tên ở dưới cùng của tooltip */
+    left: 100%; /* Căn giữa mũi tên theo chiều ngang */
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent; /* Mũi tên có cùng màu với nền tooltip */
+    border-color: transparent transparent transparent #333;
+}
+.tooltip-text{
+    display: none;
+}
+
+@media (max-width:1200px){
+    .tooltip-text{
+        display: block;
+    }
+    .tooltip-icon{
+        display: none;
+    }
+    #tooltipMessage{
+        display: none !important;
+    }
+}

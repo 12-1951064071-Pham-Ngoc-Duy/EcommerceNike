@@ -1,0 +1,48 @@
+.custom-tooltip-banner {
+    display: none; /* Ẩn tooltip ban đầu */
+    position: absolute; /* Vị trí tuyệt đối để dễ dàng căn chỉnh */
+    bottom:-51%; /* Hiển thị bên trên thẻ a */
+    right: 50.5%; /* Căn giữa theo chiều ngang */
+    transform: translateX(-50%); /* Căn giữa tooltip */
+    background-color: #333; /* Màu nền tooltip */
+    color: #fff; /* Màu chữ */
+    padding: 8px 12px; /* Padding */
+    border-radius: 4px; /* Bo góc */
+    white-space: nowrap; /* Ngăn không cho văn bản xuống dòng */
+    z-index: 100; /* Đảm bảo tooltip nằm trên các phần tử khác */
+}
+
+/* Mũi tên dưới tooltip */
+.custom-tooltip-banner::before {
+    content: "";
+    position: absolute;
+    top: 50%; /* Đặt mũi tên ở dưới cùng của tooltip */
+    left: 100%; /* Căn giữa mũi tên theo chiều ngang */
+    transform: translateY(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent; /* Mũi tên có cùng màu với nền tooltip */
+    border-color: transparent transparent transparent #333;
+}
+.tooltip-text-banner{
+    display: none;
+}
+
+@media (max-width:1200px){
+    .tooltip-text-banner{
+        display: block;
+    }
+    .tooltip-icon-banner{
+        display: none;
+    }
+    #tooltipMessageBanner{
+        display: none !important;
+    }
+}
+@media (max-width:1400px){
+    .custom-tooltip-banner {
+        bottom: -37%; /* Điều chỉnh chiều cao của tooltip */
+        right: 50.5%; /* Căn giữa theo chiều ngang */
+        transform: translateX(-50%); /* Đảm bảo tooltip nằm chính giữa */
+    }
+}

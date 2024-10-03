@@ -1,0 +1,128 @@
+.product-detail {
+    padding: 30px 0;
+}
+
+/* Phần ảnh sản phẩm */
+.product-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Phần thông tin sản phẩm */
+.product-info-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-height: 558px;
+}
+
+.product-info-scroll {
+    max-height: 558px; /* Giới hạn chiều cao để kích hoạt scroll */
+    overflow-y: auto;
+    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+}
+
+.product-info-scroll::-webkit-scrollbar {
+    display: none; /* Ẩn thanh cuộn trên Chrome, Safari và Edge */
+}
+
+/* Thông tin sản phẩm */
+.product-name {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.product-info-container p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Các nút hành động */
+.product-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-add-to-bag {
+    width: 48%;
+    padding: 12px;
+}
+
+.btn-favourite {
+    width: 48%;
+    padding: 12px;
+}
+
+@media (max-width: 1200px) {
+    .product-info-container{
+        max-height: 468px;
+    }
+    .product-info-scroll{
+        max-height: 468px;
+    }
+    .product-info-container-img{
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .product-info-container{
+        max-width: 592px;
+        padding: 12px 0;
+    }
+    .product-info-scroll{
+        max-width: 592px;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+    .product-info-container{
+        max-width: 555px;
+    }
+    .product-info-scroll{
+        max-width: 555px;
+    }
+    .product-images{
+        max-width: 555px;
+        padding: 12px 0;
+    }
+}
+
+@media (max-width: 576px){
+    .product-info-container{
+        max-width: 444px;
+    }
+    .product-info-scroll{
+        max-width: 444px;
+    }
+    .product-images{
+        max-width: 444px;
+        padding: 12px 0;
+    }
+}
+
+@media (max-width: 450px){
+    .product-info-container{
+        max-width: 333px;
+    }
+    .product-info-scroll{
+        max-width: 333px;
+    }
+    .product-images{
+        max-width: 333px;
+        padding: 12px 0;
+    }
+}

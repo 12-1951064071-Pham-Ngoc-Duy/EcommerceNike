@@ -1,0 +1,125 @@
+.container-cart {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+    display: flex;
+    justify-content: space-between;
+}
+.cart-products {
+    flex: 2;
+    margin-right: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-products h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.cart-image {
+    width: 164px;
+    height: 164px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.cart-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* Đặt các phần tử theo chiều dọc */
+}
+
+.cart-name {
+    margin: 0;
+    font-size: 18px;
+}
+
+.cart-quantity {
+    margin: 5px 0 0;
+}
+
+.cart-price {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Phần thanh toán */
+.cart-summary {
+    flex: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-summary h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+.checkout-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.checkout-button:hover {
+    background-color: #0056b3;
+}
+.box-icon-cart p i{
+    cursor: pointer;
+}
+.input-group-cart {
+    border: none;
+    display: flex;
+}
+.input-group-cart button,
+.input-group-cart input{
+    background-color: transparent;
+    border: none;
+}
+.input-group-cart input{
+    width: 50px;
+}
+.input-group-cart input:focus{
+    outline: none;
+}
+@media (max-width: 768px) {
+    .container-cart {
+        flex-direction: column;
+    }
+
+    .cart-products, .cart-summary {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+}

@@ -1,0 +1,81 @@
+.icon-header-bar {
+    display: none;
+  }
+  .box-search-web {
+    position: relative;
+    width: 100%; /* Hoặc kích thước mong muốn */
+  }
+  .box-search-web i {
+    cursor: pointer;
+  }
+  .search-icon {
+    position: absolute;
+    top: 55%;
+    left: 10px; /* Khoảng cách từ bên trái */
+    transform: translateY(-50%);
+  }
+  
+  input.form-control {
+    padding-left: 40px; /* Tạo khoảng trống bên trái để nội dung không đè lên icon */
+    border-radius: 25px;
+    border: none;
+    background-color: #f5f5f5;
+  }
+  input.form-control:focus {
+    box-shadow: none;
+    background-color: #f5f5f5;
+  }
+  .navbar-toggler-search {
+    display: none;
+    margin-top: 2px;
+  }
+  .offcanvas-body {
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    scrollbar-width: none; /* Cho Firefox */
+  }
+  .offcanvas-body::-webkit-scrollbar {
+    display: none;
+  }
+  .d-flex {
+    align-items: center;
+  }
+  .categories_product a {
+    color: black;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 15px;
+  }
+  .categories_product a:hover {
+    text-decoration: underline;
+  }
+  .cart-count {
+    font-size: 0.75rem;  /* Kích thước nhỏ cho số lượng */
+    padding: 0.4rem;  /* Khoảng cách xung quanh số */
+    color: black;  /* Màu chữ */
+    border-radius: 50%;  /* Tạo hình tròn */
+    min-width: 1.5rem;  /* Đảm bảo badge có kích thước tối thiểu */
+    text-align: center;  /* Canh giữa số lượng */
+}
+  .position-absolute-cart {
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);  /* Căn giữa badge */
+    position: absolute;
+}
+  @media (max-width: 1030px) {
+    .icon-header-bar {
+      display: block;
+    }
+    .navbar-toggler-search {
+      display: block;
+    }
+    .box-categories-product {
+      display: none;
+    }
+    .box-search-web {
+      display: none;
+    }
+  }
+  

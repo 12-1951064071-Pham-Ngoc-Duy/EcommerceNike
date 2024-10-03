@@ -1,0 +1,100 @@
+.headerlogin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+  }
+  
+  .logo_img img {
+    max-height: 20px;
+  }
+  .logo_img_nike img {
+    max-height: 30px;
+  }
+  
+  .login_infor {
+    position: relative; /* Required for positioning hoverbox */
+  }
+  
+  .login_infor a {
+    margin-left: 10px;
+    font-size: 13px;
+    text-decoration: none;
+    color: black;
+    position: relative;
+    padding-right: 15px; /* Space for the separator */
+  }
+  
+  .login_infor a::after {
+    content: "|";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: black;
+    font-size: 13px;
+  }
+  
+  .login_infor a:last-child::after {
+    content: ""; /* Remove separator from the last link */
+  }
+  
+  .login_infor a:hover {
+    color: rgba(108, 117, 125, 0.913);
+  }
+  
+  /* Hover box for Help */
+  .help-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .help-link {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .help-hover-box {
+    display: none;
+    position: absolute;
+    width: 200px;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 10px;
+  }
+  
+  .help-hover-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .help-hover-box li {
+    margin-bottom: 5px;
+  }
+  
+  .help-hover-box a {
+    text-decoration: none;
+    color: rgba(108, 117, 125, 0.913);
+    margin-left: 0;
+  }
+  
+  .help-hover-box a:hover {
+    color: black;
+  }
+  
+  /* Show help-hover-box when hovering over help-container */
+  .help-container:hover .help-hover-box {
+    display: block;
+  }
+
+  @media (max-width: 1030px) {
+    .headerlogin{
+      display: none;
+    }
+}

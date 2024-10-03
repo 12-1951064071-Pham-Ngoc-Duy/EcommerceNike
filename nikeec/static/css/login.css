@@ -1,0 +1,41 @@
+.box-login{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5rem 0;
+}
+.form-container-login {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.input-group-login {
+    margin-bottom: 15px;
+}
+
+.input-group-login label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.input-group-login input, 
+.input-group-login select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.input-row-login {
+    justify-content: space-between;
+}
+
+.input-row-register .input-group-register {
+    width: 48%;
+}

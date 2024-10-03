@@ -1,0 +1,9 @@
+.slide{
+    height: auto;
+    min-height: 58px;
+    background-color: #f5f5f5;
+}
+.carousel-item a{
+    font-size: 13px;
+    font-weight: bold;
+}
