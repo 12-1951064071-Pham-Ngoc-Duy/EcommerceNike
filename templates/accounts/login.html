@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+  {% if request.GET.command == 'verification' %}
+  <div class="mx-auto alert alert-info mt-5 mb-5 text-center" role="alert" style="width:600px">
+    Thank you for registering with us.We have sent you a verification email to your email address [{{ request.GET.email }}]
+    <br>
+    <br>
+    Already verified? <a href="{% url 'login' %}">Login</a>
+  </div>
+  {% else %}
+  <div class="box-login">
+    <div class="form-container-login">
+      <h2 class="text-center mb-4">Login</h2>
+      <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        
+        <div class="input-row-login">
+          <div class="input-group-login">
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email"
+                   class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                   value="{{ form.email.value|default_if_none:'' }}"
+                   placeholder="Enter Email">
+            <!-- Hiển thị lỗi -->
+            {% if form.email.errors %}
+              <div class="error-text">{{ form.email.errors }}</div>
+            {% endif %}
+          </div>
+
+        <div class="input-group-login">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password"
+                 class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                 value="{{ form.password.value|default_if_none:'' }}"
+                 placeholder="Enter Password">
+          <!-- Hiển thị lỗi -->
+          {% if form.password.errors %}
+            <div class="error-text">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+
+        {% include "includes/alerts.html" %}
+        <div style="float: right">
+          <a href="{% url 'forgotPassword' %}">Forgot password?</a>
+        </div>
+        <br>
+        <br>
+        <div style="float: right">
+          <button class="btn btn-dark" type="submit">Login</button>
+        </div>
+
+        <br /><br />
+        <hr />
+        <div>
+          <p class="text-center">
+           Haven't an account? <a href="{% url 'register' %}">Sign In</a>
+          </p>
+        </div>
+    </div>
+      </form>
+    
+  </div>
+  {% endif %}
+</div>
+
+{% endblock content %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+  <div class="box-register">
+    <div class="form-container-register">
+      <h2 class="text-center mb-4">Register</h2>
+      <form action="{% url 'register' %}" method="POST">
+        {% csrf_token %}
+        
+        <div class="input-row-register">
+          <div class="input-group-register">
+            <label for="first-name">First Name</label>
+            <input type="text" name="first_name" id="first-name"
+                   class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                   value="{{ form.first_name.value|default_if_none:'' }}"
+                   placeholder="{{ form.first_name.field.widget.attrs.placeholder }}">
+            <!-- Hiển thị lỗi -->
+            {% if form.first_name.errors %}
+              <div class="error-text">{{ form.first_name.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="input-group-register">
+            <label for="last-name">Last Name</label>
+            <input type="text" name="last_name" id="last-name"
+                   class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                   value="{{ form.last_name.value|default_if_none:'' }}"
+                   placeholder="{{ form.last_name.field.widget.attrs.placeholder }}">
+            <!-- Hiển thị lỗi -->
+            {% if form.last_name.errors %}
+              <div class="error-text">{{ form.last_name.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="input-group-register">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email"
+                 class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                 value="{{ form.email.value|default_if_none:'' }}"
+                 placeholder="{{ form.email.field.widget.attrs.placeholder }}">
+          <!-- Hiển thị lỗi -->
+          {% if form.email.errors %}
+            <div class="error-text">{{ form.email.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="input-group-register">
+          <label for="phone_number">Phone Number</label>
+          <input type="text" name="phone_number" id="phone_number"
+                 class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}"
+                 value="{{ form.phone_number.value|default_if_none:'' }}"
+                 placeholder="{{ form.phone_number.field.widget.attrs.placeholder }}">
+          <!-- Hiển thị lỗi -->
+          {% if form.phone_number.errors %}
+            <div class="error-text">{{ form.phone_number.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="input-group-register">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password"
+                 class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                 value="{{ form.password.value|default_if_none:'' }}"
+                 placeholder="{{ form.password.field.widget.attrs.placeholder }}">
+          <!-- Hiển thị lỗi -->
+          {% if form.password.errors %}
+            <div class="error-text">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="input-group-register">
+          <label for="confirm_password">Confirm Password</label>
+          <input type="password" name="confirm_password" id="confirm_password"
+                 class="form-control {% if form.confirm_password.errors or form.non_field_errors %}is-invalid{% endif %}"
+                 value="{{ form.confirm_password.value|default_if_none:'' }}"
+                 placeholder="{{ form.confirm_password.field.widget.attrs.placeholder }}">
+          <!-- Hiển thị lỗi -->
+          {% if form.non_field_errors %}
+            <div class="error-text">{{ form.non_field_errors }}</div>
+          {% endif %}
+        </div>        
+
+        <div class="input-group-register">
+          <label for="birth-day">Birth Day</label>
+          <input type="date" id="birth-day" name="date_of_birth" class="form-control" required />
+        </div>
+
+        <!-- Country -->
+        <label for="country">Country</label>
+        <select class="form-select mb-3 {% if form.country.errors %}is-invalid{% endif %}" id="id_country" name="country">
+          <option value="">Select Country</option>
+          {% for country_code, country_name in form.country.field.choices %}
+          <option value="{{ country_code }}">{{ country_name }}</option>
+          {% endfor %}
+        </select>
+        <!-- Hiển thị lỗi -->
+        {% if form.country.errors %}
+          <div class="error-text">{{ form.country.errors }}</div>
+        {% endif %}
+
+        <!-- City -->
+        <label for="city">City</label>
+        <select class="form-select mb-3 {% if form.city.errors %}is-invalid{% endif %}" id="id_city" name="city" disabled>
+          <option value="">Select City</option>
+        </select>
+        <!-- Hiển thị lỗi -->
+        {% if form.city.errors %}
+          <div class="error-text">{{ form.city.errors }}</div>
+        {% endif %}
+
+        <!-- Village -->
+        <label for="village">Village</label>
+        <select class="form-select mb-3 {% if form.village.errors %}is-invalid{% endif %}" id="id_village" name="village" disabled>
+          <option value="">Select Village</option>
+        </select>
+        <!-- Hiển thị lỗi -->
+        {% if form.village.errors %}
+          <div class="error-text">{{ form.village.errors }}</div>
+        {% endif %}
+
+        <div class="input-group-register">
+          <label for="address">Address</label>
+          <input type="text" name="address" id="address"
+                 class="form-control {% if form.address.errors %}is-invalid{% endif %}"
+                 value="{{ form.address.value|default_if_none:'' }}"
+                 placeholder="{{ form.address.field.widget.attrs.placeholder }}">
+          <!-- Hiển thị lỗi -->
+          {% if form.address.errors %}
+            <div class="error-text">{{ form.address.errors }}</div>
+          {% endif %}
+        </div>
+
+        {% include "includes/alerts.html" %}
+        <div style="float: right">
+          <button class="btn btn-dark" type="submit">Register</button>
+        </div>
+
+        <br /><br />
+        <hr />
+        <div>
+          <p class="text-center">
+            Have an account? <a href="{% url 'login' %}">Log In</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

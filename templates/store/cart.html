@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    {% if cart_items %}
+    <div class="container-cart">
+    <!-- Phần 1: Giỏ hàng chứa sản phẩm -->
+    
+    <div class="cart-products">
+        <h2>Bag</h2>
+        {% for cart_item in cart_items %}
+        
+        <div class="cart-item">
+            <img src="{{ cart_item.product.product_images.url }}" alt="Product 1" class="cart-image">
+            <div class="cart-details">
+                <h3 class="cart-name"><a class="text-dark" style="text-decoration:none" href="{{ cart_item.product.get_url }}">{{ cart_item.product.product_name }}</a></h3>
+                {% comment %} Quantity {% endcomment %}
+                <div class="input-group-cart mt-2 mb-2">
+                    <a href="{% url 'remove_cart' cart_item.product.id cart_item.id %}" class="btn-minus" type="button" id="btn-minus">
+                      <i class="bi bi-dash text-dark fs-5"></i>
+                    </a>
+                    <input type="text" class="text-center quantity-input fs-5" id="quantity-input" value="{{ cart_item.cart_item_quantity }}" readonly>
+                    <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
+                        {% csrf_token %}
+                        {% for item in cart_item.variations.all %}
+                        <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
+                        {% endfor %}
+                        <button type="submit" type="button" id="btn-plus">
+                            <i class="bi bi-plus text-dark fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+                {% comment %} Quantity {% endcomment %}
+                <p class="text-muted small">
+                    {% if cart_item.variations.all %}
+                       {% for item in cart_item.variations.all %}
+                          {{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
+                       {% endfor %}
+                    {% endif %}
+                </p>
+                <div class="box-icon-cart d-flex align-items-center mt-auto">
+                    <p class="mb-0"><i class="bi bi-heart me-2 fs-5 text-secondary"></i></p>
+                    <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" onclick="return confirm('Are you sure want to delete this item?')"><p class="mb-0"><i class="bi bi-trash3 fs-5 text-secondary"></i></p></a>
+                </div>
+            </div>
+            <div class="box-price-cart">
+                <p class="cart-price mb-0">$ {{ cart_item.sub_total }}</p>
+                <small class="text-muted">$ {{cart_item.product.product_price}}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Phần 2: Thông tin thanh toán -->
+    <div class="cart-summary">
+        <h2>Summary</h2>
+        <div class="summary-item">
+            <p>Subtotal</p>
+            <p>$ {{total}}</p>
+        </div>
+        <div class="summary-item">
+            <p>Estimated Delivery & Handling</p>
+            <p>$ {{tax }}</p>
+        </div>
+        <div class="summary-item total">
+            <p>Total</p>
+            <p>$ {{ grand_total }}</p>
+        </div>
+        <a href="{% url 'checkout' %}"  class="btn btn-dark w-100">Go to Checkout</a>
+    </div>
+</div>
+{% else %}
+        <p class="text-center fs-3 mt-5 mb-5">There are no items in your bag. <a class="text-dark" href="{% url 'store' %}">Back Store</a></p>
+{% endif %}
+</div>
+
+{% endblock content %}
+
+
+

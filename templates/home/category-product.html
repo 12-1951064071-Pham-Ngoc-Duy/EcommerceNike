@@ -3,7 +3,7 @@
 <div class="container">
     <div class="text-category-product d-flex align-items-center position-relative">
         <h2>Category Product</h2>
-        <a href="" class="btn btn-dark ms-auto" id="tooltipButton">
+        <a href="{% url 'store' %}" class="btn btn-dark ms-auto" id="tooltipButton">
             <i class="bi bi-shop fs-4 tooltip-icon"></i>
             <p class="tooltip-text mb-0">See all</p>
         </a>
@@ -13,7 +13,7 @@
         <div class="swiper-wrapper">
             {% for category in categories %}
             <div class="swiper-slide">
-                <a href="">
+                <a href="{{ category.get_url }}">
                     <img src="{{ category.category_images.url }}" alt="">
                     <h3>{{ category.category_name }}</h3>
                 </a>

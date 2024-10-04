@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <nav class="navbar bg-white pt-3 pb-3">
             <div class="logo_img_nike">
-                <a href="">
+                <a href="{% url 'home' %}">
                   <img src="{% static 'images/nikelogo.png' %}" alt="Logo" />
                 </a>
             </div>
@@ -21,7 +21,7 @@
                         <i class="bi bi-search fs-4 text-dark" style="cursor: pointer"></i>
                     </div>
                     <div class="box-search-web position-relative ms-2 me-2">
-                        <form action="" class="search" method="GET">
+                        <form action="{% url 'search' %}" class="search" method="GET">
                           <button type="submit" style="position: absolute; top: 55%; left: 0px; transform: translateY(-50%); border-radius: 50%; border: 0; background-color: transparent;">
                             <i class="bi bi-search fs-4 text-dark search-icon"></i>
                           </button>
@@ -32,7 +32,7 @@
                         <i class="bi bi-heart fs-4 text-dark"></i>
                     </div>
                     <div class="navbar-toggler shadow-none border-0">
-                      <a href="" class="position-relative">
+                      <a href="{% url 'cart' %}" class="position-relative">
                           <i class="bi bi-bag fs-4 text-dark">
                               <span id="cart-count" class="cart-count position-absolute-cart badge rounded-pill">
                                   {{ cart_count }}
@@ -50,7 +50,7 @@
             <div class="offcanvas-header">
                <!-- FORM SEARCH PRODUCT-->
                 <div class="position-relative w-100 me-2">
-                  <form action="" method="GET">
+                  <form action="{% url 'search' %}" method="GET">
                     <button type="submit" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); border-radius: 50%; border: 0; background-color: transparent;">
                       <i class="bi bi-search fs-5" style="background-color: transparent; pointer-events: none"></i>
                     </button>
@@ -160,8 +160,8 @@
                   </h6>
                 </div>
                 <div class="button-join-signin mt-4">
-                  <a href="" class="btn btn-dark" style="border-radius: 15px">Join Us</a>
-                  <a href="" class="btn btn-light" style="border: 1px solid gray; border-radius: 30px"> Sign In</a>
+                  <a href="{% url 'register' %}" class="btn btn-dark" style="border-radius: 15px">Join Us</a>
+                  <a href="{% url 'login' %}" class="btn btn-light" style="border: 1px solid gray; border-radius: 30px"> Sign In</a>
                 </div>
                 <div class="item-infor mt-4">
                   <ul class="navbar-nav justify-content-end flex-grow-1">

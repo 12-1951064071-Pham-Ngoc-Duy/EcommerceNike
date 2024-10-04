@@ -32,7 +32,7 @@
     {% endblock content %}
     {% include "includes/footer.html" %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    {% comment %} <script>
+    <script>
       $(document).ready(function () {
         // Khi country thay đổi, load danh sách các thành phố tương ứng
         $("#id_country").change(function () {
@@ -88,7 +88,7 @@
           }
         });
       });
-    </script> {% endcomment %}
+    </script>
     <script src="{% static 'js/style.js' %}" type="text/javascript"></script> 
     <script src="{% static 'js/dashboard.js' %}" type="text/javascript"></script> 
     <script src="{% static 'js/alerts.js' %}" type="text/javascript"></script> 
