@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from orders.forms import OrderForm
 from store.models import Product, Variation
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
@@ -172,6 +173,7 @@ def cart(request, total=0, cart_item_quantity=0, cart_items=None, tax=0, grand_t
 
 @login_required(login_url='login')
 def checkout(request, total=0, cart_item_quantity=0, cart_items=None, tax = 0, grand_total=0):
+    form = OrderForm()
     try:
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, cart_item_is_active=True)
@@ -195,5 +197,6 @@ def checkout(request, total=0, cart_item_quantity=0, cart_items=None, tax = 0, g
         'cart_items': cart_items,
         'tax': tax if tax > 0 else 'Free',
         'grand_total': grand_total,
+        'form': form,
     }
-    return render(request, 'store/checkout.html', context)
+    return render(request, 'orders/checkout.html', context)
