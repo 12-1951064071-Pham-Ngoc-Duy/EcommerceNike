@@ -105,6 +105,17 @@
             <div class="error-text">{{ form.order_address.errors }}</div>
           {% endif %}
         </div>
+
+        <div class="input-group-register">
+            <label for="order-note">Order Note</label>
+            <textarea class="form-control {% if form.order_note.errors %}is-invalid{% endif %}" 
+                      name="order_note" id="order-note" row="2"
+                      value="{{ form.order_note.value|default_if_none:'' }}"></textarea>
+            <!-- Hiển thị lỗi -->
+            {% if form.order_address.errors %}
+              <div class="error-text">{{ form.order_address.errors }}</div>
+            {% endif %}
+          </div>
         </div>
 
         <div class="cart-summary-checkout">

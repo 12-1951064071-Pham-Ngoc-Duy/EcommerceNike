@@ -193,7 +193,7 @@ class Order(models.Model):
     order_tax = models.FloatField()
     order_status = models.CharField(max_length=10, choices=STATUS, default='New')
     order_ip = models.CharField(max_length=20, blank=True)
-    order_is_ordered = models.BooleanField(max_length=20, blank=True)
+    order_is_ordered = models.BooleanField(default=False)
     order_created_at = models.DateTimeField(auto_now_add=True)
     order_updated_at = models.DateTimeField(auto_now=True)
 
