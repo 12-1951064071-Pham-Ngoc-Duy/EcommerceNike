@@ -197,6 +197,12 @@ class Order(models.Model):
     order_created_at = models.DateTimeField(auto_now_add=True)
     order_updated_at = models.DateTimeField(auto_now=True)
 
+    def full_name(self):
+        return f'{self.order_first_name} {self.order_last_name}'
+    
+    def full_address(self):
+        return f'{self.order_country} - {self.order_city} - {self.order_village}'
+
     def __str__(self):
         return self.order_first_name
     

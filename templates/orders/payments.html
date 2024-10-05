@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="container-cart">
+    <!-- Phần 1: Giỏ hàng chứa sản phẩm -->
+    
+    <div class="cart-products">
+        <h2>Checkout Process</h2>
+        <div class="card mb-2">
+            <h5 class="card-header">Billing Address</h5>
+            <div class="card-body">
+                <p class="card-text">{{ order.full_name }}</p>
+                <p class="card-text">{{ order.full_address }}</p>
+                <p class="card-text">{{ order.order_email }}</p>
+                <p class="card-text">{{ order.order_phone }}</p>
+                {% if order.order_note %}
+                    <b>Order Note: </b> {{ order.order_note }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="card mb-2">
+            <h5 class="card-header">Payment method</h5>
+            <div class="card-body">
+                <p class="card-text">Payment</p>
+            </div>
+        </div>
+        <div class="card mb-2">
+            <h5 class="card-header">Review Product</h5>
+            <div class="card-body">
+                {% for cart_item in cart_items %}
+            <div class="cart-item">
+                <img src="{{ cart_item.product.product_images.url }}" alt="Product 1" class="cart-image">
+                <div class="cart-details">
+                    <h3 class="cart-name"><a class="text-dark" style="text-decoration:none" href="{{ cart_item.product.get_url }}">{{ cart_item.product.product_name }}</a></h3>
+                    <p class="mt-2">Quantity: {{ cart_item.cart_item_quantity }}</p>
+                    <p class="text-muted small">
+                        {% if cart_item.variations.all %}
+                           {% for item in cart_item.variations.all %}
+                              {{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
+                           {% endfor %}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="box-price-cart">
+                    <p class="cart-price mb-0">$ {{ cart_item.sub_total }}</p>
+                    <small class="text-muted">$ {{cart_item.product.product_price}}</small>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Phần 2: Thông tin thanh toán -->
+    <div class="cart-summary">
+        <h2>Summary</h2>
+        <div class="summary-item">
+            <p>Subtotal</p>
+            <p>$ {{total}}</p>
+        </div>
+        <div class="summary-item">
+            <p>Estimated Delivery & Handling</p>
+            <p>$ {{tax }}</p>
+        </div>
+        <div class="summary-item total">
+            <p>Total</p>
+            <p>$ {{ grand_total }}</p>
+        </div>
+        <div id="paypal-button-container">
+
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://www.paypal.com/sdk/js?client-id=AeP2UArGbZfS7VH5kwbxirMOBKcGxVsJfaD9cz77SE2DTbmZJPHyni18WWD8VEfoBNFMvi2X2R5ppOWc&currency=USD"></script>
+<script>
+    var amount = {{ grand_total }}
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+        style: {
+            color:  'blue',
+            shape:  'rect',
+            label:  'pay',
+            height: 40
+        },
+
+        // Call your server to set up the transaction
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: amount
+                    }
+                }]
+            });
+        },
+
+        // Call your server to finalize the transaction
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+               console.log(details);
+               alert('Transaction complete by ' + details.payer.name.given_name + '!'); 
+            });
+        }
+
+    }).render('#paypal-button-container');
+</script>
+
+{% endblock content %}
+
+
+
