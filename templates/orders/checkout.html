@@ -8,7 +8,103 @@
     <div class="container-cart">
         <div class="cart-products-checkout">
             <h2>Delivery</h2>
-            {{ form.as_p }}
+            <div class="input-group-register">
+                <label for="order-first-name">First Name</label>
+                <input type="text" name="order_first_name" id="order-first-name"
+                       class="form-control {% if form.order_first_name.errors %}is-invalid{% endif %}"
+                       value="{{ form.order_first_name.value|default_if_none:'' }}"
+                       placeholder="Enter First Name">
+                <!-- Hiển thị lỗi -->
+                {% if form.order_first_name.errors %}
+                  <div class="error-text">{{ form.order_first_name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-group-register">
+                <label for="order-last-name">Last Name</label>
+                <input type="text" name="order_last_name" id="order-last-name"
+                       class="form-control {% if form.order_last_name.errors %}is-invalid{% endif %}"
+                       value="{{ form.order_last_name.value|default_if_none:'' }}"
+                       placeholder="Enter Last Name">
+                <!-- Hiển thị lỗi -->
+                {% if form.order_last_name.errors %}
+                  <div class="error-text">{{ form.order_last_name.errors }}</div>
+                {% endif %}
+              </div>
+    
+            <div class="input-group-register">
+              <label for="order-email">Email</label>
+              <input type="email" name="order_email" id="order-email"
+                     class="form-control {% if form.order_email.errors %}is-invalid{% endif %}"
+                     value="{{ form.order_email.value|default_if_none:'' }}"
+                     placeholder="Enter Email">
+              <!-- Hiển thị lỗi -->
+              {% if form.order_email.errors %}
+                <div class="error-text">{{ form.order_email.errors }}</div>
+              {% endif %}
+            </div>
+    
+            <div class="input-group-register">
+              <label for="order-phone">Phone Number</label>
+              <input type="text" name="order_phone" id="order-phone"
+                     class="form-control {% if form.order_phone.errors %}is-invalid{% endif %}"
+                     value="{{ form.order_phone.value|default_if_none:'' }}"
+                     placeholder="Enter Phone Number">
+              <!-- Hiển thị lỗi -->
+              {% if form.order_phone.errors %}
+                <div class="error-text">{{ form.order_phone.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Country -->
+        <div class="input-group-register">
+        <label for="order-country">Country</label>
+        <select class="form-select mb-3 {% if form.order_country.errors %}is-invalid{% endif %}" id="order-country" name="order_country">
+          <option value="">Select Country</option>
+          {% for country_code, country_name in form.order_country.field.choices %}
+          <option value="{{ country_code }}">{{ country_name }}</option>
+          {% endfor %}
+        </select>
+        <!-- Hiển thị lỗi -->
+        {% if form.order_country.errors %}
+          <div class="error-text">{{ form.order_country.errors }}</div>
+        {% endif %}
+        </div>
+
+        <!-- City -->
+        <div class="input-group-register">
+        <label for="order-city">City</label>
+        <select class="form-select mb-3 {% if form.order_city.errors %}is-invalid{% endif %}" id="order-city" name="order_city" disabled>
+          <option value="">Select City</option>
+        </select>
+        <!-- Hiển thị lỗi -->
+        {% if form.order_city.errors %}
+          <div class="error-text">{{ form.order_city.errors }}</div>
+        {% endif %}
+        </div>
+
+        <!-- Village -->
+        <div class="input-group-register">
+        <label for="order-village">Village</label>
+        <select class="form-select mb-3 {% if form.order_village.errors %}is-invalid{% endif %}" id="order-village" name="order_village" disabled>
+          <option value="">Select Village</option>
+        </select>
+        <!-- Hiển thị lỗi -->
+        {% if form.order_village.errors %}
+          <div class="error-text">{{ form.order_village.errors }}</div>
+        {% endif %}
+        </div>
+
+        <div class="input-group-register">
+          <label for="order-address">Address</label>
+          <input type="text" name="order_address" id="order-address"
+                 class="form-control {% if form.order_address.errors %}is-invalid{% endif %}"
+                 value="{{ form.order_address.value|default_if_none:'' }}"
+                 placeholder="Enter Address">
+          <!-- Hiển thị lỗi -->
+          {% if form.order_address.errors %}
+            <div class="error-text">{{ form.order_address.errors }}</div>
+          {% endif %}
+        </div>
         </div>
 
         <div class="cart-summary-checkout">

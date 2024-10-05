@@ -1,10 +1,12 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from orders.forms import OrderForm
+from orders.models import CITY_CHOICES, VILLAGE_CHOICES
 from store.models import Product, Variation
 from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+import json
 # Create your views here.
 
 def _cart_id(request):
@@ -200,3 +202,15 @@ def checkout(request, total=0, cart_item_quantity=0, cart_items=None, tax = 0, g
         'form': form,
     }
     return render(request, 'orders/checkout.html', context)
+
+def load_cities_order(request):
+    order_country = request.GET.get('order_country')
+    cities = CITY_CHOICES.get(order_country, [])
+    cities_list = [(order_city[0], order_city[1]) for order_city in cities]
+    return JsonResponse({'cities': cities_list})
+
+def load_villages_order(request):
+    order_city = request.GET.get('order_city')
+    villages = VILLAGE_CHOICES.get(order_city, [])
+    villages_list = [(order_village[0], order_village[1]) for order_village in villages]
+    return JsonResponse({'villages': villages_list})
