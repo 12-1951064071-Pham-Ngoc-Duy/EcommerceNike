@@ -16,17 +16,20 @@
     <link href="{% static 'css/slide-header.css' %}" rel="stylesheet" />
     <link href="{% static 'css/banner-link.css' %}" rel="stylesheet" />
     <link href="{% static 'css/store.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/product-detail1.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/cart1.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/product-detail.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/cart.css' %}" rel="stylesheet" />
     <link href="{% static 'css/register1.css' %}" rel="stylesheet" />
     <link href="{% static 'css/login.css' %}" rel="stylesheet" />
     <link href="{% static 'css/checkout.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" href="{% static 'images/logonike1.jpg' %}" type="image/x-icon">
   </head>
   <body>
     {% include "includes/header-login.html" %}
     {% include "includes/navbar.html" %}
+    {% if user.id is None %}
     {% include "includes/slide-header.html" %}
+    {% endif %}
     {% block content %}
     
     {% endblock content %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from accounts.models import Account
 from category.models import Category
 
 # Create your models here.
@@ -75,3 +76,17 @@ class Variation(models.Model):
 
     def __str__(self):
         return self.variation_value
+    
+class ReviewRating(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    review_subject = models.CharField(max_length=100, blank=True)
+    review = models.TextField(max_length=500, blank=True)
+    review_rating = models.FloatField()
+    review_ip = models.CharField(max_length=20, blank=True)
+    review_status = models.BooleanField(default=True)
+    review_created_at = models.DateTimeField(auto_now_add=True)
+    review_updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.review_subject

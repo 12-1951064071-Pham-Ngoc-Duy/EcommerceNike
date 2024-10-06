@@ -113,6 +113,8 @@
 .input-group-cart input:focus{
     outline: none;
 }
+
+
 @media (max-width: 768px) {
     .container-cart {
         flex-direction: column;
