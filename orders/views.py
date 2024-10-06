@@ -1,10 +1,13 @@
 import datetime
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
-
 from carts.models import CartItem
 from orders.forms import OrderForm
 from orders.models import Order, OrderProduct, Payment
 import json
+from store.models import Product
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 def payments(request):
     body = json.loads(request.body)
@@ -33,6 +36,38 @@ def payments(request):
         orderproduct.order_product_price = item.product.product_price
         orderproduct.order_product_ordered = True
         orderproduct.save()
+
+        cart_item = CartItem.objects.get(id = item.id)
+        product_variation = cart_item.variations.all()
+        orderproduct = OrderProduct.objects.get(id=orderproduct.id)
+        orderproduct.variations.set(product_variation)
+        orderproduct.save()
+
+        #reduce the quantity of the sold products
+        product = Product.objects.get(id = item.product_id)
+        product.product_stock -= item.cart_item_quantity
+        product.save()
+    #clear cart
+    CartItem.objects.filter(user=request.user).delete()
+    #send order recieved email to customer
+    #USER ACTIVATION
+    mail_subject = 'Thank you for your order!'
+    message = render_to_string('orders/order_recieved_email.html', {
+        'user': request.user,
+        'order': order,
+    })
+    to_email = request.user.email
+    send_email = EmailMessage(mail_subject, message, to=[to_email])
+    send_email.send()
+    #USER ACTIVATION
+
+    #Send order number and transaction id back to sendData method via JsonResponse
+    data = {
+        'order_number': order.order_number,
+        'transID': payment.payment_id,
+    }
+    return JsonResponse(data)
+
 
     return render(request, 'orders/payments.html')
 
@@ -93,3 +128,26 @@ def place_order(request, total=0, cart_item_quantity=0):
             return redirect('checkout')
 
     return render(request, 'orders/checkout.html')
+
+def order_complete(request):
+    order_number = request.GET.get('order_number')
+    transID = request.GET.get('payment_id')
+    try:
+        order = Order.objects.get(order_number=order_number, order_is_ordered=True)
+        ordered_products = OrderProduct.objects.filter(order_id=order.id)
+        subtotal = 0
+        for i in ordered_products:
+            subtotal += i.order_product_price * i.order_product_quantity
+        payment = Payment.objects.get(payment_id=transID)
+
+        context = {
+            'order':order,
+            'ordered_products':ordered_products,
+            'order_number': order.order_number,
+            'transID': payment.payment_id,
+            'payment': payment,
+            'subtotal':subtotal,
+        }
+        return render(request, 'orders/order_complete.html', context)
+    except (Payment.DoesNotExist, Order.DoesNotExist):
+        return redirect('home')
