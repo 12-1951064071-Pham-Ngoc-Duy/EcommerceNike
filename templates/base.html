@@ -18,8 +18,8 @@
     <link href="{% static 'css/store.css' %}" rel="stylesheet" />
     <link href="{% static 'css/product-detail2.css' %}" rel="stylesheet" />
     <link href="{% static 'css/cart.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/register1.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/login.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/registers.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/login1.css' %}" rel="stylesheet" />
     <link href="{% static 'css/checkout.css' %}" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" href="{% static 'images/logonike1.jpg' %}" type="image/x-icon">
@@ -148,6 +148,99 @@
           }
         });
       });
+    </script>
+    <script>
+      const getCitiesUrl = "{% url 'ajax_get_locations' %}";
+    const getVillagesUrl = "{% url 'ajax_get_villages' %}";
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentCountry = "{{ current_country }}"; // Lấy giá trị current_country
+        const currentCity = "{{ current_city }}"; // Lấy giá trị current_city
+        const currentVillage = "{{ current_village }}"; // Lấy giá trị current_village
+        
+        // Thiết lập giá trị country
+        document.getElementById('user_profile_country').value = currentCountry;
+
+        // Gọi fetch để lấy các thành phố ban đầu khi country đã được thiết lập
+        if (currentCountry) {
+            fetch(`${getCitiesUrl}?country=${currentCountry}`)
+                .then(response => response.json())
+                .then(data => {
+                    const citySelect = document.getElementById('user_profile_city');
+                    data.cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city[0];
+                        option.textContent = city[1];
+                        citySelect.appendChild(option);
+                    });
+                    // Thiết lập giá trị cho city
+                    citySelect.value = currentCity; // Đặt giá trị cho city
+                });
+        }
+
+        // Gọi fetch để lấy các làng ban đầu khi city đã được thiết lập
+        if (currentCity) {
+            fetch(`${getVillagesUrl}?city=${currentCity}`)
+                .then(response => response.json())
+                .then(data => {
+                    const villageSelect = document.getElementById('user_profile_village');
+                    data.villages.forEach(village => {
+                        const option = document.createElement('option');
+                        option.value = village[0];
+                        option.textContent = village[1];
+                        villageSelect.appendChild(option);
+                    });
+                    // Thiết lập giá trị cho village
+                    villageSelect.value = currentVillage; // Đặt giá trị cho village
+                });
+        }
+
+        document.getElementById('user_profile_country').addEventListener('change', function () {
+            const selectedCountry = this.value;
+            const citySelect = document.getElementById('user_profile_city');
+            const villageSelect = document.getElementById('user_profile_village');
+
+            // Reset city and village selections
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+            if (selectedCountry) {
+                fetch(`${getCitiesUrl}?country=${selectedCountry}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city[0];
+                            option.textContent = city[1];
+                            citySelect.appendChild(option);
+                        });
+                        // Đặt lại city về giá trị đầu tiên (hoặc rỗng)
+                        citySelect.value = ""; // Hoặc giữ giá trị cũ
+                    });
+            }
+        });
+
+        document.getElementById('user_profile_city').addEventListener('change', function () {
+            const selectedCity = this.value;
+            const villageSelect = document.getElementById('user_profile_village');
+
+            // Reset village selection
+            villageSelect.innerHTML = '<option value="">Select Village</option>';
+
+            if (selectedCity) {
+                fetch(`${getVillagesUrl}?city=${selectedCity}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.villages.forEach(village => {
+                            const option = document.createElement('option');
+                            option.value = village[0];
+                            option.textContent = village[1];
+                            villageSelect.appendChild(option);
+                        });
+                    });
+            }
+        });
+    });
     </script>
     <script src="{% static 'js/style.js' %}" type="text/javascript"></script> 
     <script src="{% static 'js/dashboard.js' %}" type="text/javascript"></script> 

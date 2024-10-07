@@ -13,4 +13,9 @@ urlpatterns = [
     path('resetpassword_validate/<uidb64>/<token>/', views.resetpassword_validate, name='resetpassword_validate'),
     path('forgotPassword/', views.forgotPassword, name='forgotPassword'),
     path('resetPassword/', views.resetPassword, name='resetPassword'),
+
+    path('my_orders/', views.my_orders, name='my_orders'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('get-cities/', views.get_cities, name='ajax_get_locations'),
+    path('get-villages/', views.get_villages, name='ajax_get_villages'),
 ]

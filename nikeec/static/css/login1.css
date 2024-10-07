@@ -1,10 +1,10 @@
-.box-register{
+.box-login{
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 5rem 0;
 }
-.form-container-register {
+.form-container-login {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -13,18 +13,18 @@
     max-width: 600px;
 }
 
-.input-group-register {
+.input-group-login {
     margin-bottom: 15px;
 }
 
-.input-group-register label {
+.input-group-login label {
     display: block;
     font-size: 14px;
     margin-bottom: 5px;
 }
 
-.input-group-register input, 
-.input-group-register select {
+.input-group-login input, 
+.input-group-login select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -32,24 +32,6 @@
     font-size: 16px;
 }
 
-.input-row-register {
-    display: flex;
+.input-row-login {
     justify-content: space-between;
 }
-
-.input-row-register .input-group-register {
-    width: 48%;
-}
-/* Thêm CSS cho viền màu đỏ khi có lỗi */
-.error-text {
-    color: red;
-    font-size: 14px;
-    margin-top: 5px;
-  }
-
-/* Thêm viền đỏ cho các trường có lỗi */
-.is-invalid {
-    border-color: red;
-  }
-  
-  
