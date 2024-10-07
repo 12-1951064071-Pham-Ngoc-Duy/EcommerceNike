@@ -126,6 +126,9 @@
     position: absolute;
     padding-right: 0;
 }
+.rating-star{
+    color: #ffb503 ;
+}
 
 input:checked ~ label, label:hover ~ label{
     color: #ffb503;

@@ -28,6 +28,17 @@
                 <form action="{% url 'add_cart' single_product.id %}" method="POST">
                     {% csrf_token %}
                         <h2 class="product-name">{{ single_product.product_name }}</h2>
+                        <div class="rating-star">
+                            <span>
+                            <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o{% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                            <i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o{% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                            <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o{% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                            <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o{% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                            <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o{% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                            <span class="text-dark">{{ single_product.countReview }} reviews</span>
+                            </span>
+                        </div>
+                        
                         <p><strong>Price:</strong> ${{ single_product.product_price }}</p>
                         <div class="item-color-select mb-4">
                             <select name="color" class="form-select" required>
@@ -58,6 +69,8 @@
                     </div>
                 </form>
                 <div class="box-review-rating">
+                    {% if user.is_authenticated %}
+                        {% if orderproduct %}
                     <form action="{% url 'submit_review' single_product.id %}" method="POST">
                         {% csrf_token %}
                         <h5>Write Your Review</h5>
@@ -77,6 +90,7 @@
                                 <input type="radio" name="review_rating" id="rating1" value="0.5" required><label for="rating1" title="0.5" class="half"></label>
                             </div>
                         </div>
+                        <span class="text-dark">{{ single_product.countReview }} reviews</span>
                         <div>
                             Review Title:
                             <input class="form-control-review" type="text" name="review_subject">
@@ -84,33 +98,39 @@
                             Review:
                             <textarea class="form-control" name="review" rows="4"></textarea>
                             <br>
-                            {% if user.is_authenticated %}
-                            <input type="submit" class="btn btn-dark" value="Submit Review">
-                            {% else %}
-                            <p>You must be logged in to post a review. </p><span><a href="{% url 'login' %}">Login now</a></span>
-                            {% endif %}
+                            
+                                <input type="submit" class="btn btn-dark" value="Submit Review">
                         </div>
                     </form>
+                       {% endif %}
+                    {% endif %}
                     <br>
                     {% include "includes/alerts.html" %}
                     <br>
-                    <article class="box mb-3">
+                    {% for review in reviews %}
+                    <article class="box mb-3 p-2" style="border:1px solid gray; border-radius:10px">
                         <div class="icontext w-100">
-                            <img src="./images/avatars/avatar1.jpg" class="img-xs icon rounded-circle">
-                            <div class="text">
-                                <span class="date text-muted float-md-right">24.04.2020 </span>  
-                                <h6 class="mb-1">Mike John </h6>
-                                
+                            {% comment %} <img src="./images/avatars/avatar1.jpg" class="img-xs icon rounded-circle"> {% endcomment %}
+                            <div class="text" style="align-item:center">
+                                <span class="date text-muted" style="float:right">{{ review.review_updated_at }}</span>  
+                                <h6 class="mb-1">{{ review.user.full_name }}</h6>
+                                <div class="rating-star">
+                                    <span>
+                                    <i class="fa fa-star{% if review.review_rating == 0.5 %}-half-o{% elif review.review_rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.review_rating == 1.5 %}-half-o{% elif review.review_rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.review_rating == 2.5 %}-half-o{% elif review.review_rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.review_rating == 3.5 %}-half-o{% elif review.review_rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                                    <i class="fa fa-star{% if review.review_rating == 4.5 %}-half-o{% elif review.review_rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div> <!-- icontext.// -->
                         <div class="mt-3">
-                            <p>
-                                Dummy comment Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                quis nostrud exercitation ullamco laboris nisi ut aliquip
-                            </p>	
+                            <h6 class="fw-bold">{{ review.review_subject }}</h6>
+                            <p>{{ review.review }}</p>	
                         </div>
                     </article>
+                    {% endfor %}
                 </div>
             </div>
     </div>
