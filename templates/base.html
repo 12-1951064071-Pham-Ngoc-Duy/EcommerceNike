@@ -16,7 +16,7 @@
     <link href="{% static 'css/slide-header.css' %}" rel="stylesheet" />
     <link href="{% static 'css/banner-link.css' %}" rel="stylesheet" />
     <link href="{% static 'css/store.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/product-detail2.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/product-detail.css' %}" rel="stylesheet" />
     <link href="{% static 'css/cart.css' %}" rel="stylesheet" />
     <link href="{% static 'css/registers.css' %}" rel="stylesheet" />
     <link href="{% static 'css/login1.css' %}" rel="stylesheet" />
@@ -239,6 +239,19 @@
                         });
                     });
             }
+        });
+    });
+    </script>
+    <script>
+      // Select all gallery images
+    const galleryImages = document.querySelectorAll('.gallery-image');
+    const mainImage = document.getElementById('mainImage');
+
+    // Add event listener for hover
+    galleryImages.forEach(image => {
+        image.addEventListener('mouseover', function() {
+            // Change main image source to the hovered image
+            mainImage.src = this.dataset.largeImage;
         });
     });
     </script>

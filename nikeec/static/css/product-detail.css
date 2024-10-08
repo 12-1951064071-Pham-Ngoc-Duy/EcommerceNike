@@ -65,7 +65,7 @@
 }
 
 .product-info-scroll {
-    max-height: 550px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
+    max-height: 670px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
     overflow-y: scroll; /* Kích hoạt cuộn theo chiều dọc */
     scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
 }
@@ -75,7 +75,7 @@
 }
 
 .product-info-container {
-    max-height: 550px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
+    max-height: 670px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
     overflow-y: scroll; /* Kích hoạt cuộn theo chiều dọc */
     scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
 }

@@ -7,20 +7,16 @@
         <!-- Phần 1: Ảnh sản phẩm -->
         <div class="col-lg-2 col-12 product-info-container-img">
             <div class="product-info-scroll">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
-                 <img class="mb-2" height="auto" width="100%" src="{% static 'images/img-shoes/shoes0.png' %}">
+                {% for i in product_gallery %}
+                    <a href="{{ i.image_gallery.url }}">
+                        <img class="mb-2 gallery-image" height="auto" width="100%" src="{{ i.image_gallery.url }}" data-large-image="{{ i.image_gallery.url }}">
+                    </a>
+                {% endfor %}
             </div>
         </div>
+        
         <div class="col-lg-5 col-12 product-images">
-            <img src="{{ single_product.product_images.url }}" alt="" class="img-fluid main-image">
+            <img id="mainImage" src="{{ single_product.product_images.url }}" alt="" class="img-fluid main-image">
         </div>
 
         <!-- Phần 2: Thông tin sản phẩm -->
