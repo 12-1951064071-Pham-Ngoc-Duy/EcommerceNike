@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from carts.models import Cart, CartItem
 from carts.views import _cart_id
-from orders.models import Order
+from orders.models import Order, OrderProduct
 from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
 from django.http import JsonResponse
@@ -169,8 +169,10 @@ def resetpassword_validate(request, uidb64, token):
 def dashboard(request):
     orders = Order.objects.order_by('-order_created_at').filter(user_id=request.user.id, order_is_ordered=True)
     orders_count = orders.count()
+    userprofile = UserProfile.objects.get(user_id=request.user.id)
     context = {
         'orders_count':orders_count,
+        'userprofile': userprofile,
     }
     return render(request, 'accounts/dashboard.html', context)
 
@@ -215,7 +217,8 @@ def resetPassword(request):
             return redirect('resetPassword')
     else:
         return render(request, 'accounts/resetPassword.html')
-    
+
+@login_required(login_url= 'login')  
 def my_orders(request):
     orders = Order.objects.filter(user=request.user, order_is_ordered=True).order_by('-order_created_at')
     context = {
@@ -223,6 +226,7 @@ def my_orders(request):
     }
     return render(request, 'accounts/my_order.html', context)
 
+@login_required(login_url= 'login')
 def edit_profile(request):
     userprofile = get_object_or_404(UserProfile, user=request.user)
     current_country = userprofile.user_profile_country
@@ -247,6 +251,7 @@ def edit_profile(request):
         'current_country': current_country,
         'current_city': current_city,
         'current_village': current_village,
+        'userprofile': userprofile,
     }
     return render(request, 'accounts/edit_profile.html', context)
 
@@ -263,3 +268,40 @@ def get_villages(request):
     villages = VILLAGE_CHOICES.get(city, [])
     villages_list = [(village[0], village[1]) for village in villages]
     return JsonResponse({'villages': villages_list})
+
+@login_required(login_url= 'login')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_new_password = request.POST['confirm_new_password']
+
+        user = Account.objects.get(username__exact=request.user.username)
+        if new_password == confirm_new_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'Password updated successfully.')
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Please enter valid current password')
+                return redirect('change_password')
+        else:
+            messages.error(request, 'Password does not math!')
+            return redirect('change_password')
+    return render(request, 'accounts/change_password.html')
+
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
+    order = Order.objects.get(order_number=order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.order_product_price * i.order_product_quantity
+    context = {
+        'order_detail':order_detail,
+        'order': order,
+        'subtotal':subtotal,
+    }
+    return render(request, 'accounts/order_detail.html', context)

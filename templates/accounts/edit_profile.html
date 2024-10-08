@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
- {% include 'includes/alerts.html' %}
  <div class="container mt-5 mb-5">
 	<div class="row">
 	{% include "includes/dashboard_slidebar.html" %}
@@ -12,8 +11,13 @@
 			<strong class="d-inline-block mr-3">Edit Your Profile</strong>
 		</header>
 		<div class="card-body">
+      <div class="text-center mb-4">
+        <img src="{{ userprofile.user_profile_picture.url }}" alt="Profile Picture" width="100" style="border-radius:50px">
+      </div>
+      <hr>
 			<div class="row">
-                 <form action="" method="POST">
+                 <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
                     <div class="input-row-register gap-3">
                         <div class="input-group-register">
                           <label for="first-name">First Name</label>
@@ -51,7 +55,7 @@
                       
                       <div class="input-group-register">
                         <label for="profile-picture">Profile Picture</label>
-                        <input type="file" name="profile_picture" id="profile-picture"
+                        <input type="file" name="user_profile_picture" id="profile-picture"
                                class="form-control {% if profile_form.user_profile_picture.errors %}is-invalid{% endif %}"
                                value="{{ profile_form.user_profile_picture.value|default_if_none:'' }}"
                                placeholder="{{ profile_form.user_profile_picture.field.widget.attrs.placeholder }}">
@@ -93,11 +97,12 @@
               
                       <div class="input-group-register">
                         <label for="address">Address</label>
-                        <input type="text" name="address" id="address"
+                        <input type="text" name="user_profile_address" id="address"
                                class="form-control {% if profile_form.user_profile_address.errors %}is-invalid{% endif %}"
                                value="{{ profile_form.user_profile_address.value|default_if_none:'' }}"
-                               placeholder="{{ profile_form.user_profile_address.field.widget.attrs.placeholder }}">
+                               placeholder="Enter Address">
                       </div>
+                      {% include "includes/alerts.html" %}
                       <div style="float:right">
                         <input type="submit" value="Save" class="btn btn-dark">
                       </div>
