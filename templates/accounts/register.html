@@ -8,7 +8,7 @@
       <form action="{% url 'register' %}" method="POST">
         {% csrf_token %}
         
-        <div class="input-row-register">
+        <div class="input-row-register gap-3">
           <div class="input-group-register">
             <label for="first-name">First Name</label>
             <input type="text" name="first_name" id="first-name"
@@ -48,6 +48,7 @@
 
         <div class="input-group-register">
           <label for="phone_number">Phone Number</label>
+          <small class="text-muted">Ex:Country phone code(+84)Country phone number(0326******)</small>
           <input type="text" name="phone_number" id="phone_number"
                  class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}"
                  value="{{ form.phone_number.value|default_if_none:'' }}"
@@ -84,10 +85,11 @@
 
         <div class="input-group-register">
           <label for="birth-day">Birth Day</label>
-          <input type="date" id="birth-day" name="date_of_birth" class="form-control" required />
+          <input type="date" id="birth-day" name="date_of_birth" class="form-control" required/>
         </div>
 
         <!-- Country -->
+        <div class="input-group-register">
         <label for="country">Country</label>
         <select class="form-select mb-3 {% if form.country.errors %}is-invalid{% endif %}" id="id_country" name="country">
           <option value="">Select Country</option>
@@ -99,8 +101,10 @@
         {% if form.country.errors %}
           <div class="error-text">{{ form.country.errors }}</div>
         {% endif %}
+        </div>
 
         <!-- City -->
+        <div class="input-group-register">
         <label for="city">City</label>
         <select class="form-select mb-3 {% if form.city.errors %}is-invalid{% endif %}" id="id_city" name="city" disabled>
           <option value="">Select City</option>
@@ -109,8 +113,10 @@
         {% if form.city.errors %}
           <div class="error-text">{{ form.city.errors }}</div>
         {% endif %}
+        </div>
 
         <!-- Village -->
+        <div class="input-group-register">
         <label for="village">Village</label>
         <select class="form-select mb-3 {% if form.village.errors %}is-invalid{% endif %}" id="id_village" name="village" disabled>
           <option value="">Select Village</option>
@@ -119,6 +125,7 @@
         {% if form.village.errors %}
           <div class="error-text">{{ form.village.errors }}</div>
         {% endif %}
+        </div>
 
         <div class="input-group-register">
           <label for="address">Address</label>

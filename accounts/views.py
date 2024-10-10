@@ -36,6 +36,13 @@ def register(request):
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, phone_number=phone_number, email=email,username=username, password=password, date_of_birth= date_of_birth, country=country, city=city, village=village, address=address)
             user.phone_number = phone_number
             user.save()
+            UserProfile.objects.create(
+                user=user,
+                user_profile_country=country,
+                user_profile_city=city,
+                user_profile_village=village,
+                user_profile_address=address
+            )
             #USER ACTIVATION
             current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
@@ -165,16 +172,23 @@ def resetpassword_validate(request, uidb64, token):
         messages.error(request, 'This link has been expried!')
         return redirect('login')
     
-@login_required(login_url= 'login')
+@login_required(login_url='login')
 def dashboard(request):
+    # Lấy tất cả các đơn hàng của người dùng
     orders = Order.objects.order_by('-order_created_at').filter(user_id=request.user.id, order_is_ordered=True)
     orders_count = orders.count()
-    userprofile = UserProfile.objects.get(user_id=request.user.id)
+
+    # Kiểm tra sự tồn tại của UserProfile, nếu không có sẽ tạo mới
+    userprofile, created = UserProfile.objects.get_or_create(user=request.user)
+
     context = {
-        'orders_count':orders_count,
+        'orders_count': orders_count,
         'userprofile': userprofile,
     }
+
+    # Render trang dashboard với context đã bao gồm các đơn hàng và thông tin UserProfile
     return render(request, 'accounts/dashboard.html', context)
+
 
 def forgotPassword(request):
     if request.method == 'POST':
