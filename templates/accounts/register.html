@@ -85,7 +85,11 @@
 
         <div class="input-group-register">
           <label for="birth-day">Birth Day</label>
-          <input type="date" id="birth-day" name="date_of_birth" class="form-control" required/>
+          <input type="date" id="birth-day" name="date_of_birth" 
+          class="form-control {% if form.date_of_birth.errors %}is-invalid{% endif %}"/>
+          {% if form.date_of_birth.errors %}
+            <div class="error-text">{{ form.date_of_birth.errors }}</div>
+          {% endif %}
         </div>
 
         <!-- Country -->

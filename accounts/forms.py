@@ -1,8 +1,22 @@
 import re
 from django import forms
 from .models import Account, UserProfile
+from datetime import datetime, timedelta
+from django.contrib.auth import authenticate
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Enter Email'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'}))
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not Account.objects.filter(email=email).exists():
+            raise forms.ValidationError("Email does not exist.")
+        
+        return email
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
@@ -15,6 +29,49 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Account
         fields = ['first_name', 'last_name', 'phone_number', 'email', 'password', 'date_of_birth', 'country', 'city', 'village', 'address']
+
+    def clean_date_of_birth(self):
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        if not date_of_birth:
+            raise forms.ValidationError("This field is required.")
+        today = datetime.today().date()
+        if date_of_birth > today:
+            raise forms.ValidationError("Date of birth cannot be in the future.")
+        age_limit = 18
+        minimum_age_date = today - timedelta(days=age_limit * 365)
+        if date_of_birth > minimum_age_date:
+            raise forms.ValidationError(f"You must be at least {age_limit} years old.")
+        max_age = 120
+        max_age_date = today - timedelta(days=max_age * 365)
+        if date_of_birth < max_age_date:
+            raise forms.ValidationError(f"Age cannot be more than {max_age} years.")
+
+        return date_of_birth
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(regex, email):
+            raise forms.ValidationError("Invalid email format.")
+        if ' ' in email:
+            raise forms.ValidationError("Email cannot contain spaces.")
+        if len(email) > 254:
+            raise forms.ValidationError("Email must not exceed 254 characters.")
+        if Account.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already in use.")
+        domain = email.split('@')[-1]
+        if '.' not in domain:
+            raise forms.ValidationError("Invalid domain in email.")
+        if domain.endswith('.'):
+            raise forms.ValidationError("Email domain cannot end with a dot.")
+        username = email.split('@')[0]
+        if not re.match(r'^[a-zA-Z0-9_.+-]+$', username):
+            raise forms.ValidationError("Invalid characters in email username.")
+        disposable_domains = ['mailinator.com', '10minutemail.com', 'tempmail.com']
+        if domain in disposable_domains:
+            raise forms.ValidationError("Temporary email addresses are not allowed.")
+
+        return email
 
     def clean_address(self):
         address = self.cleaned_data.get('address')

@@ -22,7 +22,7 @@
             <input type="text" name="email" id="email"
                    class="form-control {% if form.email.errors %}is-invalid{% endif %}"
                    value="{{ form.email.value|default_if_none:'' }}"
-                   placeholder="Enter Email">
+                   placeholder="{{ form.email.field.widget.attrs.placeholder }}">
             <!-- Hiển thị lỗi -->
             {% if form.email.errors %}
               <div class="error-text">{{ form.email.errors }}</div>
@@ -34,7 +34,7 @@
           <input type="password" name="password" id="password"
                  class="form-control {% if form.password.errors %}is-invalid{% endif %}"
                  value="{{ form.password.value|default_if_none:'' }}"
-                 placeholder="Enter Password">
+                 placeholder="{{ form.password.field.widget.attrs.placeholder }}">
           <!-- Hiển thị lỗi -->
           {% if form.password.errors %}
             <div class="error-text">{{ form.password.errors }}</div>
