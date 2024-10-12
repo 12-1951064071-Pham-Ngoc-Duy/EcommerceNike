@@ -8,6 +8,7 @@ import json
 from store.models import Product
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.contrib import messages
 
 def payments(request):
     body = json.loads(request.body)
@@ -68,9 +69,6 @@ def payments(request):
     }
     return JsonResponse(data)
 
-
-    return render(request, 'orders/payments.html')
-
 def place_order(request, total=0, cart_item_quantity=0):
     current_user = request.user
     cart_items = CartItem.objects.filter(user=current_user)
@@ -125,9 +123,20 @@ def place_order(request, total=0, cart_item_quantity=0):
             }
             return render(request, 'orders/payments.html', context)
         else:
-            return redirect('checkout')
-
-    return render(request, 'orders/checkout.html')
+            context = {
+                'form': form,
+                'cart_items': cart_items,
+                'total': total,
+                'tax': tax,
+                'grand_total': grand_total,
+            }
+            return render(request, 'orders/checkout.html', context )
+    else:
+        form = OrderForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'orders/checkout.html', context)
 
 def order_complete(request):
     order_number = request.GET.get('order_number')

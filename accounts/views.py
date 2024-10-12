@@ -9,6 +9,9 @@ from django.http import JsonResponse
 from .models import CITY_CHOICES, VILLAGE_CHOICES
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from .forms import LoginForm
 #Verification Email
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -58,17 +61,14 @@ def register(request):
             #USER ACTIVATION
             # messages.success(request, 'Thank you for registering with us.We have sent you a verification email to your email address [phamngoczuy1@gmail.com]. Please verify it.')
             return redirect('/accounts/login/?command=verification&email='+email)
+        else:
+            return redirect('register')
     else:
         form = RegistrationForm() 
     context = {
         'form': form,
     }
     return render(request, 'accounts/register.html', context)
-
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from .forms import LoginForm
 
 def login(request):
     if request.method == 'POST':
