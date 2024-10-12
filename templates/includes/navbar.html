@@ -160,8 +160,11 @@
                   </h6>
                 </div>
                 <div class="button-join-signin mt-4">
+                  {% if user.id is None %}
                   <a href="{% url 'register' %}" class="btn btn-dark" style="border-radius: 15px">Join Us</a>
                   <a href="{% url 'login' %}" class="btn btn-light" style="border: 1px solid gray; border-radius: 30px"> Sign In</a>
+                  {% else %}
+                  {% endif %}
                 </div>
                 <div class="item-infor mt-4">
                   <ul class="navbar-nav justify-content-end flex-grow-1">
@@ -171,19 +174,33 @@
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link fw-bold text-dark" href="#">
+                      <a class="nav-link fw-bold text-dark" href="{% url 'cart' %}">
                         <i class="bi bi-bag"></i> Bag
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link fw-bold text-dark" href="#">
+                      {% if user.id is None %}
+                      <a class="nav-link fw-bold text-dark" href="{% url 'store' %}">
                         <i class="bi bi-box2"></i> Orders
+                      </a>
+                      {% else %}
+                      <a class="nav-link fw-bold text-dark" href="{% url 'my_orders' %}">
+                        <i class="bi bi-box2"></i> Orders
+                      </a>
+                      {% endif %}
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link fw-bold text-dark" href="{% url 'home' %}">
+                        <i class="bi bi-shop"></i> Find a Store
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link fw-bold text-dark" href="#">
-                        <i class="bi bi-shop"></i> Find a Store
+                      {% if user.id is None %}
+                      {% else %}
+                      <a class="nav-link fw-bold text-dark" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-left"></i> Logout
                       </a>
+                      {% endif %}
                     </li>
                   </ul>
                 </div>
