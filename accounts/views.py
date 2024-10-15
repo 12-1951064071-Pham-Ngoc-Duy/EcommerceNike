@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from .forms import LoginForm
+from django.contrib.auth import get_user_model
 #Verification Email
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -34,9 +35,9 @@ def register(request):
             country = form.cleaned_data['country']
             city = form.cleaned_data['city']
             village = form.cleaned_data['village']
-            address = form.cleaned_data['address']
+            place = form.cleaned_data['place']
             username = email.split("@")[0]
-            user = Account.objects.create_user(first_name=first_name, last_name=last_name, phone_number=phone_number, email=email,username=username, password=password, date_of_birth= date_of_birth, country=country, city=city, village=village, address=address)
+            user = Account.objects.create_user(first_name=first_name, last_name=last_name, phone_number=phone_number, email=email,username=username, password=password, date_of_birth= date_of_birth, country=country, city=city, village=village, place=place)
             user.phone_number = phone_number
             user.save()
             UserProfile.objects.create(
@@ -44,7 +45,7 @@ def register(request):
                 user_profile_country=country,
                 user_profile_city=city,
                 user_profile_village=village,
-                user_profile_address=address
+                user_profile_address=place,
             )
             #USER ACTIVATION
             current_site = get_current_site(request)
@@ -61,8 +62,6 @@ def register(request):
             #USER ACTIVATION
             # messages.success(request, 'Thank you for registering with us.We have sent you a verification email to your email address [phamngoczuy1@gmail.com]. Please verify it.')
             return redirect('/accounts/login/?command=verification&email='+email)
-        else:
-            return redirect('register')
     else:
         form = RegistrationForm() 
     context = {

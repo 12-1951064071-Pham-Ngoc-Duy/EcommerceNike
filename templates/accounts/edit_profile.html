@@ -56,6 +56,21 @@
                                value="{{ user_form.phone_number.value|default_if_none:'' }}"
                                placeholder="{{ user_form.phone_number.field.widget.attrs.placeholder }}">
                       </div> 
+
+                      <div class="input-group-register">
+                        <label for="birth-day">Birth Day</label>
+                        <input 
+                            type="date" 
+                            id="birth-day" 
+                            name="user_profile_date_of_birth" 
+                            value="{{ profile_form.instance.user_profile_date_of_birth|date:'Y-m-d' }}" 
+                            class="form-control {% if profile_form.user_profile_date_of_birth.errors %}is-invalid{% endif %}" />
+                    
+                        {% if profile_form.user_profile_date_of_birth.errors %}
+                          <div class="error-text">{{ profile_form.user_profile_date_of_birth.errors }}</div>
+                        {% endif %}
+                    </div>
+                                     
                       
                       <div class="input-group-register">
                         <label for="profile-picture">Profile Picture</label>

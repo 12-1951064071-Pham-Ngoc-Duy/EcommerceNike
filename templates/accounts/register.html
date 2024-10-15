@@ -130,18 +130,17 @@
           <div class="error-text">{{ form.village.errors }}</div>
         {% endif %}
         </div>
-
-        <div class="input-group-register">
-          <label for="address">Address</label>
-          <input type="text" name="address" id="address"
-                 class="form-control {% if form.address.errors %}is-invalid{% endif %}"
-                 value="{{ form.address.value|default_if_none:'' }}"
-                 placeholder="{{ form.address.field.widget.attrs.placeholder }}">
-          <!-- Hiển thị lỗi -->
-          {% if form.address.errors %}
-            <div class="error-text">{{ form.address.errors }}</div>
-          {% endif %}
-        </div>
+  
+      <div class="input-group-register">
+        <label for="place">Place</label>
+        <input type="text" name="place" id="place"
+               class="form-control {% if form.place.errors %}is-invalid{% endif %}"
+               value="{{ form.place.value|default_if_none:'' }}"
+               placeholder="{{ form.place.field.widget.attrs.placeholder }}">
+               {% if form.place.errors %}
+               <div class="error-text">{{ form.place.errors }}</div>
+             {% endif %}
+    </div>  
 
         {% include "includes/alerts.html" %}
         <div style="float: right">

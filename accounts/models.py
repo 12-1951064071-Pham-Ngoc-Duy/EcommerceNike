@@ -157,7 +157,7 @@ VILLAGE_CHOICES = {
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, username, email, phone_number=None, date_of_birth=None, password=None, country=None, city=None, village=None, address=None):
+    def create_user(self, first_name, last_name, username, email, phone_number=None, date_of_birth=None, password=None, country=None, city=None, village=None,place=None):
         if not email:
             raise ValueError('User must have an email address')
         
@@ -173,14 +173,14 @@ class MyAccountManager(BaseUserManager):
             date_of_birth=date_of_birth,
             country=country,        # Thêm country
             city=city,              # Thêm city
-            village=village,        # Thêm village
-            address=address         # Thêm address
+            village=village,
+            place = place,
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    def create_superuser(self, first_name, last_name, username, email, phone_number=None, date_of_birth=None, password=None, country=None, city=None, village=None, address=None):
+    def create_superuser(self, first_name, last_name, username, email, phone_number=None, date_of_birth=None, password=None, country=None, city=None, village=None, place=None):
         user = self.create_user(
             email=self.normalize_email(email),
             username=username,
@@ -191,8 +191,8 @@ class MyAccountManager(BaseUserManager):
             date_of_birth=date_of_birth,
             country=country,        # Thêm country
             city=city,              # Thêm city
-            village=village,        # Thêm village
-            address=address         # Thêm address
+            village=village,
+            place=place,
         )
         user.is_admin = True
         user.is_active = True
@@ -208,10 +208,10 @@ class Account(AbstractBaseUser):
     email = models.EmailField(max_length=50, unique=True)
     phone_number = models.CharField(max_length=50,null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    address = models.CharField(max_length=255,null=True, blank=True)
     country = models.CharField(max_length=50,null=True, choices=COUNTRY_CHOICES)
     city = models.CharField(max_length=50, blank=True, null=True)
     village = models.CharField(max_length=50, blank=True, null=True)
+    place = models.CharField(max_length=255, blank=True, null=True)
 
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -239,11 +239,12 @@ class Account(AbstractBaseUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(Account, on_delete=models.CASCADE)
-    user_profile_address = models.CharField(blank=True, max_length=100)
-    user_profile_picture = models.ImageField(blank=True, upload_to='userprofile')
+    user_profile_address = models.CharField(max_length=100, blank=True, null=True)
+    user_profile_picture = models.ImageField(blank=True, null=True,upload_to='userprofile')
     user_profile_country = models.CharField(blank=True, max_length=20, choices=COUNTRY_CHOICES)
     user_profile_city = models.CharField(blank=True, max_length=20)
     user_profile_village = models.CharField(blank=True, max_length=20)
+    user_profile_date_of_birth = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.user.first_name

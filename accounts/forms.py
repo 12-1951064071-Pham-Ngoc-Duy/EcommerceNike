@@ -28,7 +28,13 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'password', 'date_of_birth', 'country', 'city', 'village', 'address']
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'password', 'date_of_birth', 'country', 'city', 'village','place']
+    
+    def clean_place(self):
+        place = self.cleaned_data.get('place')
+        if not place:
+            raise forms.ValidationError("This field is required.")
+        return place
 
     def clean_date_of_birth(self):
         date_of_birth = self.cleaned_data.get('date_of_birth')
@@ -74,9 +80,10 @@ class RegistrationForm(forms.ModelForm):
         return email
 
     def clean_address(self):
-        address = self.cleaned_data.get('address')
-        if address is None:
-           raise forms.ValidationError("This field is required.")
+        account_address = self.cleaned_data.get('account_address')
+        if not account_address:  # Kiểm tra nếu account_address là None hoặc empty
+            raise forms.ValidationError("This field is required.")
+        return account_address 
     
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
@@ -138,7 +145,7 @@ class RegistrationForm(forms.ModelForm):
         self.fields['country'].widget.attrs['placeholder'] = 'Select Country'
         self.fields['city'].widget.attrs['placeholder'] = 'Select City'
         self.fields['village'].widget.attrs['placeholder'] = 'Select Village'
-        self.fields['address'].widget.attrs['placeholder'] = 'Enter Address'
+        self.fields['place'].widget.attrs['placeholder'] = 'Enter Place'
         
         # City and Village will be loaded dynamically so no need to set choices in form
         self.fields['city'].widget.attrs['disabled'] = True
@@ -154,4 +161,4 @@ class UserProfileForm(forms.ModelForm):
     user_profile_picture = forms.ImageField(required=False, error_messages= {'invalid':("Image files only")}, widget=forms.FileInput)
     class Meta:
         model = UserProfile
-        fields = ['user_profile_address', 'user_profile_picture', 'user_profile_country', 'user_profile_city', 'user_profile_village']
+        fields = ['user_profile_address', 'user_profile_picture', 'user_profile_country', 'user_profile_city', 'user_profile_village', 'user_profile_date_of_birth']
