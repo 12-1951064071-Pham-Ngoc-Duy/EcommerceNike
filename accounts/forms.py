@@ -95,8 +95,12 @@ class RegistrationForm(forms.ModelForm):
            phone_number = re.sub(r'[^\d+]', '', phone_number)
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
-        if not phone_number.startswith("+"):
-            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
+        if not phone_number.startswith("+84"):
+            raise forms.ValidationError("Phone number must start with '+84' followed by country code.")
+    
+        regex = r'^\+?\d+$'
+        if not re.match(regex, phone_number):
+            raise forms.ValidationError("Phone number must only number")
         
         # Kiểm tra chỉ chứa số sau dấu "+"
         if not phone_number[1:].isdigit():
