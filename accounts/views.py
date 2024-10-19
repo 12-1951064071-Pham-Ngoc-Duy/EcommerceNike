@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from carts.models import Cart, CartItem
 from carts.views import _cart_id
 from orders.models import Order, OrderProduct
-from .forms import RegistrationForm, UserForm, UserProfileForm
+from .forms import ChangePasswordForm, RegistrationForm, ResetPasswordForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
 from django.http import JsonResponse
 from .models import CITY_CHOICES, VILLAGE_CHOICES
@@ -46,6 +46,7 @@ def register(request):
                 user_profile_city=city,
                 user_profile_village=village,
                 user_profile_address=place,
+                user_profile_date_of_birth=date_of_birth,
             )
             #USER ACTIVATION
             current_site = get_current_site(request)
@@ -199,45 +200,58 @@ def dashboard(request):
 
 def forgotPassword(request):
     if request.method == 'POST':
-        email = request.POST['email']
-        if Account.objects.filter(email=email).exists():
-            user = Account.objects.get(email__exact=email)
-            #RESET PASSWORD
-            current_site = get_current_site(request)
-            mail_subject = 'Reset Your Password'
-            message = render_to_string('accounts/reset_password_email.html', {
-                'user': user,
-                'domain': current_site,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': default_token_generator.make_token(user),
-            })
-            to_email = email
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.send()
-            messages.success(request, 'Password reset email has been sent to your email address.')
-            return redirect('login')
-            #USER ACTIVATION
-        else:
-            messages.error(request, 'Account does not exist!')
-            return redirect('forgotPassword')
+            email = request.POST['email']
+            if Account.objects.filter(email=email).exists():
+                user = Account.objects.get(email__exact=email)
+                #RESET PASSWORD
+                current_site = get_current_site(request)
+                mail_subject = 'Reset Your Password'
+                message = render_to_string('accounts/reset_password_email.html', {
+                    'user': user,
+                    'domain': current_site,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': default_token_generator.make_token(user),
+                })
+                to_email = email
+                send_email = EmailMessage(mail_subject, message, to=[to_email])
+                send_email.send()
+                messages.success(request, 'Password reset email has been sent to your email address.')
+                return redirect('login')
+                #USER ACTIVATION
+            else:
+                messages.error(request, 'Account does not exist!')
+                return redirect('forgotPassword')
+
     return render(request, 'accounts/forgotPassword.html')
 
+from django.contrib.messages import get_messages
+
 def resetPassword(request):
+    # Đọc và xóa các thông báo cũ
+    storage = get_messages(request)
+    list(storage)  # Chỉ đọc thông báo để nó bị xóa khỏi session
+
     if request.method == 'POST':
-        password = request.POST['password']
-        confirm_password = request.POST['confirm_password']
-        if password == confirm_password:
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            password = form.cleaned_data['password']
             uid = request.session.get('uid')
-            user = Account.objects.get(pk=uid)
-            user.set_password(password)
-            user.save()
-            messages.success(request, 'Password reset successful')
-            return redirect('login')
-        else:
-            messages.error(request, 'Password do not match!')
-            return redirect('resetPassword')
+
+            try:
+                user = Account.objects.get(pk=uid)
+                user.set_password(password)
+                user.save()
+                messages.success(request, 'Password reset successful.')
+                return redirect('login')
+            except Account.DoesNotExist:
+                messages.error(request, 'User does not exist.')
+                return redirect('resetPassword')
     else:
-        return render(request, 'accounts/resetPassword.html')
+        form = ResetPasswordForm()
+
+    context = {'form': form}
+    return render(request, 'accounts/resetPassword.html', context)
+
 
 @login_required(login_url= 'login')  
 def my_orders(request):
@@ -293,25 +307,32 @@ def get_villages(request):
 @login_required(login_url= 'login')
 def change_password(request):
     if request.method == 'POST':
-        current_password = request.POST['current_password']
-        new_password = request.POST['new_password']
-        confirm_new_password = request.POST['confirm_new_password']
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            current_password = request.POST['current_password']
+            new_password = request.POST['new_password']
+            confirm_new_password = request.POST['confirm_new_password']
 
-        user = Account.objects.get(username__exact=request.user.username)
-        if new_password == confirm_new_password:
-            success = user.check_password(current_password)
-            if success:
-                user.set_password(new_password)
-                user.save()
-                messages.success(request, 'Password updated successfully.')
-                return redirect('dashboard')
+            user = Account.objects.get(username__exact=request.user.username)
+            if new_password == confirm_new_password:
+                success = user.check_password(current_password)
+                if success:
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Password updated successfully.')
+                    return redirect('dashboard')
+                else:
+                    messages.error(request, 'Please enter valid current password')
+                    return redirect('change_password')
             else:
-                messages.error(request, 'Please enter valid current password')
+                messages.error(request, 'Password does not math!')
                 return redirect('change_password')
-        else:
-            messages.error(request, 'Password does not math!')
-            return redirect('change_password')
-    return render(request, 'accounts/change_password.html')
+    else:
+        form = ResetPasswordForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'accounts/change_password.html', context)
 
 @login_required(login_url='login')
 def order_detail(request, order_id):

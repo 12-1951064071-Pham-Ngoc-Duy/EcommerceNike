@@ -18,6 +18,56 @@ class LoginForm(forms.Form):
         
         return email
 
+class ResetPasswordForm(forms.Form):
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter new password'}),
+        label="New Password"
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm new password'}),
+        label="Confirm Password"
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        if password and len(password) < 8:
+            self.add_error('password', "Password must be at least 8 characters long.")
+
+        if password and confirm_password and password != confirm_password:
+            self.add_error('confirm_password', "Passwords do not match.")
+
+        return cleaned_data
+    
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Current Password'}),
+        label="Current Password"
+    )
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}),
+        label="New Password"
+    )
+    confirm_new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm New Password'}),
+        label="Confirm New Password"
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        confirm_new_password = cleaned_data.get('confirm_new_password')
+
+        if new_password and len(new_password) < 8:
+            self.add_error('new_password', "New password must be at least 8 characters long.")
+
+        if new_password and confirm_new_password and new_password != confirm_new_password:
+            self.add_error('confirm_new_password', "Passwords do not match.")
+
+        return cleaned_data
+
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder': 'Enter password'
@@ -90,9 +140,6 @@ class RegistrationForm(forms.ModelForm):
 
         if phone_number is None:
            raise forms.ValidationError("This field is required.")
-        else:
-           # Loại bỏ dấu cách và các ký tự không mong muốn
-           phone_number = re.sub(r'[^\d+]', '', phone_number)
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
         if not phone_number.startswith("+84"):
@@ -129,6 +176,12 @@ class RegistrationForm(forms.ModelForm):
         cleaned_data = super(RegistrationForm, self).clean()
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
+
+        if not password:
+           raise forms.ValidationError("This field is required.")
+
+        if len(password) < 8:
+            raise forms.ValidationError("Password must more than 8 digit")
 
         if confirm_password is None:
            raise forms.ValidationError("This field is required.")

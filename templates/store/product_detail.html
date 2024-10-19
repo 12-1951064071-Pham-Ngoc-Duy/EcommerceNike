@@ -45,7 +45,7 @@
                             </select>
                         </div>
                         <div class="item-color-select mb-4" >
-                            <select name="size" class="form-select">
+                            <select name="size" class="form-select" required>
                                 <option value="" disabled selected>Chosse Size</option>
                                 {% for i in single_product.variation_set.sizes %}
                                 <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
