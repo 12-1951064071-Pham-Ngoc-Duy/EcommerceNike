@@ -1,67 +1,88 @@
 from django.contrib import admin
+from suppliers.models import StockEntry
 from .models import Payment, Order, OrderProduct
-from django.http import HttpResponse
-import csv
 from django.http import HttpResponse
 from openpyxl import Workbook
 from django.db.models import Sum
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from django.utils import timezone
+from decimal import Decimal
 
-def export_doanh_thu_excel(modeladmin, request, queryset):
+def export_profit_to_excel(modeladmin, request, queryset):
     # Tạo workbook mới
     workbook = Workbook()
 
-    # --- Sheet 1: Doanh Thu Hàng Ngày ---
+    # --- Sheet 1: Lợi Nhuận Hàng Ngày --- 
     sheet1 = workbook.active
-    sheet1.title = "Doanh Thu Ngày"
-    sheet1.append(['Ngày', 'Tổng Doanh Thu'])
+    sheet1.title = "Lợi Nhuận Ngày"
+    sheet1.append(['Ngày', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
 
     doanh_thu_ngay = Order.objects.annotate(ngay=TruncDay('order_created_at')) \
                                   .values('ngay') \
-                                  .annotate(tong_doanh_thu=Sum('order_total'))
+                                  .annotate(doanh_thu=Sum('order_total'))
 
-    for entry in doanh_thu_ngay:
-        # Chuyển đổi ngày thành không có múi giờ
-        ngay = entry['ngay'].astimezone(timezone.utc).replace(tzinfo=None)
-        sheet1.append([ngay, entry['tong_doanh_thu']])
+    chi_phi_ngay = StockEntry.objects.annotate(ngay=TruncDay('entry_date')) \
+                                     .values('ngay') \
+                                     .annotate(chi_phi=Sum('total_value'))
 
-    # Đặt độ rộng cho cột 'Ngày'
-    sheet1.column_dimensions['A'].width = 20  # Có thể điều chỉnh theo ý muốn
+    # Tính lợi nhuận theo ngày
+    for doanh_thu in doanh_thu_ngay:
+        ngay = doanh_thu['ngay'].astimezone(timezone.utc).replace(tzinfo=None)  # Xóa thông tin múi giờ
+        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])  # Chuyển đổi sang Decimal
 
-    # --- Sheet 2: Doanh Thu Hàng Tháng ---
-    sheet2 = workbook.create_sheet(title="Doanh Thu Tháng")
-    sheet2.append(['Tháng', 'Tổng Doanh Thu'])
+        # Lấy chi phí tương ứng với ngày
+        chi_phi = next((cp['chi_phi'] for cp in chi_phi_ngay if cp['ngay'].date() == ngay.date()), Decimal(0))
+        loi_nhuan = doanh_thu_value - chi_phi
+
+        sheet1.append([ngay, doanh_thu_value, chi_phi, loi_nhuan])
+
+    # --- Sheet 2: Lợi Nhuận Hàng Tháng --- 
+    sheet2 = workbook.create_sheet(title="Lợi Nhuận Tháng")
+    sheet2.append(['Tháng', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
 
     doanh_thu_thang = Order.objects.annotate(thang=TruncMonth('order_created_at')) \
                                    .values('thang') \
-                                   .annotate(tong_doanh_thu=Sum('order_total'))
+                                   .annotate(doanh_thu=Sum('order_total'))
 
-    for entry in doanh_thu_thang:
-        thang = entry['thang'].astimezone(timezone.utc).replace(tzinfo=None)
-        sheet2.append([thang, entry['tong_doanh_thu']])
+    chi_phi_thang = StockEntry.objects.annotate(thang=TruncMonth('entry_date')) \
+                                      .values('thang') \
+                                      .annotate(chi_phi=Sum('total_value'))
 
-    # Đặt độ rộng cho cột 'Tháng'
-    sheet2.column_dimensions['A'].width = 20  # Có thể điều chỉnh theo ý muốn
+    # Tính lợi nhuận theo tháng
+    for doanh_thu in doanh_thu_thang:
+        thang = doanh_thu['thang'].month
+        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])  # Chuyển đổi sang Decimal
 
-    # --- Sheet 3: Doanh Thu Hàng Năm ---
-    sheet3 = workbook.create_sheet(title="Doanh Thu Năm")
-    sheet3.append(['Năm', 'Tổng Doanh Thu'])
+        chi_phi = next((cp['chi_phi'] for cp in chi_phi_thang if cp['thang'].month == thang), Decimal(0))  # Chuyển đổi sang Decimal
+        loi_nhuan = doanh_thu_value - chi_phi
+
+        sheet2.append([thang, doanh_thu_value, chi_phi, loi_nhuan])
+
+    # --- Sheet 3: Lợi Nhuận Hàng Năm --- 
+    sheet3 = workbook.create_sheet(title="Lợi Nhuận Năm")
+    sheet3.append(['Năm', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
 
     doanh_thu_nam = Order.objects.annotate(nam=TruncYear('order_created_at')) \
                                  .values('nam') \
-                                 .annotate(tong_doanh_thu=Sum('order_total'))
+                                 .annotate(doanh_thu=Sum('order_total'))
 
-    for entry in doanh_thu_nam:
-        nam = entry['nam'].astimezone(timezone.utc).replace(tzinfo=None)
-        sheet3.append([nam, entry['tong_doanh_thu']])
+    chi_phi_nam = StockEntry.objects.annotate(nam=TruncYear('entry_date')) \
+                                    .values('nam') \
+                                    .annotate(chi_phi=Sum('total_value'))
 
-    # Đặt độ rộng cho cột 'Năm'
-    sheet3.column_dimensions['A'].width = 20  # Có thể điều chỉnh theo ý muốn
+    # Tính lợi nhuận theo năm
+    for doanh_thu in doanh_thu_nam:
+        nam = doanh_thu['nam'].year
+        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])  # Chuyển đổi sang Decimal
+
+        chi_phi = next((cp['chi_phi'] for cp in chi_phi_nam if cp['nam'].year == nam), Decimal(0))  # Chuyển đổi sang Decimal
+        loi_nhuan = doanh_thu_value - chi_phi
+
+        sheet3.append([nam, doanh_thu_value, chi_phi, loi_nhuan])
 
     # Tạo response trả về file Excel
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="doanh_thu.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="loi_nhuan.xlsx"'
 
     # Lưu workbook vào response
     workbook.save(response)
@@ -71,18 +92,33 @@ class OrderProductInline(admin.TabularInline):
     model = OrderProduct
     readonly_fields = ('payment', 'user', 'product', 'order_product_quantity', 'order_product_price', 'order_product_ordered')
     extra = 0
+
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['order_number', 'full_name', 'order_phone', 'order_email', 'order_country', 'order_city', 'order_total', 'order_village', 'order_tax','order_status', 'order_created_at', 'order_is_ordered']
+    list_display = ['order_number', 'full_name', 'order_phone', 'order_email', 'order_country', 'order_city', 'order_total', 'order_village', 'order_tax', 'order_status', 'order_created_at', 'order_is_ordered']
     list_filter = ['order_status', 'order_is_ordered']
-    search_fields = ['order_number','payment__payment_id']
+    search_fields = ['order_number', 'payment__payment_id']
     list_per_page = 20
     inlines = [OrderProductInline]
-    actions = [export_doanh_thu_excel]
+    actions = [export_profit_to_excel]
+
+    def get_total_cost(self, obj):
+        total_cost = StockEntry.objects.filter(entry_date__year=obj.order_created_at.year).aggregate(
+            total=Sum('total_value')
+        )['total'] or Decimal(0)  # Đảm bảo giá trị trả về là Decimal
+        return total_cost
+
+    def get_profit(self, obj):
+        total_cost = self.get_total_cost(obj)
+        return Decimal(obj.order_total) - total_cost
+    
+    get_total_cost.short_description = 'Chi Phí'
+    get_profit.short_description = 'Lợi Nhuận'
+
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
 
-admin.site.register(Order,OrderAdmin)
+admin.site.register(Order, OrderAdmin)

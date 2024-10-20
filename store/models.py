@@ -4,6 +4,8 @@ from accounts.models import Account
 from category.models import Category
 from django.db.models import Avg, Count
 
+from suppliers.models import Supplier
+
 # Create your models here.
 
 GENDER_CHOICES = [
@@ -48,6 +50,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_created_date = models.DateTimeField(auto_now_add=True)
     product_modifield_date = models.DateTimeField(auto_now=True)
+    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products')
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
@@ -68,6 +71,10 @@ class Product(models.Model):
         if reviews['count'] is not None:
             count = float(reviews['count'])
         return count
+    
+    def update_stock(self, quantity):
+        self.product_stock += quantity
+        self.save()
 
 class VariationManager(models.Manager):
     def colors(self):

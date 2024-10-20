@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Variation, ReviewRating,ProductGallery
+from .models import Product, Variation, ReviewRating,ProductGallery, Supplier
 import admin_thumbnails
 # Register your models here.
 
@@ -58,6 +58,7 @@ class VariationAdmin(admin.ModelAdmin):
 
       def has_delete_permission(self, request, obj=None):
         return request.user.is_staff  # Staff có thể xóa
+      
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Variation, VariationAdmin)
