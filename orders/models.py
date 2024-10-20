@@ -1,6 +1,8 @@
 from django.db import models
 from accounts.models import Account
 from store.models import Product, Variation
+from django.db.models import Sum
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 
 # Create your models here.
 # Create your models here.
@@ -205,6 +207,18 @@ class Order(models.Model):
 
     def __str__(self):
         return self.order_first_name
+    
+    @classmethod
+    def doanh_thu_hang_ngay(cls):
+        return cls.objects.annotate(ngay=TruncDay('order_created_at')) \
+                          .values('ngay') \
+                          .annotate(tong_doanh_thu=Sum('order_total'))
+
+    @classmethod
+    def doanh_thu_hang_thang(cls):
+        return cls.objects.annotate(thang=TruncMonth('order_created_at')) \
+                          .values('thang') \
+                          .annotate(tong_doanh_thu=Sum('order_total'))
     
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
