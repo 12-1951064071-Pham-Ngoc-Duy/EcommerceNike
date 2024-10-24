@@ -298,13 +298,6 @@ class UserProfileForm(forms.ModelForm):
         return user_profile_date_of_birth
     
 class AdminAccountsForm(forms.ModelForm):
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'readonly': True,
-        }),
-        label="Password",
-        required=False  # Không yêu cầu nhập lại khi cập nhật
-    )
 
     class Meta:
         model = Account
@@ -406,3 +399,18 @@ class AdminAccountsForm(forms.ModelForm):
 
         
         return phone_number
+    def clean(self):
+        cleaned_data = super().clean()
+        is_active = cleaned_data.get('is_active')
+        is_admin = cleaned_data.get('is_admin')
+        is_staff = cleaned_data.get('is_staff')
+        is_superadmin = cleaned_data.get('is_superadmin')
+
+        # Kiểm tra nếu tất cả các trường này đều không được chọn
+        if not any([is_active, is_admin, is_staff, is_superadmin]):
+            raise forms.ValidationError(
+                "At least one of the following fields must be selected: "
+                "'is_active', 'is_admin', 'is_staff', or 'is_superadmin'."
+            )
+
+        return cleaned_data

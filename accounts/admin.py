@@ -18,7 +18,17 @@ class AccountAdmin(UserAdmin):
 
     filter_horizontal = ()
     list_filter = ()
-    fieldsets = ()
+    fieldsets = (
+        ('Thông tin cá nhân', {
+                    'fields': ('first_name', 'last_name', 'email', 'phone_number', 'username', 'date_of_birth')
+                }),
+                ('Địa chỉ', {
+                    'fields': ('country', 'city', 'village', 'place')
+                }),
+        ('Trạng thái tài khoản', {
+            'fields': ('is_active','is_admin', 'is_staff', 'is_superadmin')
+        }),
+    )
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff  # Cho phép staff xem model này
 
