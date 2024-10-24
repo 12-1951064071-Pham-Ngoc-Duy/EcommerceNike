@@ -29,6 +29,9 @@
                                  class="form-control {% if user_form.first_name.errors %}is-invalid{% endif %}"
                                  value="{{ user_form.first_name.value|default_if_none:'' }}"
                                  placeholder="{{ user_form.first_name.field.widget.attrs.placeholder }}">
+                                 {% if user_form.first_name.errors %}
+                               <div class="error-text">{{ user_form.first_name.errors }}</div>
+                             {% endif %}
                         </div>
               
                         <div class="input-group-register">
@@ -37,6 +40,9 @@
                                  class="form-control {% if user_form.last_name.errors %}is-invalid{% endif %}"
                                  value="{{ user_form.last_name.value|default_if_none:'' }}"
                                  placeholder="{{ user_form.last_name.field.widget.attrs.placeholder }}">
+                                 {% if user_form.last_name.errors %}
+                               <div class="error-text">{{ user_form.last_name.errors }}</div>
+                             {% endif %}
                         </div>
                       </div>
               
@@ -47,6 +53,9 @@
                                class="form-control {% if user_form.email.errors %}is-invalid{% endif %}"
                                value="{{ user_form.email.value|default_if_none:'' }}"
                                placeholder="{{ user_form.email.field.widget.attrs.placeholder }}">
+                               {% if user_form.email.errors %}
+                               <div class="error-text">{{ user_form.email.errors }}</div>
+                             {% endif %}
                       </div>
               
                       <div class="input-group-register">
@@ -55,7 +64,11 @@
                                class="form-control {% if user_form.phone_number.errors %}is-invalid{% endif %}"
                                value="{{ user_form.phone_number.value|default_if_none:'' }}"
                                placeholder="{{ user_form.phone_number.field.widget.attrs.placeholder }}">
+                               {% if user_form.phone_number.errors %}
+                               <div class="error-text">{{ user_form.phone_number.errors }}</div>
+                             {% endif %}
                       </div> 
+
 
                       <div class="input-group-register">
                         <label for="birth-day">Birth Day</label>
@@ -78,6 +91,9 @@
                                class="form-control {% if profile_form.user_profile_picture.errors %}is-invalid{% endif %}"
                                value="{{ profile_form.user_profile_picture.value|default_if_none:'' }}"
                                placeholder="{{ profile_form.user_profile_picture.field.widget.attrs.placeholder }}">
+                               {% if profile_form.user_profile_picture.errors %}
+                          <div class="error-text">{{ profile_form.user_profile_picture.errors }}</div>
+                        {% endif %}
                       </div> 
                       </div>
               
@@ -93,6 +109,9 @@
             </option>
         {% endfor %}
     </select>
+    {% if profile_form.user_profile_country.errors %}
+                          <div class="error-text">{{ profile_form.user_profile_country.errors }}</div>
+                        {% endif %}
 </div>
 
 <!-- City -->
@@ -101,6 +120,9 @@
     <select class="form-select mb-3 {% if profile_form.user_profile_city.errors %}is-invalid{% endif %}" id="user_profile_city" name="user_profile_city">
         <option value="">Select City</option>
     </select>
+    {% if profile_form.user_profile_city.errors %}
+                          <div class="error-text">{{ profile_form.user_profile_city.errors }}</div>
+                        {% endif %}
 </div>
 
 <!-- Village -->
@@ -109,6 +131,9 @@
     <select class="form-select mb-3 {% if profile_form.user_profile_village.errors %}is-invalid{% endif %}" id="user_profile_village" name="user_profile_village">
         <option value="">Select Village</option>
     </select>
+    {% if profile_form.user_profile_village.errors %}
+                          <div class="error-text">{{ profile_form.user_profile_village.errors }}</div>
+                        {% endif %}
 </div>
 
 
@@ -120,6 +145,9 @@
                                class="form-control {% if profile_form.user_profile_address.errors %}is-invalid{% endif %}"
                                value="{{ profile_form.user_profile_address.value|default_if_none:'' }}"
                                placeholder="Enter Address">
+                               {% if profile_form.user_profile_address.errors %}
+                          <div class="error-text">{{ profile_form.user_profile_address.errors }}</div>
+                        {% endif %}
                       </div>
                       {% include "includes/alerts.html" %}
                       <div style="float:right">

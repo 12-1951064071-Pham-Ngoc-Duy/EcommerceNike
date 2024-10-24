@@ -3,8 +3,10 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Account, UserProfile
 from django.utils.html import format_html
 from django.contrib.auth.models import Group
+from .forms import AdminAccountsForm
 # Register your models here.
 class AccountAdmin(UserAdmin):
+    form = AdminAccountsForm
     list_display = (
         'email', 'first_name', 'last_name', 'username', 
         'phone_number', 'date_of_birth', 'place',

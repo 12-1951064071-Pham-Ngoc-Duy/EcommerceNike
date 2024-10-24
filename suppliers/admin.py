@@ -80,6 +80,7 @@ class SupplierAdmin(admin.ModelAdmin):
 class StockEntryAdmin(admin.ModelAdmin):
     list_display = ['product', 'supplier', 'quantity','total_value', 'unit_price']  # Hiển thị thông tin trong danh sách
     readonly_fields = ['total_value']
+    search_fields = ['supplier__supplier_name']
     actions = [export_daily_monthly_yearly_costs_to_excel]  # Thêm action vào admin
     def has_delete_permission(self, request, obj=None):
         return False
