@@ -278,6 +278,33 @@ class UserProfileForm(forms.ModelForm):
         if not user_profile_address:
             raise forms.ValidationError("This field is required.")
         return user_profile_address
+    
+    def clean_user_profile_country(self):
+        user_profile_country = self.cleaned_data.get('user_profile_country')
+        if not user_profile_country:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_country
+    
+    def clean_user_profile_city(self):
+        user_profile_city = self.cleaned_data.get('user_profile_city')
+        if not user_profile_city:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_city
+    
+    def clean_user_profile_village(self):
+        user_profile_village = self.cleaned_data.get('user_profile_village')
+        if not user_profile_village:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_village
+    
+    def clean_user_profile_picture(self):
+        user_profile_picture = self.cleaned_data.get('user_profile_picture')
+        if self.instance.pk:  # Trường hợp cập nhật thông tin
+            if self.instance.user_profile_picture == user_profile_picture:
+                return user_profile_picture  # Không kiểm tra nếu số điện thoại không thay đổi
+        if not user_profile_picture:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_picture
 
     def clean_user_profile_date_of_birth(self):
         user_profile_date_of_birth = self.cleaned_data.get('user_profile_date_of_birth')
@@ -330,15 +357,16 @@ class AdminAccountsForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        if self.instance.pk:  # Trường hợp cập nhật thông tin
-            if self.instance.email == email:
-                return email  # Không kiểm tra nếu email không thay đổi
+        
         if not re.match(regex, email):
             raise forms.ValidationError("Invalid email format.")
         if ' ' in email:
             raise forms.ValidationError("Email cannot contain spaces.")
         if len(email) > 254:
             raise forms.ValidationError("Email must not exceed 254 characters.")
+        if self.instance.pk:  # Trường hợp cập nhật thông tin
+            if self.instance.email == email:
+                return email  # Không kiểm tra nếu email không thay đổi
         if Account.objects.filter(email=email).exists():
             raise forms.ValidationError("This email is already in use.")
         domain = email.split('@')[-1]
@@ -414,3 +442,59 @@ class AdminAccountsForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+class UserProfileAdminForm(forms.ModelForm):
+    user_profile_picture = forms.ImageField(required=False, error_messages= {'invalid':("Image files only")}, widget=forms.FileInput)
+    class Meta:
+        model = UserProfile
+        fields = ['user_profile_address', 'user_profile_picture', 'user_profile_country', 'user_profile_city', 'user_profile_village', 'user_profile_date_of_birth']
+    def clean_user_profile_address(self):
+        user_profile_address = self.cleaned_data.get('user_profile_address')
+        if not user_profile_address:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_address
+    
+    def clean_user_profile_country(self):
+        user_profile_country = self.cleaned_data.get('user_profile_country')
+        if not user_profile_country:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_country
+    
+    def clean_user_profile_city(self):
+        user_profile_city = self.cleaned_data.get('user_profile_city')
+        if not user_profile_city:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_city
+    
+    def clean_user_profile_village(self):
+        user_profile_village = self.cleaned_data.get('user_profile_village')
+        if not user_profile_village:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_village
+
+    def clean_user_profile_picture(self):
+        user_profile_picture = self.cleaned_data.get('user_profile_picture')
+        if self.instance.pk:  # Trường hợp cập nhật thông tin
+            if self.instance.user_profile_picture == user_profile_picture:
+                return user_profile_picture  # Không kiểm tra nếu số điện thoại không thay đổi
+        if not user_profile_picture:
+            raise forms.ValidationError("This field is required.")
+        return user_profile_picture
+
+    def clean_user_profile_date_of_birth(self):
+        user_profile_date_of_birth = self.cleaned_data.get('user_profile_date_of_birth')
+        if not user_profile_date_of_birth:
+            raise forms.ValidationError("This field is required.")
+        today = datetime.today().date()
+        if user_profile_date_of_birth > today:
+            raise forms.ValidationError("Date of birth cannot be in the future.")
+        age_limit = 18
+        minimum_age_date = today - timedelta(days=age_limit * 365)
+        if user_profile_date_of_birth > minimum_age_date:
+            raise forms.ValidationError(f"You must be at least {age_limit} years old.")
+        max_age = 120
+        max_age_date = today - timedelta(days=max_age * 365)
+        if user_profile_date_of_birth < max_age_date:
+            raise forms.ValidationError(f"Age cannot be more than {max_age} years.")
+
+        return user_profile_date_of_birth

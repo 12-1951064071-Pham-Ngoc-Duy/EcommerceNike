@@ -1,7 +1,9 @@
 from django.contrib import admin
 from .models import Category
+from .forms import CategoryForm
 # Register your models here.
 class CategoryAdmin(admin.ModelAdmin):
+    form = CategoryForm
     prepopulated_fields = {'category_slug': ('category_name',)}
     list_display = ('category_name', 'category_slug')
     search_fields = (

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Account, UserProfile
 from django.utils.html import format_html
 from django.contrib.auth.models import Group
-from .forms import AdminAccountsForm
+from .forms import AdminAccountsForm, UserProfileAdminForm
 # Register your models here.
 class AccountAdmin(UserAdmin):
     form = AdminAccountsForm
@@ -42,6 +42,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     thumbnail.short_description = 'Profile Picture'
 
+    form = UserProfileAdminForm
     list_display = (
         'thumbnail', 'user', 'user_profile_country', 
         'user_profile_city', 'user_profile_village', 

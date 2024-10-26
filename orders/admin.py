@@ -9,84 +9,108 @@ from django.utils import timezone
 from decimal import Decimal
 
 def export_profit_to_excel(modeladmin, request, queryset):
-    # Tạo workbook mới
     workbook = Workbook()
 
-    # --- Sheet 1: Lợi Nhuận Hàng Ngày --- 
+    # --- Sheet 1: Lợi Nhuận Hàng Ngày ---
     sheet1 = workbook.active
     sheet1.title = "Lợi Nhuận Ngày"
     sheet1.append(['Ngày', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
 
-    doanh_thu_ngay = Order.objects.annotate(ngay=TruncDay('order_created_at')) \
-                                  .values('ngay') \
-                                  .annotate(doanh_thu=Sum('order_total'))
+    # Chỉ lấy doanh thu từ các đơn hàng đã thanh toán
+    doanh_thu_ngay = (
+        Order.objects.filter(order_is_ordered=True)  # Chỉ lấy đơn hàng đã được thanh toán
+        .annotate(ngay=TruncDay('order_created_at'))
+        .values('ngay')
+        .annotate(doanh_thu=Sum('order_total'))
+    )
 
-    chi_phi_ngay = StockEntry.objects.annotate(ngay=TruncDay('entry_date')) \
-                                     .values('ngay') \
-                                     .annotate(chi_phi=Sum('total_value'))
+    chi_phi_ngay = (
+        StockEntry.objects.annotate(ngay=TruncDay('entry_date'))
+        .values('ngay')
+        .annotate(chi_phi=Sum('total_value'))
+    )
 
     # Tính lợi nhuận theo ngày
     for doanh_thu in doanh_thu_ngay:
-        ngay = doanh_thu['ngay'].astimezone(timezone.utc).replace(tzinfo=None)  # Xóa thông tin múi giờ
-        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])  # Chuyển đổi sang Decimal
+        ngay = doanh_thu['ngay'].astimezone(timezone.utc).replace(tzinfo=None)
+        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])
 
         # Lấy chi phí tương ứng với ngày
-        chi_phi = next((cp['chi_phi'] for cp in chi_phi_ngay if cp['ngay'].date() == ngay.date()), Decimal(0))
+        chi_phi = next(
+            (cp['chi_phi'] for cp in chi_phi_ngay if cp['ngay'].date() == ngay.date()),
+            Decimal(0),
+        )
         loi_nhuan = doanh_thu_value - chi_phi
 
         sheet1.append([ngay, doanh_thu_value, chi_phi, loi_nhuan])
 
-    # --- Sheet 2: Lợi Nhuận Hàng Tháng --- 
+    # --- Sheet 2: Lợi Nhuận Hàng Tháng ---
     sheet2 = workbook.create_sheet(title="Lợi Nhuận Tháng")
     sheet2.append(['Tháng', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
 
-    doanh_thu_thang = Order.objects.annotate(thang=TruncMonth('order_created_at')) \
-                                   .values('thang') \
-                                   .annotate(doanh_thu=Sum('order_total'))
+    doanh_thu_thang = (
+        Order.objects.filter(order_is_ordered=True)  # Chỉ lấy đơn hàng đã thanh toán
+        .annotate(thang=TruncMonth('order_created_at'))
+        .values('thang')
+        .annotate(doanh_thu=Sum('order_total'))
+    )
 
-    chi_phi_thang = StockEntry.objects.annotate(thang=TruncMonth('entry_date')) \
-                                      .values('thang') \
-                                      .annotate(chi_phi=Sum('total_value'))
+    chi_phi_thang = (
+        StockEntry.objects.annotate(thang=TruncMonth('entry_date'))
+        .values('thang')
+        .annotate(chi_phi=Sum('total_value'))
+    )
 
-    # Tính lợi nhuận theo tháng
     for doanh_thu in doanh_thu_thang:
         thang = doanh_thu['thang'].month
-        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])  # Chuyển đổi sang Decimal
+        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])
 
-        chi_phi = next((cp['chi_phi'] for cp in chi_phi_thang if cp['thang'].month == thang), Decimal(0))  # Chuyển đổi sang Decimal
+        chi_phi = next(
+            (cp['chi_phi'] for cp in chi_phi_thang if cp['thang'].month == thang),
+            Decimal(0),
+        )
         loi_nhuan = doanh_thu_value - chi_phi
 
         sheet2.append([thang, doanh_thu_value, chi_phi, loi_nhuan])
 
-    # --- Sheet 3: Lợi Nhuận Hàng Năm --- 
+    # --- Sheet 3: Lợi Nhuận Hàng Năm ---
     sheet3 = workbook.create_sheet(title="Lợi Nhuận Năm")
     sheet3.append(['Năm', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
 
-    doanh_thu_nam = Order.objects.annotate(nam=TruncYear('order_created_at')) \
-                                 .values('nam') \
-                                 .annotate(doanh_thu=Sum('order_total'))
+    doanh_thu_nam = (
+        Order.objects.filter(order_is_ordered=True)  # Chỉ lấy đơn hàng đã thanh toán
+        .annotate(nam=TruncYear('order_created_at'))
+        .values('nam')
+        .annotate(doanh_thu=Sum('order_total'))
+    )
 
-    chi_phi_nam = StockEntry.objects.annotate(nam=TruncYear('entry_date')) \
-                                    .values('nam') \
-                                    .annotate(chi_phi=Sum('total_value'))
+    chi_phi_nam = (
+        StockEntry.objects.annotate(nam=TruncYear('entry_date'))
+        .values('nam')
+        .annotate(chi_phi=Sum('total_value'))
+    )
 
-    # Tính lợi nhuận theo năm
     for doanh_thu in doanh_thu_nam:
         nam = doanh_thu['nam'].year
-        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])  # Chuyển đổi sang Decimal
+        doanh_thu_value = Decimal(doanh_thu['doanh_thu'])
 
-        chi_phi = next((cp['chi_phi'] for cp in chi_phi_nam if cp['nam'].year == nam), Decimal(0))  # Chuyển đổi sang Decimal
+        chi_phi = next(
+            (cp['chi_phi'] for cp in chi_phi_nam if cp['nam'].year == nam),
+            Decimal(0),
+        )
         loi_nhuan = doanh_thu_value - chi_phi
 
         sheet3.append([nam, doanh_thu_value, chi_phi, loi_nhuan])
 
     # Tạo response trả về file Excel
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
     response['Content-Disposition'] = 'attachment; filename="loi_nhuan.xlsx"'
 
-    # Lưu workbook vào response
     workbook.save(response)
     return response
+
 
 class OrderProductInline(admin.TabularInline):
     model = OrderProduct
@@ -117,6 +141,13 @@ class OrderAdmin(admin.ModelAdmin):
     
     get_total_cost.short_description = 'Chi Phí'
     get_profit.short_description = 'Lợi Nhuận'
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def has_add_permission(self, request, obj=None):
+        return False
+    def has_change_permission(self, request, obj=None):
+        return False 
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
