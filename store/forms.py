@@ -11,11 +11,6 @@ class ProductForm(forms.ModelForm):
         if not product_name:
             raise forms.ValidationError('This field is required.')
         return product_name
-    def clean_product_slug(self):
-        product_slug = self.cleaned_data.get('product_slug')
-        if not product_slug:
-            raise forms.ValidationError('This field is required.')
-        return product_slug
     def clean_product_description(self):
         product_description = self.cleaned_data.get('product_description')
         if not product_description:
@@ -49,12 +44,14 @@ class ProductForm(forms.ModelForm):
     
     def clean_product_slug(self):
         product_slug = self.cleaned_data.get('product_slug')
+        if not product_slug:
+            raise forms.ValidationError('This field is required.')
         if self.instance.pk:  # Trường hợp cập nhật thông tin
             if self.instance.product_slug == product_slug:
                 return product_slug  # Không kiểm tra nếu email không thay đổi
         if Product.objects.filter(product_slug=product_slug).exists():
             raise forms.ValidationError("This product_slug is already in use.")
-        return 
+        return product_slug
     
 
     def clean_product_price(self):

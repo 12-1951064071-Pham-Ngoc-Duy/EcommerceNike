@@ -1,6 +1,8 @@
 from django.contrib import admin
 import openpyxl
 from django.http import HttpResponse
+
+from suppliers.forms import StockEntryForm, SupplierForm
 from .models import Supplier, StockEntry
 from django.db.models import Sum
 from django.utils.timezone import now
@@ -75,9 +77,11 @@ def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
     workbook.save(response)
     return response
 class SupplierAdmin(admin.ModelAdmin):
+    form = SupplierForm
     list_display = ['supplier_name', 'supplier_email', 'supplier_phone', 'supplier_country', 'supplier_is_active']
     search_fields = ['supplier_name', 'supplier_email']
 class StockEntryAdmin(admin.ModelAdmin):
+    form = StockEntryForm
     list_display = ['product', 'supplier', 'quantity','total_value', 'unit_price']  # Hiển thị thông tin trong danh sách
     readonly_fields = ['total_value']
     search_fields = ['supplier__supplier_name']
