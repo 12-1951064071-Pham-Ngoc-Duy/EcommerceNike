@@ -143,12 +143,12 @@ class RegistrationForm(forms.ModelForm):
            raise forms.ValidationError("This field is required.")
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
-        if not phone_number.startswith("+84"):
-            raise forms.ValidationError("Phone number must start with '+84' followed by country code.")
+        if not phone_number.startswith("+"):
+            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, phone_number):
-            raise forms.ValidationError("Phone number must only number")
+            raise forms.ValidationError("Phone number must only number and no space")
         
         # Kiểm tra chỉ chứa số sau dấu "+"
         if not phone_number[1:].isdigit():
@@ -234,6 +234,11 @@ class UserForm(forms.ModelForm):
         disposable_domains = ['mailinator.com', '10minutemail.com', 'tempmail.com']
         if domain in disposable_domains:
             raise forms.ValidationError("Temporary email addresses are not allowed.")
+        if self.instance.pk:  # Trường hợp cập nhật thông tin
+            if self.instance.email == email:
+                return email  # Không kiểm tra nếu email không thay đổi
+        if Account.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already exists.")
 
         return email
     def clean_phone_number(self):
@@ -243,8 +248,8 @@ class UserForm(forms.ModelForm):
            raise forms.ValidationError("This field is required.")
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
-        if not phone_number.startswith("+84"):
-            raise forms.ValidationError("Phone number must start with '+84' followed by country code.")
+        if not phone_number.startswith("+"):
+            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, phone_number):
@@ -265,6 +270,13 @@ class UserForm(forms.ModelForm):
                 raise forms.ValidationError("Invalid phone number for the given country code.")
         except NumberParseException:
             raise forms.ValidationError("Invalid phone number format.")
+
+        if self.instance.pk:  # Trường hợp cập nhật thông tin
+            if self.instance.phone_number == phone_number:
+                return phone_number  # Không kiểm tra nếu số điện thoại không thay đổi
+        # Kiểm tra số điện thoại đã tồn tại
+        if Account.objects.filter(phone_number=phone_number).exists():
+            raise forms.ValidationError("Phone number already exists.")
         return phone_number
     
 

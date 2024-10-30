@@ -76,6 +76,11 @@ def login(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+            user = Account.objects.get(email=email)
+            if not user.is_active:
+                messages.error(request, 'Your account has not been verified by email. Please check your mailbox and verify your account.')
+                return redirect('login')
+
             user = authenticate(email=email, password=password)
 
             if user is not None:
@@ -200,27 +205,30 @@ def dashboard(request):
 
 def forgotPassword(request):
     if request.method == 'POST':
-            email = request.POST['email']
-            if Account.objects.filter(email=email).exists():
-                user = Account.objects.get(email__exact=email)
-                #RESET PASSWORD
-                current_site = get_current_site(request)
-                mail_subject = 'Reset Your Password'
-                message = render_to_string('accounts/reset_password_email.html', {
-                    'user': user,
-                    'domain': current_site,
-                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                    'token': default_token_generator.make_token(user),
-                })
-                to_email = email
-                send_email = EmailMessage(mail_subject, message, to=[to_email])
-                send_email.send()
-                messages.success(request, 'Password reset email has been sent to your email address.')
-                return redirect('login')
-                #USER ACTIVATION
-            else:
-                messages.error(request, 'Account does not exist!')
+            email = request.POST.get('email', '')
+            if not email:
+                messages.error(request, 'This field is required.')
                 return redirect('forgotPassword')
+            if Account.objects.filter(email=email).exists():
+                    user = Account.objects.get(email__exact=email)
+                    #RESET PASSWORD
+                    current_site = get_current_site(request)
+                    mail_subject = 'Reset Your Password'
+                    message = render_to_string('accounts/reset_password_email.html', {
+                        'user': user,
+                        'domain': current_site,
+                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token': default_token_generator.make_token(user),
+                    })
+                    to_email = email
+                    send_email = EmailMessage(mail_subject, message, to=[to_email])
+                    send_email.send()
+                    messages.success(request, 'Password reset email has been sent to your email address.')
+                    return redirect('login')
+                    #USER ACTIVATION
+            else:
+                    messages.error(request, 'Account does not exist!')
+                    return redirect('forgotPassword')
 
     return render(request, 'accounts/forgotPassword.html')
 

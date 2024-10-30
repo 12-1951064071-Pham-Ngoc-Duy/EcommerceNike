@@ -39,37 +39,35 @@ def add_cart(request, product_id):
     cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
 
     if current_user.is_authenticated:
-        # Kiểm tra xem sản phẩm đã tồn tại trong giỏ của người dùng chưa
-        is_cart_item_exists = CartItem.objects.filter(product=product, user=current_user).exists()
-        if is_cart_item_exists:
-            cart_item = CartItem.objects.filter(product=product, user=current_user)
-        else:
-            # Nếu chưa có, tạo mới và liên kết cả `user` và `cart`
-            cart_item = CartItem.objects.create(
-                product=product,
-                cart_item_quantity=1,
-                user=current_user,
-                cart=cart,  # Lưu cả thông tin giỏ hàng nếu cần
-            )
+        cart_items = CartItem.objects.filter(product=product, user=current_user)
     else:
-        # Đối với người dùng chưa đăng nhập, lưu vào giỏ hàng theo session
-        is_cart_item_exists = CartItem.objects.filter(product=product, cart=cart).exists()
-        if is_cart_item_exists:
-            cart_item = CartItem.objects.filter(product=product, cart=cart)
-        else:
-            cart_item = CartItem.objects.create(
-                product=product,
-                cart_item_quantity=1,
-                cart=cart,
-            )
+        cart_items = CartItem.objects.filter(product=product, cart=cart)
 
-    # Gán các biến thể nếu có
-    if product_variation:
-        cart_item.variations.clear()
-        cart_item.variations.add(*product_variation)
+    # Kiểm tra xem biến thể đã tồn tại trong giỏ hàng chưa
+    existing_cart_item = None
+    for item in cart_items:
+        if set(item.variations.all()) == set(product_variation):
+            existing_cart_item = item
+            break
 
-    cart_item.save()
+    if existing_cart_item:
+        # Nếu đã có cùng biến thể, tăng số lượng
+        existing_cart_item.cart_item_quantity += 1
+        existing_cart_item.save()
+    else:
+        # Nếu chưa có, tạo mới
+        cart_item = CartItem.objects.create(
+            product=product,
+            cart_item_quantity=1,
+            user=current_user if current_user.is_authenticated else None,
+            cart=cart if not current_user.is_authenticated else None,
+        )
+        if product_variation:
+            cart_item.variations.add(*product_variation)
+        cart_item.save()
+
     return redirect('cart')
+
 
 
 def remove_cart(request, product_id, cart_item_id):
