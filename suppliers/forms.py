@@ -50,8 +50,8 @@ class SupplierForm(forms.ModelForm):
             raise forms.ValidationError("This field is required.")
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
-        if not supplier_phone.startswith("+84"):
-            raise forms.ValidationError("Phone number must start with '+84' followed by country code.")
+        if not supplier_phone.startswith("+"):
+            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, supplier_phone):

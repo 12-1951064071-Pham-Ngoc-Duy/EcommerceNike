@@ -45,6 +45,7 @@
     
             <div class="input-group-register">
               <label for="order-phone">Phone Number</label>
+              <small class="text-secondary">Ex: Country code(+84) and Country phone(0326******)</small>
               <input type="text" name="order_phone" id="order-phone"
                      class="form-control {% if form.order_phone.errors %}is-invalid{% endif %}"
                      value="{{ form.order_phone.value|default_if_none:'' }}"
