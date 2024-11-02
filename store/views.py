@@ -4,34 +4,72 @@ from django.db.models import Q
 from carts.models import CartItem
 from orders.models import OrderProduct
 from store.forms import ReviewForm
-from .models import Product, ProductGallery, ReviewRating
+from .models import GENDER_CHOICES, Product, ProductGallery, ReviewRating
 from category.models import Category
 from carts.views import _cart_id
 from django.core.paginator import EmptyPage, PageNotAnInteger,Paginator
 from django.contrib import messages
 
-def store(request, category_slug_path=None):
-    categories = None
-    products = None
-    if category_slug_path != None:
-        categories = get_object_or_404(Category, category_slug=category_slug_path)
-        products = Product.objects.filter(category=categories, product_is_availabel=True)
-        paginator = Paginator(products, 6)
-        page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
-    else:
-        products = Product.objects.all().filter(product_is_availabel=True).order_by('id')
-        paginator = Paginator(products, 6)
-        page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
-    
+def store_by_gender(request, gender):
+    products = Product.objects.filter(product_is_availabel=True, product_gender=gender)
+
+    # Phân trang
+    paginator = Paginator(products, 6)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    product_count = products.count()
+
+    # Tạo context
     context = {
         'products': paged_products,
-        'product_count':product_count,
+        'product_count': product_count,
+        'links': Category.objects.all(),  # Để hiển thị danh sách categories
+        'selected_genders': [gender],  # Để đánh dấu giới tính đang chọn
     }
+
     return render(request, 'store/store.html', context)
+
+def store(request, category_slug_path=None):
+    categories = None
+    products = Product.objects.filter(product_is_availabel=True)
+
+    # Lấy danh sách các checkbox được chọn từ request
+    selected_categories = request.GET.getlist('category')  # Lấy category từ request
+    selected_genders = request.GET.getlist('gender')      # Lấy gender từ request
+
+    # Kiểm tra nếu 'all' được chọn
+    if 'all' in selected_categories:
+        selected_categories = []  # Đặt selected_categories thành rỗng để không lọc theo category
+
+    # Lọc theo các checkbox đã chọn trong Categories
+    if selected_categories:
+        products = products.filter(category__category_slug__in=selected_categories)
+    elif category_slug_path:  # Kiểm tra category_slug_path
+        products = products.filter(category__category_slug=category_slug_path)  # Lọc theo category_slug_path
+
+    # Lọc theo các checkbox đã chọn trong Gender
+    if selected_genders:
+        products = products.filter(product_gender__in=selected_genders)
+
+    # Phân trang
+    paginator = Paginator(products, 6)
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    product_count = products.count()
+
+    # Tạo context
+    context = {
+        'products': paged_products,
+        'product_count': product_count,
+        'links': Category.objects.all(),  # Để hiển thị danh sách categories
+        'GENDER_CHOICES': GENDER_CHOICES,  # Truyền GENDER_CHOICES vào context
+        'selected_categories': selected_categories,  # Truyền danh sách category đã chọn vào context
+        'selected_genders': selected_genders,  # Truyền danh sách gender đã chọn vào context
+    }
+
+    return render(request, 'store/store.html', context)
+
+
 
 def product_detail(request, category_slug_path, product_slug_path):
     try:
