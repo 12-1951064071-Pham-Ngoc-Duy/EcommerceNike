@@ -102,29 +102,28 @@ def product_detail(request, category_slug_path, product_slug_path):
 
 def search(request):
     products = Product.objects.order_by('-product_created_date')
-    product_count_result = products.count()
+    product_count = products.count()
 
     keyword = request.GET.get('keyword', '')
     if keyword:
         products = products.filter(
             Q(product_description__icontains=keyword) | Q(product_name__icontains=keyword)
         )
-        product_count_result = products.count()
+        product_count = products.count()
 
-    # Thêm phần phân trang
-    paginator = Paginator(products, 6)  # 6 sản phẩm mỗi trang
-    page = request.GET.get('page', 1)  # Lấy số trang từ request
-
+    paginator = Paginator(products, 6)
+    page = request.GET.get('page', 1)
     try:
         products = paginator.page(page)
     except PageNotAnInteger:
-        products = paginator.page(1)  # Nếu không phải số nguyên, quay về trang 1
+        products = paginator.page(1)
     except EmptyPage:
-        products = paginator.page(paginator.num_pages)  # Nếu vượt quá số trang, lấy trang cuối
+        products = paginator.page(paginator.num_pages)
 
     context = {
         'products': products,
-        'product_count_result': product_count_result,
+        'product_count': product_count,
+        'keyword': keyword,  # Thêm keyword vào context
     }
     return render(request, 'store/store.html', context)
 

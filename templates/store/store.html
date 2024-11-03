@@ -60,7 +60,7 @@
                     <!-- Previous Page -->
                     {% if products.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ products.previous_page_number }}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Previous</a>
+                        <a class="page-link" href="?page={{ products.previous_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Previous</a>
                     </li>
                     {% else %}
                     <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
@@ -72,7 +72,7 @@
                     <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li> <!-- Trang hiện tại -->
                     {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{i}}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">{{ i }}</a>
+                        <a class="page-link" href="?page={{ i }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">{{ i }}</a>
                     </li> <!-- Các trang khác -->
                     {% endif %}
                     {% endfor %}
@@ -80,7 +80,7 @@
                     <!-- Next Page -->
                     {% if products.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Next</a>
+                        <a class="page-link" href="?page={{ products.next_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Next</a>
                     </li>
                     {% else %}
                     <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
