@@ -52,6 +52,9 @@ class Product(models.Model):
     product_modifield_date = models.DateTimeField(auto_now=True)
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products')
 
+    def count_colors(self):
+        return Variation.objects.filter(product=self, variation_category='color', variation_is_active=True).count()
+
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
 

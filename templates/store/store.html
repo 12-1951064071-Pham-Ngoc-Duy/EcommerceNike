@@ -42,7 +42,8 @@
                             <img src="{{ product.product_images.url }}" alt="{{ product.product_name }}" class="img-fluid product-image">
                             <div class="product-info">
                                 <h2 class="product-name">{{ product.product_name }}</h2>
-                                <p><strong>{{ product.product_gender | capfirst }}</strong></p>
+                                <p><strong class="text-secondary">{{ product.product_gender | capfirst }} {{ product.category.category_name }}</strong></p>
+                                <p><strong class="text-secondary">{{ product.count_colors }} Colours</strong></p>
                                 <p><strong>${{ product.product_price }}</strong></p>
                             </div>
                         </a>

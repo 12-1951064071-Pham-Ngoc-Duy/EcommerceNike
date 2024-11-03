@@ -54,13 +54,11 @@
                         </div>
                         <p><strong>Description:</strong> {{ single_product.product_description }}</p>
                         <p><strong>Made In:</strong> {{ single_product.product_made_in }}</p>
-                        <!-- Nút Add to Bag và Favourite -->
                     <div class="product-actions mb-4">
                         {% if single_product.product_stock <= 0 %}
                         <h5 class="btn btn-danger">Out of stock</h5>
                         {% else %}
-                        <button type="submit" class="btn btn-dark btn-add-to-bag">Add to Bag</button>
-                        <button class="btn btn-outline-secondary btn-favourite">Favourite</button>
+                        <button type="submit" class="btn btn-dark btn-add-to-bag w-100">Add to Bag</button>
                         {% endif %}
                     </div>
                 </form>
