@@ -104,6 +104,18 @@ class OrderForm(forms.ModelForm):
             raise forms.ValidationError("This field is required.")
         return country
 
+    def clean_order_city(self):
+        order_city = self.cleaned_data.get('order_city')
+        if not order_city:
+            raise forms.ValidationError("This field is required.")
+        return order_city
+    
+    def clean_order_village(self):
+        order_village = self.cleaned_data.get('order_village')
+        if not order_village:
+            raise forms.ValidationError("This field is required.")
+        return order_village
+
     def clean_order_note(self):
         note = self.cleaned_data.get('order_note')
         if not note:

@@ -39,7 +39,8 @@ def add_cart(request, product_id):
     cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
 
     if current_user.is_authenticated:
-        cart_items = CartItem.objects.filter(product=product, user=current_user)
+        # Kiểm tra xem Cart của người dùng đã tồn tại hay chưa
+        cart_items = CartItem.objects.filter(product=product, user=current_user, cart=cart)
     else:
         cart_items = CartItem.objects.filter(product=product, cart=cart)
 
@@ -60,13 +61,14 @@ def add_cart(request, product_id):
             product=product,
             cart_item_quantity=1,
             user=current_user if current_user.is_authenticated else None,
-            cart=cart if not current_user.is_authenticated else None,
+            cart=cart,  # Luôn gán cart cho CartItem, bất kể người dùng có đăng nhập hay không
         )
         if product_variation:
             cart_item.variations.add(*product_variation)
         cart_item.save()
 
     return redirect('cart')
+
 
 
 
