@@ -172,10 +172,14 @@ class Payment(models.Model):
     
 class Order(models.Model):
     STATUS = (
-        ('New', 'New'),
-        ('Accepted', 'Accepted'),
-        ('Completed', 'Completed'),
-        ('Cancelled', 'Cancelled'),
+        ('Processing', 'Processing'),
+    ('Packing', 'Packing'),
+    ('Waiting for Pickup', 'Waiting for Pickup'),
+    ('In Transit', 'In Transit'),
+    ('At Distribution Center', 'At Distribution Center'),
+    ('Out for Delivery', 'Out for Delivery'),
+    ('Delivered', 'Delivered'),
+    ('Delivery Failed', 'Delivery Failed'),
     )
     
 
@@ -193,7 +197,7 @@ class Order(models.Model):
     order_note = models.CharField(max_length=100, blank=True)
     order_total = models.FloatField()
     order_tax = models.FloatField()
-    order_status = models.CharField(max_length=10, choices=STATUS, default='New')
+    order_status = models.CharField(max_length=100, choices=STATUS, default='Processing')
     order_ip = models.CharField(max_length=20, blank=True)
     order_is_ordered = models.BooleanField(default=False)
     order_created_at = models.DateTimeField(auto_now_add=True)

@@ -116,6 +116,14 @@ class OrderProductInline(admin.TabularInline):
     model = OrderProduct
     readonly_fields = ('payment', 'user', 'product', 'order_product_quantity', 'order_product_price', 'order_product_ordered')
     extra = 0
+    def has_add_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
@@ -141,13 +149,17 @@ class OrderAdmin(admin.ModelAdmin):
     
     get_total_cost.short_description = 'Chi Phí'
     get_profit.short_description = 'Lợi Nhuận'
+    def get_readonly_fields(self, request, obj=None):
+        # Nếu đang chỉnh sửa (không phải tạo mới), chỉ cho phép thay đổi order_status
+        if obj:
+            return [field.name for field in self.model._meta.fields if field.name != 'order_status']
+        return super().get_readonly_fields(request, obj)
 
-    def has_delete_permission(self, request, obj=None):
-        return False
     def has_add_permission(self, request, obj=None):
         return False
-    def has_change_permission(self, request, obj=None):
-        return False 
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
