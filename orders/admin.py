@@ -1,4 +1,5 @@
 from django.contrib import admin
+from orders.forms import OrderFormAdmin
 from suppliers.models import StockEntry
 from .models import Payment, Order, OrderProduct
 from django.http import HttpResponse
@@ -130,6 +131,7 @@ class OrderProductInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
+    form = OrderFormAdmin
     list_display = ['order_number', 'full_name', 'order_phone', 'order_email', 'order_country', 'order_city', 'order_total', 'order_village', 'order_tax', 'order_status', 'order_created_at', 'order_is_ordered']
     list_filter = ['order_status', 'order_is_ordered']
     search_fields = ['order_number', 'payment__payment_id']
@@ -152,7 +154,7 @@ class OrderAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         # Nếu đang chỉnh sửa (không phải tạo mới), chỉ cho phép thay đổi order_status
         if obj:
-            return [field.name for field in self.model._meta.fields if field.name != 'order_status']
+            return [field.name for field in self.model._meta.fields if field.name != 'order_status' and field.name != 'order_is_ordered']
         return super().get_readonly_fields(request, obj)
 
     def has_add_permission(self, request, obj=None):

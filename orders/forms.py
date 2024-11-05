@@ -121,3 +121,21 @@ class OrderForm(forms.ModelForm):
         if not note:
             raise forms.ValidationError("This field is required.")
         return note
+
+class OrderFormAdmin(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = '__all__'  # Hoặc bạn có thể chỉ định các trường cụ thể
+
+    def clean(self):
+        cleaned_data = super().clean()
+        order_status = cleaned_data.get("order_status")
+        order_is_ordered = cleaned_data.get("order_is_ordered")
+
+        if order_status == "Delivery Failed" and order_is_ordered:
+            raise forms.ValidationError("order_is_ordered is not allowed to be charged when the status is 'Delivery Failed'.")
+
+        if order_status != "Delivery Failed" and not order_is_ordered:
+            raise forms.ValidationError("order_is_ordered must be accumulated if the state is not 'Delivery Failed'.")
+
+        return cleaned_data
