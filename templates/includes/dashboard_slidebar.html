@@ -1,12 +1,12 @@
 <aside class="col-md-3 mb-4">
     <!--   SIDEBAR   -->
     <ul class="list-group">
-        <a class="list-group-item {% if '/accounts/' == request.path %}active{% endif %}" href="{% url 'dashboard' %}"> Dashboard </a>
-        <a class="list-group-item {% if '/my_orders/' in request.path %}active{% endif %}" href="{% url 'my_orders' %}"> My Orders </a>
-        <a class="list-group-item {% if '/edit_profile/' in request.path %}active{% endif %}" href="{% url 'edit_profile' %}"> Edit Profile </a>
-        <a class="list-group-item {% if '/change_password/' in request.path %}active{% endif %}" href="{% url 'change_password' %}"> Change Password </a>
+        <a class="list-group-item {% if '/accounts/' == request.path %}active{% endif %}" href="{% url 'dashboard' %}"> Thông tin tài khoản </a>
+        <a class="list-group-item {% if '/my_orders/' in request.path %}active{% endif %}" href="{% url 'my_orders' %}"> Đơn hàng của tôi </a>
+        <a class="list-group-item {% if '/edit_profile/' in request.path %}active{% endif %}" href="{% url 'edit_profile' %}"> Hồ sơ người dùng</a>
+        <a class="list-group-item {% if '/change_password/' in request.path %}active{% endif %}" href="{% url 'change_password' %}"> Thay đổi mật khẩu </a>
     </ul>
     <br>
-    <a class="btn btn-light btn-block w-100" style="border:1px solid gray" href="{% url 'logout' %}"> <i class="bi bi-power text-dark fs-5"></i> <span class="text">Log out</span> </a> 
+    <a class="btn btn-light btn-block w-100" style="border:1px solid gray" href="{% url 'logout' %}"> <i class="bi bi-power text-dark fs-5"></i> <span class="text">Đăng xuất</span> </a> 
     <!--   SIDEBAR .//END   -->
 </aside>

@@ -50,7 +50,7 @@ def register(request):
             )
             #USER ACTIVATION
             current_site = get_current_site(request)
-            mail_subject = 'Please activate your account'
+            mail_subject = 'Vui lòng kích hoạt tài khoản của bạn'
             message = render_to_string('accounts/account_verification_email.html', {
                 'user': user,
                 'domain': current_site,
@@ -78,7 +78,7 @@ def login(request):
             password = form.cleaned_data['password']
             user = Account.objects.get(email=email)
             if not user.is_active:
-                messages.error(request, 'Your account has not been verified by email. Please check your mailbox and verify your account.')
+                messages.error(request, 'Tài khoản của bạn chưa được xác minh qua email. Vui lòng kiểm tra hộp thư và xác minh tài khoản của bạn.')
                 return redirect('login')
 
             user = authenticate(email=email, password=password)
@@ -119,7 +119,7 @@ def login(request):
                     pass
                 
                 auth_login(request, user)
-                messages.success(request, 'You are now logged in.')
+                messages.success(request, 'Đăng nhập thành công')
                 url = request.META.get('HTTP_REFERER')
                 try:
                     query = requests.utils.urlparse(url).query
@@ -130,7 +130,7 @@ def login(request):
                 except:
                     return redirect('dashboard')
             else:
-                messages.error(request, 'Wrong password')
+                messages.error(request, 'Sai mật khẩu')
                 return redirect('login')
     else:
         form = LoginForm()
@@ -140,7 +140,7 @@ def login(request):
 @login_required(login_url= 'login')
 def logout(request):
     auth.logout(request)
-    messages.success(request, 'Your are logged out.')
+    messages.success(request, 'Bạn đã đăng xuất')
     return redirect('login') 
 
 def load_cities(request):
@@ -165,10 +165,10 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        messages.success(request, 'Congratulation Your account is activated.')
+        messages.success(request, 'Xin chúc mừng Tài khoản của bạn đã được kích hoạt.')
         return redirect('login')
     else:
-        messages.error(request, 'Invalid activated link')
+        messages.error(request, 'Liên kết kích hoạt không hợp lệ')
         return redirect('register')
 
 def resetpassword_validate(request, uidb64, token):
@@ -179,10 +179,10 @@ def resetpassword_validate(request, uidb64, token):
         user = None
     if user is not None and default_token_generator.check_token(user, token):
         request.session['uid'] = uid
-        messages.success(request, 'Please reset your password')
+        messages.success(request, 'Vui lòng đặt lại mật khẩu của bạn')
         return redirect('resetPassword')
     else:
-        messages.error(request, 'This link has been expried!')
+        messages.error(request, 'Liên kết này đã hết hạn!')
         return redirect('login')
     
 @login_required(login_url='login')
@@ -207,13 +207,13 @@ def forgotPassword(request):
     if request.method == 'POST':
             email = request.POST.get('email', '')
             if not email:
-                messages.error(request, 'This field is required.')
+                messages.error(request, 'Chưa điền giá trị')
                 return redirect('forgotPassword')
             if Account.objects.filter(email=email).exists():
                     user = Account.objects.get(email__exact=email)
                     #RESET PASSWORD
                     current_site = get_current_site(request)
-                    mail_subject = 'Reset Your Password'
+                    mail_subject = 'Thay đổi lại mật khẩu của bạn'
                     message = render_to_string('accounts/reset_password_email.html', {
                         'user': user,
                         'domain': current_site,
@@ -223,11 +223,11 @@ def forgotPassword(request):
                     to_email = email
                     send_email = EmailMessage(mail_subject, message, to=[to_email])
                     send_email.send()
-                    messages.success(request, 'Password reset email has been sent to your email address.')
+                    messages.success(request, 'Thư điện tử đặt lại mật khẩu đã được gửi đến địa chỉ email của bạn.')
                     return redirect('login')
                     #USER ACTIVATION
             else:
-                    messages.error(request, 'Account does not exist!')
+                    messages.error(request, 'Tài khoản không tồn tại!')
                     return redirect('forgotPassword')
 
     return render(request, 'accounts/forgotPassword.html')
@@ -249,10 +249,10 @@ def resetPassword(request):
                 user = Account.objects.get(pk=uid)
                 user.set_password(password)
                 user.save()
-                messages.success(request, 'Password reset successful.')
+                messages.success(request, 'Cập nhật mật khẩu thành công.')
                 return redirect('login')
             except Account.DoesNotExist:
-                messages.error(request, 'User does not exist.')
+                messages.error(request, 'Người dùng không tồn tại')
                 return redirect('resetPassword')
     else:
         form = ResetPasswordForm()
@@ -282,7 +282,7 @@ def edit_profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Your profile has been updated.')
+            messages.success(request, 'Hồ sơ của bạn đã được cập nhật.')
             return redirect('edit_profile')
     else:
         user_form = UserForm(instance=request.user)
@@ -327,13 +327,13 @@ def change_password(request):
                 if success:
                     user.set_password(new_password)
                     user.save()
-                    messages.success(request, 'Password updated successfully.')
+                    messages.success(request, 'Đã cập nhật mật khẩu thành công.')
                     return redirect('dashboard')
                 else:
-                    messages.error(request, 'Please enter valid current password')
+                    messages.error(request, 'Vui lòng nhập mật khẩu hiện tại hợp lệ')
                     return redirect('change_password')
             else:
-                messages.error(request, 'Password does not math!')
+                messages.error(request, 'Mật khẩu không trùng khớp!')
                 return redirect('change_password')
     else:
         form = ResetPasswordForm()

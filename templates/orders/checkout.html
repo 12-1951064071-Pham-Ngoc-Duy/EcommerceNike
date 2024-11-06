@@ -7,9 +7,9 @@
     {% csrf_token %}
     <div class="container-cart">
         <div class="cart-products-checkout">
-            <h2>Delivery</h2>
+            <h2>Vận chuyển</h2>
             <div class="input-group-register">
-                <label for="order-first-name">First Name</label>
+                <label for="order-first-name">Tên đầu</label>
                 <input type="text" name="order_first_name" id="order-first-name"
                        class="form-control {% if form.order_first_name.errors %}is-invalid{% endif %}"
                        value="{{ form.order_first_name.value|default_if_none:'' }}"
@@ -20,7 +20,7 @@
                 {% endif %}
             </div>
             <div class="input-group-register">
-                <label for="order-last-name">Last Name</label>
+                <label for="order-last-name">Tên cuối</label>
                 <input type="text" name="order_last_name" id="order-last-name"
                        class="form-control {% if form.order_last_name.errors %}is-invalid{% endif %}"
                        value="{{ form.order_last_name.value|default_if_none:'' }}"
@@ -32,7 +32,7 @@
               </div>
     
             <div class="input-group-register">
-              <label for="order-email">Email</label>
+              <label for="order-email">Thư điện tử</label>
               <input type="email" name="order_email" id="order-email"
                      class="form-control {% if form.order_email.errors %}is-invalid{% endif %}"
                      value="{{ form.order_email.value|default_if_none:'' }}"
@@ -44,8 +44,8 @@
             </div>
     
             <div class="input-group-register">
-              <label for="order-phone">Phone Number</label>
-              <small class="text-secondary">Ex: Country code(+84) and Country phone(0326******)</small>
+              <label for="order-phone">Số điện thoại</label>
+              <small class="text-secondary">Ví dụ: Mã đất nước(+84) Số điện thoại đất nước(0326******)</small>
               <input type="text" name="order_phone" id="order-phone"
                      class="form-control {% if form.order_phone.errors %}is-invalid{% endif %}"
                      value="{{ form.order_phone.value|default_if_none:'' }}"
@@ -58,9 +58,9 @@
 
             <!-- Country -->
         <div class="input-group-register">
-        <label for="order-country">Country</label>
+        <label for="order-country">Đất nước</label>
         <select class="form-select mb-3 {% if form.order_country.errors %}is-invalid{% endif %}" id="order-country" name="order_country">
-          <option value="">Select Country</option>
+          <option value="">Chọn đất nước</option>
           {% for country_code, country_name in form.order_country.field.choices %}
           <option value="{{ country_code }}">{{ country_name }}</option>
           {% endfor %}
@@ -73,9 +73,9 @@
 
         <!-- City -->
         <div class="input-group-register">
-        <label for="order-city">City</label>
+        <label for="order-city">Thành phố</label>
         <select class="form-select mb-3 {% if form.order_city.errors %}is-invalid{% endif %}" id="order-city" name="order_city" disabled>
-          <option value="">Select City</option>
+          <option value="">Chọn thành phố</option>
         </select>
         <!-- Hiển thị lỗi -->
         {% if form.order_city.errors %}
@@ -85,9 +85,9 @@
 
         <!-- Village -->
         <div class="input-group-register">
-        <label for="order-village">Village</label>
+        <label for="order-village">Huyện</label>
         <select class="form-select mb-3 {% if form.order_village.errors %}is-invalid{% endif %}" id="order-village" name="order_village" disabled>
-          <option value="">Select Village</option>
+          <option value="">Chọn huyện</option>
         </select>
         <!-- Hiển thị lỗi -->
         {% if form.order_village.errors %}
@@ -96,7 +96,7 @@
         </div>
 
         <div class="input-group-register">
-          <label for="order-address">Address</label>
+          <label for="order-address">Địa chỉ</label>
           <input type="text" name="order_address" id="order-address"
                  class="form-control {% if form.order_address.errors %}is-invalid{% endif %}"
                  value="{{ form.order_address.value|default_if_none:'' }}"
@@ -108,7 +108,7 @@
         </div>
 
         <div class="input-group-register">
-            <label for="order-note">Order Note</label>
+            <label for="order-note">Ghi chú đơn hàng</label>
             <textarea class="form-control {% if form.order_note.errors %}is-invalid{% endif %}" 
                       name="order_note" id="order-note" row="2"
                       value="{{ form.order_note.value|default_if_none:'' }}"></textarea>
@@ -120,13 +120,13 @@
         </div>
 
         <div class="cart-summary-checkout">
-            <h2>Order summary</h2>
+            <h2>Tóm tắt đơn hàng</h2>
             {% for cart_item in cart_items %}
             <div class="cart-item">
                 <img src="{{ cart_item.product.product_images.url }}" alt="Product 1" class="cart-image">
                 <div class="cart-details">
                     <h3 class="cart-name"><a class="text-dark" style="text-decoration:none" href="{{ cart_item.product.get_url }}">{{ cart_item.product.product_name }}</a></h3>
-                    <p class="mt-2">Quantity: {{ cart_item.cart_item_quantity }}</p>
+                    <p class="mt-2">Số lượng: {{ cart_item.cart_item_quantity }}</p>
                     <p class="text-muted small">
                         {% if cart_item.variations.all %}
                            {% for item in cart_item.variations.all %}
@@ -141,7 +141,7 @@
                 </div>
             </div>
             {% endfor %}
-            <button type="submit" name="submit" class="checkout-button">Place Order</button>
+            <button type="submit" name="submit" class="btn btn-dark w-100 mt-2">Đặt hàng</button>
         </div>
     </div>
     </form>

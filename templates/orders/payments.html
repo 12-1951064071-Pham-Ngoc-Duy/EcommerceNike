@@ -8,34 +8,34 @@
     <!-- Phần 1: Giỏ hàng chứa sản phẩm -->
     
     <div class="cart-products">
-        <h2>Checkout Process</h2>
+        <h2>Quy trình thanh toán</h2>
         <div class="card mb-2">
-            <h5 class="card-header">Billing Address</h5>
+            <h5 class="card-header">Địa chỉ thanh toán</h5>
             <div class="card-body">
                 <p class="card-text">{{ order.full_name }}</p>
                 <p class="card-text">{{ order.full_address }}</p>
                 <p class="card-text">{{ order.order_email }}</p>
                 <p class="card-text">{{ order.order_phone }}</p>
                 {% if order.order_note %}
-                    <b>Order Note: </b> {{ order.order_note }}
+                    <b>Ghi chú đơn hàng: </b> {{ order.order_note }}
                 {% endif %}
             </div>
         </div>
         <div class="card mb-2">
-            <h5 class="card-header">Payment method</h5>
+            <h5 class="card-header">Phương thức thanh toán</h5>
             <div class="card-body">
                 <p class="card-text">PayPal</p>
             </div>
         </div>
         <div class="card mb-2">
-            <h5 class="card-header">Review Product</h5>
+            <h5 class="card-header">Đánh giá sản phẩm</h5>
             <div class="card-body">
                 {% for cart_item in cart_items %}
             <div class="cart-item">
                 <img src="{{ cart_item.product.product_images.url }}" alt="Product 1" class="cart-image">
                 <div class="cart-details">
                     <h3 class="cart-name"><a class="text-dark" style="text-decoration:none" href="{{ cart_item.product.get_url }}">{{ cart_item.product.product_name }}</a></h3>
-                    <p class="mt-2">Quantity: {{ cart_item.cart_item_quantity }}</p>
+                    <p class="mt-2">Số lượng: {{ cart_item.cart_item_quantity }}</p>
                     <p class="text-muted small">
                         {% if cart_item.variations.all %}
                            {% for item in cart_item.variations.all %}
@@ -56,17 +56,17 @@
 
     <!-- Phần 2: Thông tin thanh toán -->
     <div class="cart-summary">
-        <h2>Summary</h2>
+        <h2>Bản tóm tắt</h2>
         <div class="summary-item">
-            <p>Subtotal</p>
+            <p>Tổng phụ</p>
             <p>$ {{total}}</p>
         </div>
         <div class="summary-item">
-            <p>Estimated Delivery & Handling</p>
+            <p>Ước tính giao hàng và xử lý</p>
             <p>$ {{tax }}</p>
         </div>
         <div class="summary-item total">
-            <p>Total</p>
+            <p>Tổng</p>
             <p>$ {{ grand_total }}</p>
         </div>
         <div id="paypal-button-container">

@@ -9,10 +9,10 @@ from suppliers.models import Supplier
 # Create your models here.
 
 GENDER_CHOICES = [
-        ('men', 'Men'),
-        ('women', 'Women'),
-        ('kid', 'Kid'),
-        ('unisex', 'Unisex'),
+        ('Nam', 'Nam'),
+        ('Nữ', 'Nữ'),
+        ('Trẻ em', 'Trẻ em'),
+        ('Nam Nữ', 'Nam Nữ'),
     ]
 
 COUNTRY_CHOICES = [
@@ -44,8 +44,8 @@ class Product(models.Model):
     product_price = models.IntegerField()
     product_images = models.ImageField(upload_to="photos/products")
     product_stock = models.IntegerField()
-    product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='unisex')
-    product_made_in = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default='VN')
+    product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Nam Nữ')
+    product_made_in = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default='Vietnam')
     product_is_availabel = models.BooleanField(default=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_created_date = models.DateTimeField(auto_now_add=True)
@@ -53,7 +53,7 @@ class Product(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products')
 
     def count_colors(self):
-        return Variation.objects.filter(product=self, variation_category='color', variation_is_active=True).count()
+        return Variation.objects.filter(product=self, variation_category='Màu sắc', variation_is_active=True).count()
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
@@ -81,13 +81,13 @@ class Product(models.Model):
 
 class VariationManager(models.Manager):
     def colors(self):
-        return super(VariationManager, self).filter(variation_category='color', variation_is_active=True)
+        return super(VariationManager, self).filter(variation_category='Màu sắc', variation_is_active=True)
     def sizes(self):
-        return super(VariationManager, self).filter(variation_category='size', variation_is_active=True)
+        return super(VariationManager, self).filter(variation_category='Kích cỡ', variation_is_active=True)
 
 variation_category_choice = (
-    ('color', 'color'),
-    ('size', 'size'),
+    ('Màu sắc', 'Màu sắc'),
+    ('Kích cỡ', 'Kích cỡ'),
 )
 
 class Variation(models.Model):

@@ -9,7 +9,7 @@
 	<main class="col-md-9">
 		<article class="card">
 		<header class="card-header">
-			<strong class="d-inline-block mr-3">logged in as: </strong>
+			<strong class="d-inline-block mr-3">Đăng nhập với: </strong>
 			<span>{{ user.full_name }}</span>
 		</header>
 		<div class="card-body">
@@ -17,9 +17,9 @@
 				<div class="col-md-6">
 					<div class="card" style="text-align:center">
 						<div class="card-body">
-							<h5 class="cart-title">Total Orders</h5>
+							<h5 class="cart-title">Tổng số đơn hàng</h5>
 							<h4>{{ orders_count }}</h4>
-							<a href="{% url 'my_orders' %}">View Orders</a>
+							<a href="{% url 'my_orders' %}">Xem đơn hàng</a>
 						</div>
 					</div>
 				</div>
@@ -27,9 +27,9 @@
 					<div class="card"  style="text-align:center">
 						<div class="card-body">
 							{% if userprofile.user_profile_picture %}
-							<img src="{{ userprofile.user_profile_picture.url }}" alt="User Profile Picture" width="50" height="50" style="border-radius:50%">
+							<img src="{{ userprofile.user_profile_picture.url }}" alt="Ảnh người dùng" width="50" height="50" style="border-radius:50%">
 						    {% else %}
-							<img src="" alt="Default Profile Picture" width="50" height="50" style="border-radius:50%">
+							<img src="" alt="Ảnh mặc định người dùng" width="50" height="50" style="border-radius:50%">
 					     	{% endif %}
 							
 							<p class="mb-0">{{ user.email }}</p>

@@ -9,7 +9,7 @@
     <!-- Phần 1: Giỏ hàng chứa sản phẩm -->
     
     <div class="cart-products">
-        <h2>Bag</h2>
+        <h2>Giỏ hàng</h2>
         {% for cart_item in cart_items %}
         
         <div class="cart-item">
@@ -42,7 +42,7 @@
                 </p>
                 <div class="box-icon-cart d-flex align-items-center mt-auto">
                     <p class="mb-0"><i class="bi bi-heart me-2 fs-5 text-secondary"></i></p>
-                    <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" onclick="return confirm('Are you sure want to delete this item?')"><p class="mb-0"><i class="bi bi-trash3 fs-5 text-secondary"></i></p></a>
+                    <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" onclick="return confirm('Bạn muốn xóa sản phẩm này?')"><p class="mb-0"><i class="bi bi-trash3 fs-5 text-secondary"></i></p></a>
                 </div>
             </div>
             <div class="box-price-cart">
@@ -55,24 +55,24 @@
 
     <!-- Phần 2: Thông tin thanh toán -->
     <div class="cart-summary">
-        <h2>Summary</h2>
+        <h2>Bản tóm tắt</h2>
         <div class="summary-item">
-            <p>Subtotal</p>
+            <p>Tổng phụ</p>
             <p>$ {{total}}</p>
         </div>
         <div class="summary-item">
-            <p>Estimated Delivery & Handling</p>
+            <p>Ước tính giao hàng và xử lý</p>
             <p>$ {{tax }}</p>
         </div>
         <div class="summary-item total">
-            <p>Total</p>
+            <p>Tổng</p>
             <p>$ {{ grand_total }}</p>
         </div>
-        <a href="{% url 'checkout' %}"  class="btn btn-dark w-100">Go to Checkout</a>
+        <a href="{% url 'checkout' %}"  class="btn btn-dark w-100">Đi tới Thanh toán</a>
     </div>
 </div>
 {% else %}
-        <p class="text-center fs-3 mt-5 mb-5">There are no items in your bag. <a class="text-dark" href="{% url 'store' %}">Back Store</a></p>
+        <p class="text-center fs-3 mt-5 mb-5">Không có sản phẩm nào trong giỏ hàng. <a class="text-dark" href="{% url 'store' %}">Trở về cửa hàng</a></p>
 {% endif %}
 </div>
 

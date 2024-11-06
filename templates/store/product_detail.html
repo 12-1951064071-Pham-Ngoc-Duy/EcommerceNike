@@ -31,14 +31,14 @@
                             <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o{% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
                             <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o{% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
                             <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o{% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
-                            <span class="text-dark">{{ single_product.countReview }} reviews</span>
+                            <span class="text-dark">{{ single_product.countReview }} đánh giá</span>
                             </span>
                         </div>
                         
-                        <p><strong>Price:</strong> ${{ single_product.product_price }}</p>
+                        <p><strong>Gía:</strong> ${{ single_product.product_price }}</p>
                         <div class="item-color-select mb-4">
                             <select name="color" class="form-select" required>
-                                <option value="" disabled selected>Chosse Color</option>
+                                <option value="" disabled selected>Chọn màu sắc</option>
                                 {% for i in single_product.variation_set.colors %}
                                 <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
                                 {% endfor %}
@@ -46,19 +46,19 @@
                         </div>
                         <div class="item-color-select mb-4" >
                             <select name="size" class="form-select" required>
-                                <option value="" disabled selected>Chosse Size</option>
+                                <option value="" disabled selected>Chọn kích cỡ</option>
                                 {% for i in single_product.variation_set.sizes %}
                                 <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <p><strong>Description:</strong> {{ single_product.product_description }}</p>
-                        <p><strong>Made In:</strong> {{ single_product.product_made_in }}</p>
+                        <p><strong>Ghi chú:</strong> {{ single_product.product_description }}</p>
+                        <p><strong>Sản xuất bởi:</strong> {{ single_product.supplier }}</p>
                     <div class="product-actions mb-4">
                         {% if single_product.product_stock <= 0 %}
-                        <h5 class="btn btn-danger">Out of stock</h5>
+                        <h5 class="btn btn-danger">Sản phẩm đã hết</h5>
                         {% else %}
-                        <button type="submit" class="btn btn-dark btn-add-to-bag w-100">Add to Bag</button>
+                        <button type="submit" class="btn btn-dark btn-add-to-bag w-100">Thêm sản phẩm vào giỏ hàng</button>
                         {% endif %}
                     </div>
                 </form>
@@ -67,9 +67,9 @@
                         {% if orderproduct %}
                     <form action="{% url 'submit_review' single_product.id %}" method="POST">
                         {% csrf_token %}
-                        <h5>Write Your Review</h5>
+                        <h5>Đánh giá của bạn</h5>
                         <div>
-                            <label>How do you rate this products?</label>
+                            <label>Đánh giá sản phẩm bằng sao?</label>
                             <br>
                             <div class="rate">
                                 <input type="radio" name="review_rating" id="rating10" value="5" required><label for="rating10" title="5"></label>
@@ -84,16 +84,16 @@
                                 <input type="radio" name="review_rating" id="rating1" value="0.5" required><label for="rating1" title="0.5" class="half"></label>
                             </div>
                         </div>
-                        <span class="text-dark">{{ single_product.countReview }} reviews</span>
+                        <span class="text-dark">{{ single_product.countReview }} đánh giá</span>
                         <div>
-                            Review Title:
+                            Đề mục đánh giá:
                             <input class="form-control-review" type="text" name="review_subject">
                             <br>
-                            Review:
+                            Đánh giá:
                             <textarea class="form-control" name="review" rows="4"></textarea>
                             <br>
                             
-                                <input type="submit" class="btn btn-dark" value="Submit Review">
+                                <input type="submit" class="btn btn-dark" value="Đánh giá">
                         </div>
                     </form>
                        {% endif %}

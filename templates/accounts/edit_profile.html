@@ -8,7 +8,7 @@
 	<main class="col-md-9">
 		<article class="card">
 		<header class="card-header">
-			<strong class="d-inline-block mr-3">Edit Your Profile</strong>
+			<strong class="d-inline-block mr-3">Thông tin hồ sơ</strong>
 		</header>
 		<div class="card-body">
       <div class="text-center mb-4">
@@ -23,7 +23,7 @@
                  <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
                   {% csrf_token %}
                         <div class="input-group-register">
-                          <label for="first-name">First Name</label>
+                          <label for="first-name">Tên đầu</label>
                           <input type="text" name="first_name" id="first-name"
                                  class="form-control {% if user_form.first_name.errors %}is-invalid{% endif %}"
                                  value="{{ user_form.first_name.value|default_if_none:'' }}"
@@ -34,7 +34,7 @@
                         </div>
               
                         <div class="input-group-register">
-                          <label for="last-name">Last Name</label>
+                          <label for="last-name">Tên cuối</label>
                           <input type="text" name="last_name" id="last-name"
                                  class="form-control {% if user_form.last_name.errors %}is-invalid{% endif %}"
                                  value="{{ user_form.last_name.value|default_if_none:'' }}"
@@ -45,7 +45,7 @@
                         </div>
               
                       <div class="input-group-register">
-                        <label for="email">Email</label>
+                        <label for="email">Thư điện tử</label>
                         <input type="email" name="email" id="email"
                                class="form-control {% if user_form.email.errors %}is-invalid{% endif %}"
                                value="{{ user_form.email.value|default_if_none:'' }}"
@@ -56,7 +56,8 @@
                       </div>
               
                       <div class="input-group-register">
-                        <label for="phone_number">Phone Number</label>
+                        <label for="phone_number">Số điện thoại</label>
+                        <small class="text-muted">Ví dụ:Mã số đất nước(+84) Số điện thoại đất nước đó(0326******)</small>
                         <input type="text" name="phone_number" id="phone_number"
                                class="form-control {% if user_form.phone_number.errors %}is-invalid{% endif %}"
                                value="{{ user_form.phone_number.value|default_if_none:'' }}"
@@ -68,7 +69,7 @@
 
 
                       <div class="input-group-register">
-                        <label for="birth-day">Birth Day</label>
+                        <label for="birth-day">Ngày sinh</label>
                         <input 
                             type="date" 
                             id="birth-day" 
@@ -83,7 +84,7 @@
                                      
                       
                       <div class="input-group-register">
-                        <label for="profile-picture">Profile Picture</label>
+                        <label for="profile-picture">Ảnh hồ sơ</label>
                         <input type="file" name="user_profile_picture" id="profile-picture"
                                class="form-control {% if profile_form.user_profile_picture.errors %}is-invalid{% endif %}"
                                value="{{ profile_form.user_profile_picture.value|default_if_none:'' }}"
@@ -94,9 +95,9 @@
                       </div>
 <!-- Country -->
 <div class="input-group-register">
-    <label for="country">Country</label>
+    <label for="country">Đất nước</label>
     <select class="form-select mb-3 {% if profile_form.user_profile_country.errors %}is-invalid{% endif %}" id="user_profile_country" name="user_profile_country">
-        <option value="" disabled>Select Country</option>
+        <option value="" disabled>Chọn đất nước</option>
         {% for country_code, country_name in profile_form.user_profile_country.field.choices %}
             <option value="{{ country_code }}" {% if country_code == profile_form.user_profile_country.value %}selected{% endif %}>
                 {{ country_name }}
@@ -110,9 +111,9 @@
 
 <!-- City -->
 <div class="input-group-register">
-    <label for="city">City</label>
+    <label for="city">Thành phố</label>
     <select class="form-select mb-3 {% if profile_form.user_profile_city.errors %}is-invalid{% endif %}" id="user_profile_city" name="user_profile_city">
-        <option value="">Select City</option>
+        <option value="">Chọn thành phố</option>
     </select>
     {% if profile_form.user_profile_city.errors %}
                           <div class="error-text">{{ profile_form.user_profile_city.errors }}</div>
@@ -121,9 +122,9 @@
 
 <!-- Village -->
 <div class="input-group-register">
-    <label for="village">Village</label>
+    <label for="village">Huyện</label>
     <select class="form-select mb-3 {% if profile_form.user_profile_village.errors %}is-invalid{% endif %}" id="user_profile_village" name="user_profile_village">
-        <option value="">Select Village</option>
+        <option value="">Chọn huyện</option>
     </select>
     {% if profile_form.user_profile_village.errors %}
                           <div class="error-text">{{ profile_form.user_profile_village.errors }}</div>
@@ -131,18 +132,18 @@
 </div>
               
                       <div class="input-group-register">
-                        <label for="address">Address</label>
+                        <label for="address">Địa chỉ</label>
                         <input type="text" name="user_profile_address" id="address"
                                class="form-control {% if profile_form.user_profile_address.errors %}is-invalid{% endif %}"
                                value="{{ profile_form.user_profile_address.value|default_if_none:'' }}"
-                               placeholder="Enter Address">
+                               placeholder="Nhập địa chỉ">
                                {% if profile_form.user_profile_address.errors %}
                           <div class="error-text">{{ profile_form.user_profile_address.errors }}</div>
                         {% endif %}
                       </div>
                       {% include "includes/alerts.html" %}
                       <div style="float:right">
-                        <input type="submit" value="Save" class="btn btn-dark">
+                        <input type="submit" value="Lưu" class="btn btn-dark">
                       </div>
                  </form>
 			</div> <!-- row.// -->

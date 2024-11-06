@@ -8,30 +8,30 @@
       </div>
       <!-- Links -->
       <div class="login_infor text-dark">
-        <a href="#">Find a Store</a>
+        <a href="#">Tìm cửa hàng</a>
         <div class="help-container">
-          <a href="#" class="help-link">Help</a>
+          <a href="#" class="help-link">Hỗ trợ</a>
           <div class="help-hover-box">
-            <p class="text-dark fs-5 mb-0">Help</p>
+            <p class="text-dark fs-5 mb-0">Hỗ trợ</p>
             <ul>
-              <li><a href="#">Order Status</a></li>
-              <li><a href="#">Dispatch and Delivery</a></li>
-              <li><a href="#">Returns</a></li>
-              <li><a href="#">Contact Us</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Sale</a></li>
-              <li><a href="#">Terms of Use</a></li>
-              <li><a href="#">Send Us Feedback</a></li>
+              <li><a href="#">Trạng thái đơn hàng</a></li>
+              <li><a href="#">Gửi và giao hàng</a></li>
+              <li><a href="#">Trả về</a></li>
+              <li><a href="#">Liên hệ với chúng tôi</a></li>
+              <li><a href="#">Chính sách quyền riêng tư</a></li>
+              <li><a href="#">Điều khoản bán hàng</a></li>
+              <li><a href="#">Điều khoản sử dụng</a></li>
+              <li><a href="#">Gửi phản hồi cho chúng tôi</a></li>
             </ul>
           </div>
         </div>
         {% if user.id is not None %}
-        <a href="{% url 'dashboard' %}">Dashboard</a>
-        <a href="#">Welcome {{ user.last_name }}</a>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'dashboard' %}">Thông tin tài khoản</a>
+        <a href="#">Chào mừng {{ user.last_name }}</a>
+        <a href="{% url 'logout' %}">Đăng xuất</a>
         {% else %}
-        <a href="{% url 'register' %}">Join Us</a>
-        <a href="{% url 'login' %}">Sign In</a>
+        <a href="{% url 'register' %}">Đăng ký</a>
+        <a href="{% url 'login' %}">Đăng nhập</a>
         {% endif %}
       </div>
     </div>

@@ -4,13 +4,13 @@
 <div class="container">
   <div class="box-register">
     <div class="form-container-register">
-      <h2 class="text-center mb-4">Register</h2>
+      <h2 class="text-center mb-4">Đăng ký</h2>
       <form action="{% url 'register' %}" method="POST">
         {% csrf_token %}
         
         <div class="input-row-register gap-3">
           <div class="input-group-register">
-            <label for="first-name">First Name</label>
+            <label for="first-name">Tên đầu</label>
             <input type="text" name="first_name" id="first-name"
                    class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
                    value="{{ form.first_name.value|default_if_none:'' }}"
@@ -22,7 +22,7 @@
           </div>
 
           <div class="input-group-register">
-            <label for="last-name">Last Name</label>
+            <label for="last-name">Tên cuối</label>
             <input type="text" name="last_name" id="last-name"
                    class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
                    value="{{ form.last_name.value|default_if_none:'' }}"
@@ -35,7 +35,7 @@
         </div>
 
         <div class="input-group-register">
-          <label for="email">Email</label>
+          <label for="email">Thư điện tử</label>
           <input type="email" name="email" id="email"
                  class="form-control {% if form.email.errors %}is-invalid{% endif %}"
                  value="{{ form.email.value|default_if_none:'' }}"
@@ -47,8 +47,8 @@
         </div>
 
         <div class="input-group-register">
-          <label for="phone_number">Phone Number</label>
-          <small class="text-muted">Ex:Country phone code(+84)Country phone number(0326******)</small>
+          <label for="phone_number">Số điện thoại</label>
+          <small class="text-muted">Ví dụ:Mã số đất nước(+84) Số điện thoại đất nước đó(0326******)</small>
           <input type="text" name="phone_number" id="phone_number"
                  class="form-control {% if form.phone_number.errors %}is-invalid{% endif %}"
                  value="{{ form.phone_number.value|default_if_none:'' }}"
@@ -60,7 +60,7 @@
         </div>
 
         <div class="input-group-register">
-          <label for="password">Password</label>
+          <label for="password">Mật khẩu</label>
           <input type="password" name="password" id="password"
                  class="form-control {% if form.password.errors %}is-invalid{% endif %}"
                  value="{{ form.password.value|default_if_none:'' }}"
@@ -72,7 +72,7 @@
         </div>
 
         <div class="input-group-register">
-          <label for="confirm_password">Confirm Password</label>
+          <label for="confirm_password">Nhập lại mật khẩu</label>
           <input type="password" name="confirm_password" id="confirm_password"
                  class="form-control {% if form.confirm_password.errors or form.non_field_errors %}is-invalid{% endif %}"
                  value="{{ form.confirm_password.value|default_if_none:'' }}"
@@ -84,7 +84,7 @@
         </div>        
 
         <div class="input-group-register">
-          <label for="birth-day">Birth Day</label>
+          <label for="birth-day">Ngày sinh</label>
           <input type="date" id="birth-day" name="date_of_birth" 
           class="form-control {% if form.date_of_birth.errors %}is-invalid{% endif %}"/>
           {% if form.date_of_birth.errors %}
@@ -94,9 +94,9 @@
 
         <!-- Country -->
         <div class="input-group-register">
-        <label for="country">Country</label>
+        <label for="country">Đất nước</label>
         <select class="form-select mb-3 {% if form.country.errors %}is-invalid{% endif %}" id="id_country" name="country">
-          <option value="">Select Country</option>
+          <option value="">Chọn đất nước</option>
           {% for country_code, country_name in form.country.field.choices %}
           <option value="{{ country_code }}">{{ country_name }}</option>
           {% endfor %}
@@ -109,9 +109,9 @@
 
         <!-- City -->
         <div class="input-group-register">
-        <label for="city">City</label>
+        <label for="city">Thành phố</label>
         <select class="form-select mb-3 {% if form.city.errors %}is-invalid{% endif %}" id="id_city" name="city" disabled>
-          <option value="">Select City</option>
+          <option value="">Chọn thành phố</option>
         </select>
         <!-- Hiển thị lỗi -->
         {% if form.city.errors %}
@@ -121,9 +121,9 @@
 
         <!-- Village -->
         <div class="input-group-register">
-        <label for="village">Village</label>
+        <label for="village">Huyện</label>
         <select class="form-select mb-3 {% if form.village.errors %}is-invalid{% endif %}" id="id_village" name="village" disabled>
-          <option value="">Select Village</option>
+          <option value="">Chọn huyện</option>
         </select>
         <!-- Hiển thị lỗi -->
         {% if form.village.errors %}
@@ -132,7 +132,7 @@
         </div>
   
       <div class="input-group-register">
-        <label for="place">Place</label>
+        <label for="place">Địa chỉ</label>
         <input type="text" name="place" id="place"
                class="form-control {% if form.place.errors %}is-invalid{% endif %}"
                value="{{ form.place.value|default_if_none:'' }}"
@@ -144,14 +144,14 @@
 
         {% include "includes/alerts.html" %}
         <div style="float: right">
-          <button class="btn btn-dark" type="submit">Register</button>
+          <button class="btn btn-dark" type="submit">Đăng ký</button>
         </div>
 
         <br /><br />
         <hr />
         <div>
           <p class="text-center">
-            Have an account? <a href="{% url 'login' %}">Log In</a>
+            Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập</a>
           </p>
         </div>
       </form>

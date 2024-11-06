@@ -52,7 +52,7 @@ def payments(request):
     CartItem.objects.filter(user=request.user).delete()
     #send order recieved email to customer
     #USER ACTIVATION
-    mail_subject = 'Thank you for your order!'
+    mail_subject = 'Cảm ơn bạn đã đặt hàng!'
     message = render_to_string('orders/order_recieved_email.html', {
         'user': request.user,
         'order': order,

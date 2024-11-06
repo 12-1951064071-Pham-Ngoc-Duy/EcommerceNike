@@ -12,13 +12,13 @@
   {% else %}
   <div class="box-login">
     <div class="form-container-login">
-      <h2 class="text-center mb-4">Login</h2>
+      <h2 class="text-center mb-4">Đăng nhập</h2>
       <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
         
         <div class="input-row-login">
           <div class="input-group-login">
-            <label for="email">Email</label>
+            <label for="email">Thư điện tử</label>
             <input type="text" name="email" id="email"
                    class="form-control {% if form.email.errors %}is-invalid{% endif %}"
                    value="{{ form.email.value|default_if_none:'' }}"
@@ -30,7 +30,7 @@
           </div>
 
         <div class="input-group-login">
-          <label for="password">Password</label>
+          <label for="password">Mật khẩu</label>
           <input type="password" name="password" id="password"
                  class="form-control {% if form.password.errors %}is-invalid{% endif %}"
                  value="{{ form.password.value|default_if_none:'' }}"
@@ -43,19 +43,19 @@
 
         {% include "includes/alerts.html" %}
         <div style="float: right">
-          <a href="{% url 'forgotPassword' %}">Forgot password?</a>
+          <a href="{% url 'forgotPassword' %}">Quên mật khẩu?</a>
         </div>
         <br>
         <br>
         <div style="float: right">
-          <button class="btn btn-dark" type="submit">Login</button>
+          <button class="btn btn-dark" type="submit">Đăng nhập</button>
         </div>
 
         <br /><br />
         <hr />
         <div>
           <p class="text-center">
-           Haven't an account? <a href="{% url 'register' %}">Sign In</a>
+           Không có tài khoản? <a href="{% url 'register' %}">Đăng ký</a>
           </p>
         </div>
     </div>

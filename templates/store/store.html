@@ -4,12 +4,12 @@
 <div class="store-container container">
     <div class="row">
         <div class="col-lg-2 col-md-4 col-12">
-            <h3>Categories</h3>
+            <h3>Danh mục sản phẩm</h3>
             <form method="GET" action="{% url 'store' %}" id="filter-form">
                 <ul class="category-list">
                     <li>
                         <input type="checkbox" name="category" value="all" {% if 'all' in selected_categories %}checked{% endif %} onchange="this.form.submit();">
-                        <label>ALL PRODUCTS</label>
+                        <label>Tất cả sản phẩm</label>
                     </li>
                     {% for category in links %}
                     <li>
@@ -18,7 +18,7 @@
                     </li>
                     {% endfor %}
                 </ul>
-                <h3>Gender</h3>
+                <h3>Giới tính</h3>
                 <ul class="category-list">
                     {% for value, name in GENDER_CHOICES %}
                     <li>
@@ -32,7 +32,7 @@
         </div>
         
         <div class="col-lg-10 col-md-8 col-12">
-            <p>Item({{ product_count }})</p>
+            <p>Sản phẩm({{ product_count }})</p>
             <div class="product-list row">
                 {% if products %}
                 {% for product in products %}
@@ -43,7 +43,7 @@
                             <div class="product-info">
                                 <h2 class="product-name">{{ product.product_name }}</h2>
                                 <p><strong class="text-secondary">{{ product.product_gender | capfirst }} {{ product.category.category_name }}</strong></p>
-                                <p><strong class="text-secondary">{{ product.count_colors }} Colours</strong></p>
+                                <p><strong class="text-secondary">{{ product.count_colors }} Màu sắc</strong></p>
                                 <p><strong>${{ product.product_price }}</strong></p>
                             </div>
                         </a>
@@ -51,7 +51,7 @@
                 </div>
                 {% endfor %}
                 {% else %}
-                <p>No product in here</p>
+                <p>Không có sản phẩm nào</p>
                 {% endif %}
             </div>
             <nav class="mt-4" aria-label="Page navigation sample">
@@ -63,7 +63,7 @@
                         <a class="page-link" href="?page={{ products.previous_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Previous</a>
                     </li>
                     {% else %}
-                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
                     {% endif %}
             
                     <!-- Page Numbers -->
@@ -80,10 +80,10 @@
                     <!-- Next Page -->
                     {% if products.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ products.next_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Next</a>
+                        <a class="page-link" href="?page={{ products.next_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Sau</a>
                     </li>
                     {% else %}
-                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">Sau</a></li>
                     {% endif %}
                 </ul>
                 {% endif %}
