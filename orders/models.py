@@ -172,14 +172,14 @@ class Payment(models.Model):
     
 class Order(models.Model):
     STATUS = (
-        ('Processing', 'Processing'),
-    ('Packing', 'Packing'),
-    ('Waiting for Pickup', 'Waiting for Pickup'),
-    ('In Transit', 'In Transit'),
-    ('At Distribution Center', 'At Distribution Center'),
-    ('Out for Delivery', 'Out for Delivery'),
-    ('Delivered', 'Delivered'),
-    ('Delivery Failed', 'Delivery Failed'),
+        ("Đang xử lý", "Đang xử lý"),
+    ("Đóng gói", "Đóng gói"),
+    ("Chờ Nhận Hàng", "Chờ Nhận Hàng"),
+    ("Đang vận chuyển", "Đang vận chuyển"),
+    ("Tại Trung tâm Phân phối", "Tại Trung tâm Phân phối"),
+    ("Ra đi để giao hàng", "Ra đi để giao hàng"),
+    ("Đã giao", "Đã giao"),
+    ("Giao hàng không thành công", "Giao hàng không thành công"),
     )
     
 
@@ -197,7 +197,7 @@ class Order(models.Model):
     order_note = models.CharField(max_length=100, blank=True)
     order_total = models.FloatField()
     order_tax = models.FloatField()
-    order_status = models.CharField(max_length=100, choices=STATUS, default='Processing')
+    order_status = models.CharField(max_length=100, choices=STATUS, default='Đang xử lý')
     order_ip = models.CharField(max_length=20, blank=True)
     order_is_ordered = models.BooleanField(default=False)
     order_created_at = models.DateTimeField(auto_now_add=True)
