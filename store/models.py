@@ -53,7 +53,7 @@ class Product(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products')
 
     def count_colors(self):
-        return Variation.objects.filter(product=self, variation_category='Màu sắc', variation_is_active=True).count()
+        return Variation.objects.filter(product=self, variation_category='color', variation_is_active=True).count()
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
@@ -81,13 +81,13 @@ class Product(models.Model):
 
 class VariationManager(models.Manager):
     def colors(self):
-        return super(VariationManager, self).filter(variation_category='Màu sắc', variation_is_active=True)
+        return super(VariationManager, self).filter(variation_category='color', variation_is_active=True)
     def sizes(self):
-        return super(VariationManager, self).filter(variation_category='Kích cỡ', variation_is_active=True)
+        return super(VariationManager, self).filter(variation_category='size', variation_is_active=True)
 
 variation_category_choice = (
-    ('Màu sắc', 'Màu sắc'),
-    ('Kích cỡ', 'Kích cỡ'),
+    ('color', 'Màu sắc'),
+    ('size', 'Kích cỡ'),
 )
 
 class Variation(models.Model):

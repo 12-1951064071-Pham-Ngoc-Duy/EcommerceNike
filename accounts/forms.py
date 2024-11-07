@@ -63,7 +63,7 @@ class ResetPasswordForm(forms.Form):
 
         return cleaned_data
     def __init__(self, *args, **kwargs):
-        super(LoginForm, self).__init__(*args, **kwargs)
+        super(ResetPasswordForm, self).__init__(*args, **kwargs)
         for field_name in ['password', 'confirm_password']:
             self.fields[field_name].required = False
     
