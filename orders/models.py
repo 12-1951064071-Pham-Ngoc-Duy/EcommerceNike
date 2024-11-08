@@ -160,12 +160,15 @@ VILLAGE_CHOICES = {
 }
     
 class Payment(models.Model):
-    user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    payment_id = models.CharField(max_length=100)
-    payment_method = models.CharField(max_length=100)
-    amount_paid  = models.CharField(max_length=100)
-    status = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE,verbose_name = "Người dùng")
+    payment_id = models.CharField(max_length=100,verbose_name = "Mã thanh toán")
+    payment_method = models.CharField(max_length=100,verbose_name = "Phương thức thanh toán")
+    amount_paid  = models.CharField(max_length=100,verbose_name = "Tiền đã thanh toán")
+    status = models.CharField(max_length=100,verbose_name = "Trạng thái")
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian thanh toán")
+    class Meta:
+        verbose_name = 'Thanh toán'
+        verbose_name_plural = 'Thanh toán'
 
     def __str__(self):
         return self.payment_id
@@ -183,25 +186,28 @@ class Order(models.Model):
     )
     
 
-    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
-    order_number = models.CharField(max_length=20)
-    order_first_name = models.CharField(max_length=50)
-    order_last_name = models.CharField(max_length=50)
-    order_phone = models.CharField(max_length=50)
-    order_email = models.EmailField(max_length=50)
-    order_address = models.CharField(max_length=50)
-    order_country = models.CharField(max_length=50,null=True, choices=COUNTRY_CHOICES)
-    order_city = models.CharField(max_length=50, blank=True, null=True)
-    order_village = models.CharField(max_length=50, blank=True, null=True)
-    order_note = models.CharField(max_length=100, blank=True)
-    order_total = models.FloatField()
-    order_tax = models.FloatField()
-    order_status = models.CharField(max_length=100, choices=STATUS, default='Đang xử lý')
-    order_ip = models.CharField(max_length=20, blank=True)
-    order_is_ordered = models.BooleanField(default=False)
-    order_created_at = models.DateTimeField(auto_now_add=True)
-    order_updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True,verbose_name = "Người dùng")
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True,verbose_name = "Thanh toán")
+    order_number = models.CharField(max_length=20,verbose_name = "Số đơn hàng")
+    order_first_name = models.CharField(max_length=50,verbose_name = "Tên đầu")
+    order_last_name = models.CharField(max_length=50,verbose_name = "Tên cuối")
+    order_phone = models.CharField(max_length=50,verbose_name = "Số điện thoại")
+    order_email = models.EmailField(max_length=50,verbose_name = "Thư điện tử")
+    order_address = models.CharField(max_length=50,verbose_name = "Địa chỉ")
+    order_country = models.CharField(max_length=50,null=True, choices=COUNTRY_CHOICES,verbose_name = "Đất nước")
+    order_city = models.CharField(max_length=50, blank=True, null=True,verbose_name = "Thành phố")
+    order_village = models.CharField(max_length=50, blank=True, null=True,verbose_name = "Huyện")
+    order_note = models.CharField(max_length=100, blank=True,verbose_name = "Ghi chú")
+    order_total = models.FloatField(verbose_name = "Tổng")
+    order_tax = models.FloatField(verbose_name = "Phí giao hàng")
+    order_status = models.CharField(max_length=100, choices=STATUS, default='Đang xử lý',verbose_name = "Trạng thái")
+    order_ip = models.CharField(max_length=20, blank=True,verbose_name = "Giao thức")
+    order_is_ordered = models.BooleanField(default=False,verbose_name = "Được đặt hàng")
+    order_created_at = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
+    order_updated_at = models.DateTimeField(auto_now=True,verbose_name = "Thời gian cập nhật")
+    class Meta:
+        verbose_name = 'Đơn hàng'
+        verbose_name_plural = 'Đơn hàng'
 
     def full_name(self):
         return f'{self.order_first_name} {self.order_last_name}'
@@ -225,16 +231,19 @@ class Order(models.Model):
                           .annotate(tong_doanh_thu=Sum('order_total'))
     
 class OrderProduct(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null = True)
-    user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variations = models.ManyToManyField(Variation, blank=True)
-    order_product_quantity = models.IntegerField()
-    order_product_price = models.FloatField()
-    order_product_ordered = models.BooleanField(default=False)
-    order_product_created_at = models.DateTimeField(auto_now_add=True)
-    order_product_updated_at = models.DateTimeField(auto_now=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,verbose_name = "Đơn hàng")
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null = True,verbose_name = "Thanh toán")
+    user = models.ForeignKey(Account, on_delete=models.CASCADE,verbose_name = "Người dùng")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
+    variations = models.ManyToManyField(Variation, blank=True,verbose_name = "Biến thể")
+    order_product_quantity = models.IntegerField(verbose_name = "Số lượng")
+    order_product_price = models.FloatField(verbose_name = "Gía")
+    order_product_ordered = models.BooleanField(default=False,verbose_name = "Được đặt hàng")
+    order_product_created_at = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
+    order_product_updated_at = models.DateTimeField(auto_now=True,verbose_name = "Thời gian cập nhật")
+    class Meta:
+        verbose_name = 'Sản phẩm đơn hàng'
+        verbose_name_plural = 'Sản phẩm đơn hàng'
 
     def __str__(self):
         return self.product.product_name

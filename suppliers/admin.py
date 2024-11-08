@@ -76,6 +76,7 @@ def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
     response['Content-Disposition'] = f'attachment; filename=costs_{current_year}.xlsx'
     workbook.save(response)
     return response
+export_daily_monthly_yearly_costs_to_excel.short_description = "Xuất Chi Phí Ra Excel"
 class SupplierAdmin(admin.ModelAdmin):
     form = SupplierForm
     list_display = ['supplier_name', 'supplier_email', 'supplier_phone', 'supplier_country', 'supplier_is_active']

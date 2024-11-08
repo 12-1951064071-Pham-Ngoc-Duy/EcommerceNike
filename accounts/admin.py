@@ -32,15 +32,14 @@ class AccountAdmin(UserAdmin):
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff  # Cho phép staff xem model này
 
-
 class UserProfileAdmin(admin.ModelAdmin):
     def thumbnail(self, object):
         if object.user_profile_picture and object.user_profile_picture.url:
             return format_html('<img src="{}" width="30" style="border-radius:50%;">'.format(object.user_profile_picture.url))
         else:
-            return format_html('<span style="color: gray;">No Image</span>')
+            return format_html('<span style="color: gray;">Không có ảnh</span>')
 
-    thumbnail.short_description = 'Profile Picture'
+    thumbnail.short_description = 'Ảnh hồ sơ'
 
     form = UserProfileAdminForm
     list_display = (
@@ -53,8 +52,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff  # Cho phép staff xem model này
 
-
 admin.site.register(Account, AccountAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.unregister(Group)
-

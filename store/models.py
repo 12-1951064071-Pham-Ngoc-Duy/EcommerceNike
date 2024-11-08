@@ -38,19 +38,22 @@ COUNTRY_CHOICES = [
 
 
 class Product(models.Model):
-    product_name = models.CharField(max_length=200)
-    product_slug = models.SlugField(max_length=200, unique=True)
-    product_description = models.TextField(max_length=500, blank=True)
-    product_price = models.IntegerField()
-    product_images = models.ImageField(upload_to="photos/products")
-    product_stock = models.IntegerField()
-    product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Nam Nữ')
-    product_made_in = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default='Vietnam')
-    product_is_availabel = models.BooleanField(default=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    product_created_date = models.DateTimeField(auto_now_add=True)
-    product_modifield_date = models.DateTimeField(auto_now=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products')
+    product_name = models.CharField(max_length=200,verbose_name = "Tên sản phẩm")
+    product_slug = models.SlugField(max_length=200, unique=True,verbose_name = "Tên nguồn sản phẩm")
+    product_description = models.TextField(max_length=500, blank=True,verbose_name = "Mô tả sản phẩm")
+    product_price = models.IntegerField(verbose_name = "Gía")
+    product_images = models.ImageField(upload_to="photos/products",verbose_name = "Ảnh sản phẩm")
+    product_stock = models.IntegerField(verbose_name = "Tồn kho")
+    product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Nam Nữ',verbose_name = "Giới tính")
+    product_made_in = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default='Vietnam',verbose_name = "Nơi sản xuất")
+    product_is_availabel = models.BooleanField(default=True,verbose_name = "Có sẵn")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,verbose_name = "Danh mục")
+    product_created_date = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
+    product_modifield_date = models.DateTimeField(auto_now=True,verbose_name = "Thời gian sửa đổi")
+    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products',verbose_name = "Nhà cung cấp")
+    class Meta:
+        verbose_name = 'Sản phẩm'
+        verbose_name_plural = 'Sản phẩm'
 
     def count_colors(self):
         return Variation.objects.filter(product=self, variation_category='color', variation_is_active=True).count()
@@ -91,11 +94,14 @@ variation_category_choice = (
 )
 
 class Variation(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation_category = models.CharField(max_length=100, choices=variation_category_choice)
-    variation_value = models.CharField(max_length=100)
-    variation_is_active = models.BooleanField(default=True)
-    variation_created_date = models.DateTimeField(auto_now=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
+    variation_category = models.CharField(max_length=100, choices=variation_category_choice,verbose_name = "Danh mục biến thể")
+    variation_value = models.CharField(max_length=100,verbose_name = "Gía trị")
+    variation_is_active = models.BooleanField(default=True,verbose_name = "Hoạt động")
+    variation_created_date = models.DateTimeField(auto_now=True,verbose_name = "Thời gian tạo")
+    class Meta:
+        verbose_name = 'Biến thể'
+        verbose_name_plural = 'Biến thể'
 
     objects = VariationManager()
 
@@ -103,27 +109,30 @@ class Variation(models.Model):
         return self.variation_value
     
 class ReviewRating(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey(Account, on_delete=models.CASCADE)
-    review_subject = models.CharField(max_length=100, blank=True)
-    review = models.TextField(max_length=500, blank=True)
-    review_rating = models.FloatField()
-    review_ip = models.CharField(max_length=20, blank=True)
-    review_status = models.BooleanField(default=True)
-    review_created_at = models.DateTimeField(auto_now_add=True)
-    review_updated_at = models.DateTimeField(auto_now=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
+    user = models.ForeignKey(Account, on_delete=models.CASCADE,verbose_name = "Người dùng")
+    review_subject = models.CharField(max_length=100, blank=True,verbose_name = "Tiêu đề đánh giá")
+    review = models.TextField(max_length=500, blank=True,verbose_name = "Đánh giá")
+    review_rating = models.FloatField(verbose_name = "Điểm đánh giá")
+    review_ip = models.CharField(max_length=20, blank=True,verbose_name = "Giao thức")
+    review_status = models.BooleanField(default=True,verbose_name = "Trạng thái")
+    review_created_at = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
+    review_updated_at = models.DateTimeField(auto_now=True,verbose_name = "Thời gian cập nhật")
+    class Meta:
+        verbose_name = 'Đánh giá'
+        verbose_name_plural = 'Đánh giá'
 
     def __str__(self):
         return self.review_subject
     
 
 class ProductGallery(models.Model):
-    product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE)
-    image_gallery = models.ImageField(upload_to='store/products', max_length=255)
+    product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
+    image_gallery = models.ImageField(upload_to='store/products', max_length=255,verbose_name = "Ảnh phụ sản phẩm")
 
     def __str__(self):
         return self.product.product_name
     
     class Meta:
-        verbose_name = 'productgallery'
-        verbose_name_plural = 'product gallery'
+        verbose_name = 'Ảnh phụ sản phẩm'
+        verbose_name_plural = 'Ảnh phụ sản phẩm'

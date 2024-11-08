@@ -23,15 +23,18 @@ NIKE_FACTORY_CHOICES = [
 ]
 
 class Supplier(models.Model):
-    supplier_name = models.CharField(max_length=200)
-    supplier_email = models.EmailField()
-    supplier_phone = models.CharField(max_length=15, blank=True)
-    supplier_address = models.TextField(blank=True)
-    supplier_country = models.CharField(max_length=100, choices=NIKE_FACTORY_CHOICES)
-    supplier_is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    products = models.ManyToManyField('store.Product', blank=True, related_name='suppliers')
+    supplier_name = models.CharField(max_length=200,verbose_name = "Tên nhà cung cấp")
+    supplier_email = models.EmailField(verbose_name = "Thư điện tử")
+    supplier_phone = models.CharField(max_length=15, blank=True,verbose_name = "Số điện thoại")
+    supplier_address = models.TextField(blank=True,verbose_name = "Địa chỉ")
+    supplier_country = models.CharField(max_length=100, choices=NIKE_FACTORY_CHOICES,verbose_name = "Đất nước")
+    supplier_is_active = models.BooleanField(default=True,verbose_name = "Hoạt động")
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
+    updated_at = models.DateTimeField(auto_now=True,verbose_name = "Thời gian cập nhật")
+    products = models.ManyToManyField('store.Product', blank=True, related_name='suppliers',verbose_name = "Sản phẩm")
+    class Meta:
+        verbose_name = 'Nhà cung cấp'
+        verbose_name_plural = 'Nhà cung cấp'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # Lưu nhà cung cấp
@@ -44,12 +47,15 @@ class Supplier(models.Model):
         return self.supplier_name
     
 class StockEntry(models.Model):
-    product = models.ForeignKey('store.Product', on_delete=models.CASCADE)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)  # Đơn giá mỗi sản phẩm
-    total_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Tổng giá trị
-    entry_date = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey('store.Product', on_delete=models.CASCADE,verbose_name = "Sản phẩm")
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,verbose_name = "Nhà cung cấp")
+    quantity = models.IntegerField(verbose_name = "Số lượng")
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2,verbose_name = "Đơn giá")
+    total_value = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name = "Tổng giá trị")  # Tổng giá trị
+    entry_date = models.DateTimeField(auto_now_add=True,verbose_name = "Ngày nhập")
+    class Meta:
+        verbose_name = 'Nhập kho'
+        verbose_name_plural = 'Nhập kho'
 
     def save(self, *args, **kwargs):
         # Tính tổng giá trị

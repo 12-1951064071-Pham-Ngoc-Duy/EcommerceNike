@@ -202,23 +202,23 @@ class MyAccountManager(BaseUserManager):
         return user
 
 class Account(AbstractBaseUser):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(max_length=50, unique=True)
-    phone_number = models.CharField(max_length=50,null=True, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    country = models.CharField(max_length=50,null=True, choices=COUNTRY_CHOICES)
-    city = models.CharField(max_length=50, blank=True, null=True)
-    village = models.CharField(max_length=50, blank=True, null=True)
-    place = models.CharField(max_length=255, blank=True, null=True)
+    first_name = models.CharField(max_length=50, verbose_name="Tên đầu")
+    last_name = models.CharField(max_length=50, verbose_name="Tên cuối")
+    username = models.CharField(max_length=50, unique=True, verbose_name="Tên người dùng")
+    email = models.EmailField(max_length=50, unique=True, verbose_name="Thư điện tử")
+    phone_number = models.CharField(max_length=50,null=True, blank=True, verbose_name="Số điện thoại")
+    date_of_birth = models.DateField(null=True, blank=True, verbose_name="Ngày sinh")
+    country = models.CharField(max_length=50,null=True, choices=COUNTRY_CHOICES, verbose_name="Đất nước")
+    city = models.CharField(max_length=50, blank=True, null=True, verbose_name="Thành phố")
+    village = models.CharField(max_length=50, blank=True, null=True, verbose_name="Huyện")
+    place = models.CharField(max_length=255, blank=True, null=True, verbose_name="Địa chỉ")
 
-    date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now_add=True)
-    is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-    is_superadmin = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tham gia")
+    last_login = models.DateTimeField(auto_now_add=True, verbose_name="Đăng nhập lần cuối")
+    is_admin = models.BooleanField(default=False, verbose_name="Quyền quản trị viên")
+    is_staff = models.BooleanField(default=False, verbose_name="Quyền nhân viên")
+    is_active = models.BooleanField(default=False, verbose_name="Quyền hoạt động")
+    is_superadmin = models.BooleanField(default=False, verbose_name="Quyền siêu quản trị viên")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
@@ -236,17 +236,23 @@ class Account(AbstractBaseUser):
     
     def has_module_perms(self, add_label):
         return True
+    class Meta:
+        verbose_name = "Tài khoản người dùng"
+        verbose_name_plural = "Tài khoản người dùng"
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(Account, on_delete=models.CASCADE)
-    user_profile_address = models.CharField(max_length=100, blank=True, null=True)
-    user_profile_picture = models.ImageField(blank=True, null=True,upload_to='userprofile')
-    user_profile_country = models.CharField(blank=True, max_length=20, choices=COUNTRY_CHOICES)
-    user_profile_city = models.CharField(blank=True, max_length=20)
-    user_profile_village = models.CharField(blank=True, max_length=20)
-    user_profile_date_of_birth = models.DateField(null=True, blank=True)
+    user = models.OneToOneField(Account, on_delete=models.CASCADE, verbose_name="Người dùng")
+    user_profile_address = models.CharField(max_length=100, blank=True, null=True, verbose_name="Địa chỉ")
+    user_profile_picture = models.ImageField(blank=True, null=True,upload_to='userprofile', verbose_name="Ảnh hồ sơ")
+    user_profile_country = models.CharField(blank=True, max_length=20, choices=COUNTRY_CHOICES, verbose_name="Đất nước")
+    user_profile_city = models.CharField(blank=True, max_length=20, verbose_name="Thành phố")
+    user_profile_village = models.CharField(blank=True, max_length=20, verbose_name="Huyện")
+    user_profile_date_of_birth = models.DateField(null=True, blank=True, verbose_name="Ngày sinh")
 
     def __str__(self):
         return self.user.first_name
+    class Meta:
+        verbose_name = "Hồ sơ người dùng"
+        verbose_name_plural = "Hồ sơ người dùng"
     
 

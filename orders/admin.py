@@ -111,6 +111,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
 
     workbook.save(response)
     return response
+export_profit_to_excel.short_description = "Xuất Lợi Nhuận Ra Excel"
 
 
 class OrderProductInline(admin.TabularInline):
