@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'store',
     'carts',
     'orders',
-    'admin_honeypot',
+    'custom_admin_honeypot.apps.CustomAdminHoneypotConfig',
     'suppliers',
 ]
 
