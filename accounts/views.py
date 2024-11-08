@@ -223,7 +223,7 @@ def forgotPassword(request):
                     to_email = email
                     send_email = EmailMessage(mail_subject, message, to=[to_email])
                     send_email.send()
-                    messages.success(request, 'Thư điện tử đặt lại mật khẩu đã được gửi đến địa chỉ email của bạn.')
+                    messages.success(request, 'Thư điện tử đặt lại mật khẩu đã được gửi đến địa chỉ thư điện tử của bạn.')
                     return redirect('login')
                     #USER ACTIVATION
             else:

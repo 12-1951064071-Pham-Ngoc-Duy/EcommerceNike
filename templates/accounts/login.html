@@ -4,10 +4,10 @@
 <div class="container">
   {% if request.GET.command == 'verification' %}
   <div class="mx-auto alert alert-info mt-5 mb-5 text-center" role="alert" style="width:600px">
-    Thank you for registering with us.We have sent you a verification email to your email address [{{ request.GET.email }}]
+    Cảm ơn bạn đã đăng ký với chúng tôi. Chúng tôi đã gửi cho bạn thư điện tử xác minh đến địa chỉ thư điện tử của bạn [{{ request.GET.email }}]
     <br>
     <br>
-    Already verified? <a href="{% url 'login' %}">Login</a>
+    Đã được xác minh? <a href="{% url 'login' %}">Đăng nhập</a>
   </div>
   {% else %}
   <div class="box-login">

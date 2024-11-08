@@ -8,15 +8,24 @@ from phonenumbers.phonenumberutil import NumberParseException
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Nhập thư điện tử'}))
+    email = forms.CharField(widget=forms.EmailInput(attrs={'placeholder': 'Nhập thư điện tử'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Nhập mật khẩu'}))
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(regex, email):
+            raise forms.ValidationError("Sai định dạng thư điện tử")
         if not email:
             raise forms.ValidationError("Chưa điền giá trị")
         if not Account.objects.filter(email=email).exists():
             raise forms.ValidationError("Thư điện tử không tồn tại")
+        if '@' not in email:
+            raise forms.ValidationError("Sai định dạng thư điện tử")
+
+        # Kiểm tra email có chứa nhiều hơn một ký tự `@`
+        if email.count('@') > 1:
+            raise forms.ValidationError("Sai định dạng thư điện tử")
         
         return email
     def clean_password(self):
@@ -104,7 +113,7 @@ class ChangePasswordForm(forms.Form):
         confirm_new_password = cleaned_data.get('confirm_new_password')
 
         if new_password and len(new_password) < 8:
-            self.add_error('new_password', "Vui lòng nhập lại mật khẩu phải dài ít nhất 8 ký tự. Hãy kích hoạt tài khoản của bạn")
+            self.add_error('new_password', "Vui lòng nhập lại mật khẩu phải dài ít nhất 8 ký tự")
 
         if new_password and confirm_new_password and new_password != confirm_new_password:
             self.add_error('confirm_new_password', "Mật khẩu không khớp")
@@ -122,6 +131,7 @@ class RegistrationForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={
         'placeholder': 'Enter confirm password'
     }))
+    email = forms.CharField(widget=forms.EmailInput(attrs={'placeholder': 'Nhập thư điện tử'}))
 
     class Meta:
         model = Account
@@ -185,11 +195,17 @@ class RegistrationForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if '@' not in email:
+            raise forms.ValidationError("Sai định dạng thư điện tử")
+
+        # Kiểm tra email có chứa nhiều hơn một ký tự `@`
+        if email.count('@') > 1:
+            raise forms.ValidationError("Sai định dạng thư điện tử")
         if not email:
             raise forms.ValidationError("Chưa điền giá trị")
 
         if not re.match(regex, email):
-            raise forms.ValidationError("Sai định dạng email")
+            raise forms.ValidationError("Sai định dạng thư điện tử")
         if ' ' in email:
             raise forms.ValidationError("Thư điện tử không được chứa khoảng trống")
         if len(email) > 254:
@@ -228,7 +244,7 @@ class RegistrationForm(forms.ModelForm):
     
         regex = r'^\+?\d+$'
         if not re.match(regex, phone_number):
-            raise forms.ValidationError("Số điện thoại chỉ có duy nhất là số không chứa dấu cách")
+            raise forms.ValidationError("Số điện thoại chỉ có duy nhất là số và không có ký tự đặc biệt ,dấu cách")
         
         # Kiểm tra chỉ chứa số sau dấu "+"
         if not phone_number[1:].isdigit():
@@ -262,7 +278,7 @@ class RegistrationForm(forms.ModelForm):
         if confirm_password is None:
            raise forms.ValidationError("Chưa điền giá trị")
         elif password != confirm_password:
-            self.add_error('confirm_password', "Mật khẩu chưa khớp")
+            self.add_error('password', "Mật khẩu chưa khớp")
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
@@ -281,7 +297,7 @@ class RegistrationForm(forms.ModelForm):
         # City and Village will be loaded dynamically so no need to set choices in form
         self.fields['city'].widget.attrs['disabled'] = True
         self.fields['village'].widget.attrs['disabled'] = True
-        for field_name in ['first_name', 'last_name', 'country', 'email', 'password']:
+        for field_name in ['first_name', 'last_name', 'country', 'email', 'password', 'confirm_password']:
             self.fields[field_name].required = False
     
 
@@ -307,7 +323,7 @@ class UserForm(forms.ModelForm):
         if not email:
            raise forms.ValidationError("Chưa điền giá trị")
         if not re.match(regex, email):
-            raise forms.ValidationError("Định dạng email không hợp lệ.")
+            raise forms.ValidationError("Định dạng thư điện tử không hợp lệ.")
         if ' ' in email:
             raise forms.ValidationError("Thư điện tử không được chứa dấu cách.")
         if len(email) > 254:
@@ -338,7 +354,7 @@ class UserForm(forms.ModelForm):
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
         if not phone_number.startswith("+"):
-            raise forms.ValidationError("Số điện thoại phải bắt đầu bằng '+', sau đó là mã quốc gia.")
+            raise forms.ValidationError("Số điện thoại phải bắt đầu bằng '+', sau đó là mã đất nước.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, phone_number):
@@ -346,13 +362,13 @@ class UserForm(forms.ModelForm):
         
         # Kiểm tra chỉ chứa số sau dấu "+"
         if not phone_number[1:].isdigit():
-            raise forms.ValidationError("Số điện thoại chỉ được chứa các chữ số sau mã quốc gia.")
+            raise forms.ValidationError("Số điện thoại chỉ được chứa các chữ số sau mã đất nước.")
         
         # Kiểm tra tính hợp lệ bằng thư viện phonenumbers
         try:
             parsed_number = phonenumbers.parse(phone_number, None)
             if not phonenumbers.is_valid_number(parsed_number):
-                raise forms.ValidationError("Số điện thoại không hợp lệ cho mã quốc gia đã cho.")
+                raise forms.ValidationError("Số điện thoại không hợp lệ cho mã đất nước đã cho.")
         except NumberParseException:
             raise forms.ValidationError("Định dạng số điện thoại không hợp lệ.")
 
@@ -500,8 +516,8 @@ class AdminAccountsForm(forms.ModelForm):
            raise forms.ValidationError("This field is required.")
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
-        if not phone_number.startswith("+84"):
-            raise forms.ValidationError("Phone number must start with '+84' followed by country code.")
+        if not phone_number.startswith("+"):
+            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, phone_number):

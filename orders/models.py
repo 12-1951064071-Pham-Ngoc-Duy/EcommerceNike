@@ -188,7 +188,7 @@ class Order(models.Model):
     order_number = models.CharField(max_length=20)
     order_first_name = models.CharField(max_length=50)
     order_last_name = models.CharField(max_length=50)
-    order_phone = models.CharField(max_length=15)
+    order_phone = models.CharField(max_length=50)
     order_email = models.EmailField(max_length=50)
     order_address = models.CharField(max_length=50)
     order_country = models.CharField(max_length=50,null=True, choices=COUNTRY_CHOICES)

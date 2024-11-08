@@ -44,29 +44,36 @@ class OrderForm(forms.ModelForm):
         return last_name
 
     def clean_order_phone(self):
-        phone = self.cleaned_data.get('order_phone')
-        if not phone:
+        phone_number = self.cleaned_data.get('order_phone')
+
+        if not phone_number:
            raise forms.ValidationError("Chưa điền giá trị")
-        else:
-           # Loại bỏ dấu cách và các ký tự không mong muốn
-           phone = re.sub(r'[^\d+]', '', phone)
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
-        if not phone.startswith("+"):
-            raise forms.ValidationError("Số điện thoại phải bắt đầu bằng dấu (+) trước mã đất nước")
+        if not phone_number.startswith("+"):
+            raise forms.ValidationError("Số điện thoại phải bắt đầu bằng '+', sau đó là mã đất nước.")
+
+        regex = r'^\+?\d+$'
+        if not re.match(regex, phone_number):
+            raise forms.ValidationError("Số điện thoại chỉ có duy nhất là số và không có ký tự đặc biệt ,dấu cách")
         
         # Kiểm tra chỉ chứa số sau dấu "+"
-        if not phone[1:].isdigit():
-            raise forms.ValidationError("Số điện thoại chỉ được chứa các chữ số sau mã quốc gia.")
+        if not phone_number[1:].isdigit():
+            raise forms.ValidationError("Số điện thoại chỉ được chứa các chữ số sau mã đất nước.")
         
         # Kiểm tra tính hợp lệ bằng thư viện phonenumbers
         try:
-            parsed_number = phonenumbers.parse(phone, None)
+            parsed_number = phonenumbers.parse(phone_number, None)
             if not phonenumbers.is_valid_number(parsed_number):
-                raise forms.ValidationError("Số điện thoại không hợp lệ cho mã quốc gia đã cho.")
+                raise forms.ValidationError("Số điện thoại không hợp lệ cho mã đất nước đã cho.")
         except NumberParseException:
             raise forms.ValidationError("Định dạng số điện thoại không hợp lệ.")
-        return phone
+
+        if self.instance.pk:  # Trường hợp cập nhật thông tin
+            if self.instance.phone_number == phone_number:
+                return phone_number  # Không kiểm tra nếu số điện thoại không thay đổi
+        # Kiểm tra số điện thoại đã tồn tại
+        return phone_number
 
     def clean_order_email(self):
         email = self.cleaned_data.get('order_email')
@@ -74,14 +81,14 @@ class OrderForm(forms.ModelForm):
         if not email:
             raise forms.ValidationError("Chưa điền giá trị")
         if not re.match(regex, email):
-            raise forms.ValidationError("Định dạng email không hợp lệ.")
+            raise forms.ValidationError("Định dạng thư điện tử không hợp lệ.")
         if ' ' in email:
             raise forms.ValidationError("Thư điện tử không được chứa dấu cách.")
         if len(email) > 254:
             raise forms.ValidationError("Thư điện tử không được vượt quá 254 ký tự.")
         domain = email.split('@')[-1]
         if '.' not in domain:
-            raise forms.ValidationError("Tên miền không hợp lệ trong email.")
+            raise forms.ValidationError("Tên miền không hợp lệ trong thư điện tử.")
         if domain.endswith('.'):
             raise forms.ValidationError("Tên miền thư điện tử không thể kết thúc bằng dấu chấm.")
         username = email.split('@')[0]
