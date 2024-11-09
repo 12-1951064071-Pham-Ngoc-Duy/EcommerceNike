@@ -140,9 +140,9 @@ class OrderFormAdmin(forms.ModelForm):
         order_is_ordered = cleaned_data.get("order_is_ordered")
 
         if order_status == "Delivery Failed" and order_is_ordered:
-            raise forms.ValidationError("order_is_ordered is not allowed to be charged when the status is 'Delivery Failed'.")
+            raise forms.ValidationError("Đơn hàng không được phép tính phí khi trạng thái là 'Giao hàng không thành công'.")
 
         if order_status != "Delivery Failed" and not order_is_ordered:
-            raise forms.ValidationError("order_is_ordered must be accumulated if the state is not 'Delivery Failed'.")
+            raise forms.ValidationError("Đơn hàng phải được tích nếu trạng thái không phải là 'Giao hàng không thành công'.")
 
         return cleaned_data

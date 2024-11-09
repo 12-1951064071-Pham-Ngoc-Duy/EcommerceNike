@@ -18,9 +18,9 @@ class SupplierForm(forms.ModelForm):
         regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         
         if not re.match(regex, supplier_email):
-            raise forms.ValidationError("Invalid email format.")
+            raise forms.ValidationError("Định dạng thư điện tử không hợp lệ.")
         if not supplier_email:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
 
         # Kiểm tra tính tồn tại của email trong các nhà cung cấp khác
         existing_supplier = Supplier.objects.filter(supplier_email=supplier_email)
@@ -28,42 +28,42 @@ class SupplierForm(forms.ModelForm):
             existing_supplier = existing_supplier.exclude(pk=self.instance.pk)
 
         if existing_supplier.exists():
-            raise forms.ValidationError("This email is already in use.")
+            raise forms.ValidationError("Thư điện tử này đã được sử dụng.")
 
         return supplier_email
 
     def clean_supplier_name(self):
         supplier_name = self.cleaned_data.get('supplier_name')
         if not supplier_name:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return supplier_name
 
     def clean_supplier_country(self):
         supplier_country = self.cleaned_data.get('supplier_country')
         if not supplier_country:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return supplier_country
 
     def clean_supplier_phone(self):
         supplier_phone = self.cleaned_data.get('supplier_phone')
         if not supplier_phone:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
         if not supplier_phone.startswith("+"):
-            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
+            raise forms.ValidationError("Số điện thoại phải bắt đầu bằng '+', sau đó là mã quốc gia.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, supplier_phone):
-            raise forms.ValidationError("Phone number must only number")
+            raise forms.ValidationError("Số điện thoại chỉ được có số")
         
         # Kiểm tra chỉ chứa số sau dấu "+"
         if not supplier_phone[1:].isdigit():
-            raise forms.ValidationError("Phone number must contain only digits after the country code.")
+            raise forms.ValidationError("Số điện thoại chỉ được chứa các chữ số sau mã quốc gia.")
         
-        # Kiểm tra độ dài hợp lệ (8-15 số)
-        if len(supplier_phone[1:]) < 11:
-            raise forms.ValidationError("Phone number must be between 8 and 15 digits after the country code.")
+        # # Kiểm tra độ dài hợp lệ (8-15 số)
+        # if len(supplier_phone[1:]) < 11:
+        #     raise forms.ValidationError("Phone number must be between 8 and 15 digits after the country code.")
         
         # Kiểm tra tính hợp lệ bằng thư viện phonenumbers
         try:
@@ -71,7 +71,7 @@ class SupplierForm(forms.ModelForm):
             if not phonenumbers.is_valid_number(parsed_number):
                 raise forms.ValidationError("Invalid phone number for the given country code.")
         except NumberParseException:
-            raise forms.ValidationError("Invalid phone number format.")
+            raise forms.ValidationError("Định dạng số điện thoại không hợp lệ.")
         
         # Kiểm tra số điện thoại đã tồn tại
         if self.instance.pk:  # Trường hợp cập nhật thông tin
@@ -84,13 +84,13 @@ class SupplierForm(forms.ModelForm):
     def clean_supplier_address(self):
         supplier_address = self.cleaned_data.get('supplier_address')
         if not supplier_address:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return supplier_address
     
     def clean_products(self):
         products = self.cleaned_data.get('products')
         if not products:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return products
 
 
@@ -104,24 +104,24 @@ class StockEntryForm(forms.ModelForm):
     def clean_product(self):
         product = self.cleaned_data.get('product')
         if not product:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return product
     def clean_supplier(self):
         supplier = self.cleaned_data.get('supplier')
         if not supplier:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return supplier
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
         if quantity <= 0:
-            raise forms.ValidationError("Quantity must be greater than zero.")
+            raise forms.ValidationError("Số lượng phải lớn hơn 0.")
         if not quantity:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return quantity
     def clean_unit_price(self):
         unit_price = self.cleaned_data.get('unit_price')
         if unit_price <= 0:
-            raise forms.ValidationError("Unit price must be greater than zero.")
+            raise forms.ValidationError("Đơn giá phải lớn hơn 0.")
         if not unit_price:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return unit_price

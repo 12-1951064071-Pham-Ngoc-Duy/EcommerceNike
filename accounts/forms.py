@@ -453,24 +453,24 @@ class AdminAccountsForm(forms.ModelForm):
     def clean_place(self):
         place = self.cleaned_data.get('place')
         if not place:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return place
 
     def clean_date_of_birth(self):
         date_of_birth = self.cleaned_data.get('date_of_birth')
         if not date_of_birth:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         today = datetime.today().date()
         if date_of_birth > today:
-            raise forms.ValidationError("Date of birth cannot be in the future.")
+            raise forms.ValidationError("Ngày sinh lớn hơn ngày hiện tại")
         age_limit = 18
         minimum_age_date = today - timedelta(days=age_limit * 365)
         if date_of_birth > minimum_age_date:
-            raise forms.ValidationError(f"You must be at least {age_limit} years old.")
+            raise forms.ValidationError("Ngày sinh phải lớn hơn 18")
         max_age = 120
         max_age_date = today - timedelta(days=max_age * 365)
         if date_of_birth < max_age_date:
-            raise forms.ValidationError(f"Age cannot be more than {max_age} years.")
+            raise forms.ValidationError("Ngày sinh phải nhỏ hơn 120")
 
         return date_of_birth
 
@@ -479,71 +479,71 @@ class AdminAccountsForm(forms.ModelForm):
         regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         
         if not re.match(regex, email):
-            raise forms.ValidationError("Invalid email format.")
+            raise forms.ValidationError("Cấu trúc thư điện tử không đúng")
         if ' ' in email:
-            raise forms.ValidationError("Email cannot contain spaces.")
+            raise forms.ValidationError("Thư điện tử không chứa dấu cách")
         if len(email) > 254:
-            raise forms.ValidationError("Email must not exceed 254 characters.")
+            raise forms.ValidationError("Thư điện tử không quá 254 ký tự")
         if self.instance.pk:  # Trường hợp cập nhật thông tin
             if self.instance.email == email:
                 return email  # Không kiểm tra nếu email không thay đổi
         if Account.objects.filter(email=email).exists():
-            raise forms.ValidationError("This email is already in use.")
+            raise forms.ValidationError("Thư điện tử đã đăng ký")
         domain = email.split('@')[-1]
         if '.' not in domain:
-            raise forms.ValidationError("Invalid domain in email.")
+            raise forms.ValidationError("Tên miền thư điện tử không hợp lệ")
         if domain.endswith('.'):
-            raise forms.ValidationError("Email domain cannot end with a dot.")
+            raise forms.ValidationError("Tên miền thư điện tử không kết thúc bằng dấu chấm")
         username = email.split('@')[0]
         if not re.match(r'^[a-zA-Z0-9_.+-]+$', username):
-            raise forms.ValidationError("Invalid characters in email username.")
+            raise forms.ValidationError("Ký tự không hợp lệ trong thư điện tử người dùng")
         disposable_domains = ['mailinator.com', '10minutemail.com', 'tempmail.com']
         if domain in disposable_domains:
-            raise forms.ValidationError("Temporary email addresses are not allowed.")
+            raise forms.ValidationError("Địa chỉ email tạm thời không được phép.")
 
         return email
 
     def clean_address(self):
         account_address = self.cleaned_data.get('account_address')
         if not account_address:  # Kiểm tra nếu account_address là None hoặc empty
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return account_address 
     
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
 
         if phone_number is None:
-           raise forms.ValidationError("This field is required.")
+           raise forms.ValidationError("Trường này là bắt buộc")
 
         # Kiểm tra số điện thoại bắt đầu bằng "+"
         if not phone_number.startswith("+"):
-            raise forms.ValidationError("Phone number must start with '+' followed by country code.")
+            raise forms.ValidationError("Số điện thoại phải bắt đầu bằng '+', sau đó là mã quốc gia.")
     
         regex = r'^\+?\d+$'
         if not re.match(regex, phone_number):
-            raise forms.ValidationError("Phone number must only number")
+            raise forms.ValidationError("Số điện thoại chỉ được có số")
         
         # Kiểm tra chỉ chứa số sau dấu "+"
         if not phone_number[1:].isdigit():
-            raise forms.ValidationError("Phone number must contain only digits after the country code.")
+            raise forms.ValidationError("Số điện thoại chỉ được chứa các chữ số sau mã quốc gia.")
         
-        # Kiểm tra độ dài hợp lệ (8-15 số)
-        if len(phone_number[1:]) < 11:
-            raise forms.ValidationError("Phone number must be between 8 and 15 digits after the country code.")
+        # # Kiểm tra độ dài hợp lệ (8-15 số)
+        # if len(phone_number[1:]) < 11:
+        #     raise forms.ValidationError("Phone number must be between 8 and 15 digits after the country code.")
         
         # Kiểm tra tính hợp lệ bằng thư viện phonenumbers
         try:
             parsed_number = phonenumbers.parse(phone_number, None)
             if not phonenumbers.is_valid_number(parsed_number):
-                raise forms.ValidationError("Invalid phone number for the given country code.")
+                raise forms.ValidationError("Số điện thoại không hợp lệ cho mã quốc gia đã cho.")
         except NumberParseException:
-            raise forms.ValidationError("Invalid phone number format.")
+            raise forms.ValidationError("Định dạng số điện thoại không hợp lệ.")
         if self.instance.pk:  # Trường hợp cập nhật thông tin
             if self.instance.phone_number == phone_number:
                 return phone_number  # Không kiểm tra nếu số điện thoại không thay đổi
         # Kiểm tra số điện thoại đã tồn tại
         if Account.objects.filter(phone_number=phone_number).exists():
-            raise forms.ValidationError("Phone number already exists.")
+            raise forms.ValidationError("Số điện thoại đã đăng ký.")
 
         
         return phone_number
@@ -557,8 +557,8 @@ class AdminAccountsForm(forms.ModelForm):
         # Kiểm tra nếu tất cả các trường này đều không được chọn
         if not any([is_active, is_admin, is_staff, is_superadmin]):
             raise forms.ValidationError(
-                "At least one of the following fields must be selected: "
-                "'is_active', 'is_admin', 'is_staff', or 'is_superadmin'."
+                "Ít nhất một trong các trường sau phải được chọn:"
+                "'Quyền hoạt động', 'Quyền quản trị viên', 'Quyền nhân viên' hoặc 'Quyền siêu quản trị viên'."
             )
 
         return cleaned_data
@@ -571,25 +571,25 @@ class UserProfileAdminForm(forms.ModelForm):
     def clean_user_profile_address(self):
         user_profile_address = self.cleaned_data.get('user_profile_address')
         if not user_profile_address:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return user_profile_address
     
     def clean_user_profile_country(self):
         user_profile_country = self.cleaned_data.get('user_profile_country')
         if not user_profile_country:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return user_profile_country
     
     def clean_user_profile_city(self):
         user_profile_city = self.cleaned_data.get('user_profile_city')
         if not user_profile_city:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return user_profile_city
     
     def clean_user_profile_village(self):
         user_profile_village = self.cleaned_data.get('user_profile_village')
         if not user_profile_village:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return user_profile_village
 
     def clean_user_profile_picture(self):
@@ -598,23 +598,23 @@ class UserProfileAdminForm(forms.ModelForm):
             if self.instance.user_profile_picture == user_profile_picture:
                 return user_profile_picture  # Không kiểm tra nếu số điện thoại không thay đổi
         if not user_profile_picture:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         return user_profile_picture
 
     def clean_user_profile_date_of_birth(self):
         user_profile_date_of_birth = self.cleaned_data.get('user_profile_date_of_birth')
         if not user_profile_date_of_birth:
-            raise forms.ValidationError("This field is required.")
+            raise forms.ValidationError("Trường này là bắt buộc")
         today = datetime.today().date()
         if user_profile_date_of_birth > today:
-            raise forms.ValidationError("Date of birth cannot be in the future.")
+            raise forms.ValidationError("Ngày sinh không thể ở trong tương lai.")
         age_limit = 18
         minimum_age_date = today - timedelta(days=age_limit * 365)
         if user_profile_date_of_birth > minimum_age_date:
-            raise forms.ValidationError(f"You must be at least {age_limit} years old.")
+            raise forms.ValidationError("Tuổi phải lớn hơn 18")
         max_age = 120
         max_age_date = today - timedelta(days=max_age * 365)
         if user_profile_date_of_birth < max_age_date:
-            raise forms.ValidationError(f"Age cannot be more than {max_age} years.")
+            raise forms.ValidationError("Tuổi phải nhỏ hơn 120")
 
         return user_profile_date_of_birth
