@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 COUNTRY_CHOICES = [
@@ -159,10 +160,10 @@ VILLAGE_CHOICES = {
 class MyAccountManager(BaseUserManager):
     def create_user(self, first_name, last_name, username, email, phone_number=None, date_of_birth=None, password=None, country=None, city=None, village=None,place=None):
         if not email:
-            raise ValueError('User must have an email address')
+            raise ValueError('Người dùng phải có địa chỉ thư điện tử')
         
         if not username:
-            raise ValueError('User must have a username')
+            raise ValueError('Người dùng phải có tên người dùng')
         
         user = self.model(
             email=self.normalize_email(email),

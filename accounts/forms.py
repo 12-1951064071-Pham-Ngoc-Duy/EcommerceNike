@@ -487,7 +487,7 @@ class AdminAccountsForm(forms.ModelForm):
         if self.instance.pk:  # Trường hợp cập nhật thông tin
             if self.instance.email == email:
                 return email  # Không kiểm tra nếu email không thay đổi
-        if Account.objects.filter(email=email).exists():
+        elif Account.objects.filter(email=email).exists():
             raise forms.ValidationError("Thư điện tử đã đăng ký")
         domain = email.split('@')[-1]
         if '.' not in domain:
@@ -564,7 +564,6 @@ class AdminAccountsForm(forms.ModelForm):
         return cleaned_data
 
 class UserProfileAdminForm(forms.ModelForm):
-    user_profile_picture = forms.ImageField(required=False, error_messages= {'invalid':("Image files only")}, widget=forms.FileInput)
     class Meta:
         model = UserProfile
         fields = ['user_profile_address', 'user_profile_picture', 'user_profile_country', 'user_profile_city', 'user_profile_village', 'user_profile_date_of_birth']

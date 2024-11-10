@@ -32,21 +32,21 @@ class AccountAdmin(UserAdmin):
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff  # Cho phép staff xem model này
 
-class UserProfileAdmin(admin.ModelAdmin):
-    def thumbnail(self, object):
-        if object.user_profile_picture and object.user_profile_picture.url:
-            return format_html('<img src="{}" width="30" style="border-radius:50%;">'.format(object.user_profile_picture.url))
-        else:
-            return format_html('<span style="color: gray;">Không có ảnh</span>')
-
-    thumbnail.short_description = 'Ảnh hồ sơ'
-
+class UserProfileAdmin(admin.ModelAdmin):  
     form = UserProfileAdminForm
     list_display = (
         'thumbnail', 'user', 'user_profile_country', 
         'user_profile_city', 'user_profile_village', 
         'user_profile_address', 'user_profile_date_of_birth'
-    )
+    )  
+    def thumbnail(self, object):
+        if object.user_profile_picture and object.user_profile_picture.url:
+            return format_html('<img src="{}" width="30" style="border-radius:50%;">'.format(object.user_profile_picture.url))
+        else:
+            return format_html('<span style="color: gray;">Không có ảnh</span>')
+        
+    thumbnail.short_description = 'Ảnh hồ sơ'
+    
     search_fields = ('user__email',)
 
     def has_view_permission(self, request, obj=None):
