@@ -99,8 +99,7 @@ class VariationForm(forms.ModelForm):
 
             if existing_variation.exists():
                 raise forms.ValidationError(
-                    f"Biến thể with danh mục biến thể '{variation_category}' "
-                    f"và giá trị '{variation_value}' đã tồn tại trong sản phẩm."
+                    f"Biến thể trường danh mục biến thể và giá trị đã tồn tại trong sản phẩm."
                 )
 
         return cleaned_data

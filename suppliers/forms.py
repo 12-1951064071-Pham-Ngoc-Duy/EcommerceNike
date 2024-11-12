@@ -69,7 +69,7 @@ class SupplierForm(forms.ModelForm):
         try:
             parsed_number = phonenumbers.parse(supplier_phone, None)
             if not phonenumbers.is_valid_number(parsed_number):
-                raise forms.ValidationError("Invalid phone number for the given country code.")
+                raise forms.ValidationError("Sai cấu trúc số điện thoại cho mã quốc gia")
         except NumberParseException:
             raise forms.ValidationError("Định dạng số điện thoại không hợp lệ.")
         
@@ -78,7 +78,7 @@ class SupplierForm(forms.ModelForm):
             if self.instance.supplier_phone == supplier_phone:
                 return supplier_phone  # Không kiểm tra nếu số điện thoại không thay đổi
         if Supplier.objects.filter(supplier_phone=supplier_phone).exists():
-            raise forms.ValidationError("Phone number already exists.")
+            raise forms.ValidationError("Số điện thoại đã tồn tại.")
         return supplier_phone
     
     def clean_supplier_address(self):
