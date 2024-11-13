@@ -9,10 +9,10 @@
             </div>
             <div class="box-categories-product">
               <div class="categories_product">
-                <a href="{% url 'store_by_gender' 'men' %}">Nam</a>
-                <a href="{% url 'store_by_gender' 'women' %}">Nữ</a>
-                <a href="{% url 'store_by_gender' 'kid' %}">Trẻ em</a>
-                <a href="{% url 'store_by_gender' 'unisex' %}">Nam Nữ</a>
+                <a href="{% url 'store_by_gender' 'Nam' %}">Nam</a>
+                <a href="{% url 'store_by_gender' 'Nữ' %}">Nữ</a>
+                <a href="{% url 'store_by_gender' 'Trẻ em' %}">Trẻ em</a>
+                <a href="{% url 'store_by_gender' 'Nam Nữ' %}">Nam Nữ</a>
             </div>
             </div>
                 <div class="d-flex">
@@ -138,6 +138,11 @@
                 <div class="item-infor mt-4">
                   <ul class="navbar-nav justify-content-end flex-grow-1">
                     <li class="nav-item">
+                      <a class="nav-link fw-bold text-dark" href="{% url 'dashboard' %}">
+                        <i class="bi bi-person-circle"></i> Thông tin tài khoản
+                      </a>
+                    </li>
+                    <li class="nav-item">
                       <a class="nav-link fw-bold text-dark" href="#">
                         <i class="bi bi-question-circle"></i> Hỗ trợ
                       </a>
@@ -159,7 +164,7 @@
                       {% endif %}
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link fw-bold text-dark" href="{% url 'home' %}">
+                      <a class="nav-link fw-bold text-dark" href="{% url 'store' %}">
                         <i class="bi bi-shop"></i> Tìm cửa hàng
                       </a>
                     </li>
