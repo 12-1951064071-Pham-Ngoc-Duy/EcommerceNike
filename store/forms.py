@@ -64,10 +64,8 @@ class ProductForm(forms.ModelForm):
 
     def clean_product_stock(self):
         stock = self.cleaned_data.get('product_stock')
-        if not stock:
-            raise forms.ValidationError('Trường này là bắt buộc')
-        if stock is None or stock <= 0:
-            raise forms.ValidationError("Giá trị sản phẩm không âm và lớn hơn 0")
+        if stock is None or stock < 0:
+            raise forms.ValidationError("Giá trị sản phẩm không âm")
         return stock
 
 class ReviewForm(forms.ModelForm):
