@@ -81,6 +81,9 @@ class SupplierAdmin(admin.ModelAdmin):
     form = SupplierForm
     list_display = ['supplier_name', 'supplier_email', 'supplier_phone', 'supplier_country', 'supplier_is_active']
     search_fields = ['supplier_name', 'supplier_email']
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        form.save_m2m()
 class StockEntryAdmin(admin.ModelAdmin):
     form = StockEntryForm
     list_display = ['product', 'supplier', 'quantity','total_value', 'unit_price']  # Hiển thị thông tin trong danh sách
