@@ -6,7 +6,7 @@
 .product-images {
     display: flex;
     justify-content: center;
-    align-items: center;
+    /* align-items: center; */
 }
 
 .main-image {

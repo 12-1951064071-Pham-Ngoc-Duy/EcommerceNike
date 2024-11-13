@@ -31,7 +31,6 @@
                             <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o{% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
                             <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o{% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
                             <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o{% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
-                            <span class="text-dark">{{ single_product.countReview }} đánh giá</span>
                             </span>
                         </div>
                         
@@ -62,69 +61,86 @@
                         {% endif %}
                     </div>
                 </form>
-                <div class="box-review-rating">
-                    {% if user.is_authenticated %}
-                        {% if orderproduct %}
-                    <form action="{% url 'submit_review' single_product.id %}" method="POST">
-                        {% csrf_token %}
-                        <h5>Đánh giá của bạn</h5>
-                        <div>
-                            <label>Đánh giá sản phẩm bằng sao?</label>
-                            <br>
-                            <div class="rate">
-                                <input type="radio" name="review_rating" id="rating10" value="5" required><label for="rating10" title="5"></label>
-                                <input type="radio" name="review_rating" id="rating9" value="4.5" required><label for="rating9" title="4.5" class="half"></label>
-                                <input type="radio" name="review_rating" id="rating8" value="4" required><label for="rating8" title="4"></label>
-                                <input type="radio" name="review_rating" id="rating7" value="3.5" required><label for="rating7" title="3.5" class="half"></label>
-                                <input type="radio" name="review_rating" id="rating6" value="3" required><label for="rating6" title="3"></label>
-                                <input type="radio" name="review_rating" id="rating5" value="2.5" required><label for="rating5" title="2.5" class="half"></label>
-                                <input type="radio" name="review_rating" id="rating4" value="2" required><label for="rating4" title="2"></label>
-                                <input type="radio" name="review_rating" id="rating3" value="1.5" required><label for="rating3" title="1.5" class="half"></label>
-                                <input type="radio" name="review_rating" id="rating2" value="1" required><label for="rating2" title="1"></label>
-                                <input type="radio" name="review_rating" id="rating1" value="0.5" required><label for="rating1" title="0.5" class="half"></label>
+                {% if user.is_authenticated %}
+                                    {% if orderproduct %}
+                                <form action="{% url 'submit_review' single_product.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <h5>Đánh giá của bạn</h5>
+                                    <div>
+                                        <label>Đánh giá sản phẩm bằng sao?</label>
+                                        <br>
+                                        <div class="rate">
+                                            <input type="radio" name="review_rating" id="rating10" value="5" required><label for="rating10" title="5"></label>
+                                            <input type="radio" name="review_rating" id="rating9" value="4.5" required><label for="rating9" title="4.5" class="half"></label>
+                                            <input type="radio" name="review_rating" id="rating8" value="4" required><label for="rating8" title="4"></label>
+                                            <input type="radio" name="review_rating" id="rating7" value="3.5" required><label for="rating7" title="3.5" class="half"></label>
+                                            <input type="radio" name="review_rating" id="rating6" value="3" required><label for="rating6" title="3"></label>
+                                            <input type="radio" name="review_rating" id="rating5" value="2.5" required><label for="rating5" title="2.5" class="half"></label>
+                                            <input type="radio" name="review_rating" id="rating4" value="2" required><label for="rating4" title="2"></label>
+                                            <input type="radio" name="review_rating" id="rating3" value="1.5" required><label for="rating3" title="1.5" class="half"></label>
+                                            <input type="radio" name="review_rating" id="rating2" value="1" required><label for="rating2" title="1"></label>
+                                            <input type="radio" name="review_rating" id="rating1" value="0.5" required><label for="rating1" title="0.5" class="half"></label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        Đề mục đánh giá:
+                                        <input class="form-control-review" type="text" name="review_subject" required>
+                                        <br>
+                                        Đánh giá:
+                                        <textarea class="form-control" name="review" rows="4" required></textarea>
+                                        <br>
+                                        <button type="submit" class="btn btn-dark">Đánh giá</button>
+                                    </div>
+                                </form>
+                                   {% endif %}
+                                {% endif %}
+                                <br>
+                                {% include "includes/alerts.html" %}
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <span>
+                                <span class="text-dark">Số đánh giá({{ single_product.countReview }})</span>
+                                <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o{% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.averageReview < 1.5 %}-o{% elif single_product.averageReview >= 1.5 and single_product.averageReview < 2 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.averageReview < 2.5 %}-o{% elif single_product.averageReview >= 2.5 and single_product.averageReview < 3 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.averageReview < 3.5 %}-o{% elif single_product.averageReview >= 3.5 and single_product.averageReview < 4 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                <i class="fa fa-star{% if single_product.averageReview < 4.5 %}-o{% elif single_product.averageReview >= 4.5 and single_product.averageReview < 5 %}-half-o {% endif %}" aria-hidden="true"></i>
+                                </span>
+                          </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                          <div class="accordion-body">
+                            <div class="box-review-rating">
+                                {% for review in reviews %}
+                                <article class="box mb-3 p-2" style="border:1px solid gray; border-radius:10px">
+                                    <div class="icontext w-100">
+                                        {% comment %} <img src="./images/avatars/avatar1.jpg" class="img-xs icon rounded-circle"> {% endcomment %}
+                                        <div class="text" style="align-item:center">
+                                            <span class="date text-muted" style="float:right">{{ review.review_updated_at }}</span>  
+                                            <h6 class="mb-1">{{ review.user.full_name }}</h6>
+                                            <div class="rating-star">
+                                                <span>
+                                                <i class="fa fa-star{% if review.review_rating == 0.5 %}-half-o{% elif review.review_rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if review.review_rating == 1.5 %}-half-o{% elif review.review_rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if review.review_rating == 2.5 %}-half-o{% elif review.review_rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if review.review_rating == 3.5 %}-half-o{% elif review.review_rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
+                                                <i class="fa fa-star{% if review.review_rating == 4.5 %}-half-o{% elif review.review_rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div> <!-- icontext.// -->
+                                    <div class="mt-3">
+                                        <h6 class="fw-bold">{{ review.review_subject }}</h6>
+                                        <p>{{ review.review }}</p>	
+                                    </div>
+                                </article>
+                                {% endfor %}
                             </div>
+                          </div>
                         </div>
-                        <span class="text-dark">{{ single_product.countReview }} đánh giá</span>
-                        <div>
-                            Đề mục đánh giá:
-                            <input class="form-control-review" type="text" name="review_subject">
-                            <br>
-                            Đánh giá:
-                            <textarea class="form-control" name="review" rows="4"></textarea>
-                            <br>
-                            
-                                <input type="submit" class="btn btn-dark" value="Đánh giá">
-                        </div>
-                    </form>
-                       {% endif %}
-                    {% endif %}
-                    <br>
-                    {% include "includes/alerts.html" %}
-                    <br>
-                    {% for review in reviews %}
-                    <article class="box mb-3 p-2" style="border:1px solid gray; border-radius:10px">
-                        <div class="icontext w-100">
-                            {% comment %} <img src="./images/avatars/avatar1.jpg" class="img-xs icon rounded-circle"> {% endcomment %}
-                            <div class="text" style="align-item:center">
-                                <span class="date text-muted" style="float:right">{{ review.review_updated_at }}</span>  
-                                <h6 class="mb-1">{{ review.user.full_name }}</h6>
-                                <div class="rating-star">
-                                    <span>
-                                    <i class="fa fa-star{% if review.review_rating == 0.5 %}-half-o{% elif review.review_rating < 1 %}-o {% endif %}" aria-hidden="true"></i>
-                                    <i class="fa fa-star{% if review.review_rating == 1.5 %}-half-o{% elif review.review_rating < 2 %}-o {% endif %}" aria-hidden="true"></i>
-                                    <i class="fa fa-star{% if review.review_rating == 2.5 %}-half-o{% elif review.review_rating < 3 %}-o {% endif %}" aria-hidden="true"></i>
-                                    <i class="fa fa-star{% if review.review_rating == 3.5 %}-half-o{% elif review.review_rating < 4 %}-o {% endif %}" aria-hidden="true"></i>
-                                    <i class="fa fa-star{% if review.review_rating == 4.5 %}-half-o{% elif review.review_rating < 5 %}-o {% endif %}" aria-hidden="true"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div> <!-- icontext.// -->
-                        <div class="mt-3">
-                            <h6 class="fw-bold">{{ review.review_subject }}</h6>
-                            <p>{{ review.review }}</p>	
-                        </div>
-                    </article>
-                    {% endfor %}
+                      </div>
                 </div>
             </div>
     </div>

@@ -75,7 +75,7 @@ class Product(models.Model):
         reviews = ReviewRating.objects.filter(product=self, review_status=True).aggregate(count=Count('id'))
         count = 0
         if reviews['count'] is not None:
-            count = float(reviews['count'])
+            count = int(reviews['count'])
         return count
     
     def update_stock(self, quantity):
