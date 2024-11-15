@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from django.db.models import Sum
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
-from django.utils import timezone
+from datetime import timezone
 from decimal import Decimal
 
 def export_profit_to_excel(modeladmin, request, queryset):

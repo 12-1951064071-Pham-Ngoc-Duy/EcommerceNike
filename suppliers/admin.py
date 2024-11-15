@@ -37,14 +37,14 @@ def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
 
     # Tạo sheet cho từng trường (ngày, tháng, năm)
     day_sheet = workbook.active  # Sheet mặc định là cho ngày
-    day_sheet.title = 'Daily Costs'
-    month_sheet = workbook.create_sheet(title='Monthly Costs')
-    year_sheet = workbook.create_sheet(title='Yearly Costs')
+    day_sheet.title = 'Ngày'
+    month_sheet = workbook.create_sheet(title='Tháng')
+    year_sheet = workbook.create_sheet(title='Năm')
 
     # Thêm tiêu đề cho các cột
-    day_sheet.append(['Day', 'Total Cost'])
-    month_sheet.append(['Month', 'Total Cost'])
-    year_sheet.append(['Year', 'Total Cost'])
+    day_sheet.append(['Ngày', 'Tổng Ngày'])
+    month_sheet.append(['Tháng', 'Tổng Tháng'])
+    year_sheet.append(['Năm', 'Tổng Năm'])
 
     # Thêm dữ liệu vào sheet cho Ngày
     total_daily_cost = 0  # Biến để giữ tổng chi phí trong ngày
@@ -65,9 +65,9 @@ def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
         year_sheet.append([entry['year'], float(entry['total_cost'])])
 
     # Thêm hàng tổng cộng vào mỗi sheet
-    day_sheet.append(['Total', total_daily_cost])
-    month_sheet.append(['Total', total_monthly_cost])
-    year_sheet.append(['Total', total_yearly_cost])
+    day_sheet.append(['Tổng Ngày', total_daily_cost])
+    month_sheet.append(['Tổng Tháng', total_monthly_cost])
+    year_sheet.append(['Tổng Năm', total_yearly_cost])
 
     # Thiết lập response để trả về file Excel
     response = HttpResponse(
