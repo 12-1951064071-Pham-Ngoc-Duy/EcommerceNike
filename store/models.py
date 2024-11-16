@@ -3,7 +3,7 @@ from django.urls import reverse
 from accounts.models import Account
 from category.models import Category
 from django.db.models import Avg, Count
-
+from django.apps import apps
 from suppliers.models import Supplier
 
 # Create your models here.
@@ -41,28 +41,34 @@ class Product(models.Model):
     product_name = models.CharField(max_length=200,verbose_name = "Tên sản phẩm")
     product_slug = models.SlugField(max_length=200, unique=True,verbose_name = "Tên nguồn sản phẩm")
     product_description = models.TextField(max_length=500, blank=True,verbose_name = "Mô tả sản phẩm")
-    product_price = models.IntegerField(verbose_name = "Gía")
+    product_price = models.IntegerField(verbose_name = "Gía", default=0)
     product_images = models.ImageField(upload_to="photos/products",verbose_name = "Ảnh sản phẩm")
-    product_stock = models.IntegerField(verbose_name = "Tồn kho")
+    product_stock = models.IntegerField(verbose_name = "Tồn kho", default=0)
     product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Nam Nữ',verbose_name = "Giới tính")
     product_made_in = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default='Vietnam',verbose_name = "Nơi sản xuất")
     product_is_availabel = models.BooleanField(default=True,verbose_name = "Có sẵn")
     category = models.ForeignKey(Category, on_delete=models.CASCADE,verbose_name = "Danh mục")
     product_created_date = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
     product_modifield_date = models.DateTimeField(auto_now=True,verbose_name = "Thời gian sửa đổi")
-    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products',verbose_name = "Nhà cung cấp")
+    supplier = models.ForeignKey('suppliers.Supplier', on_delete=models.SET_NULL, null=True, blank=True, related_name='supplied_products',verbose_name = "Nhà cung cấp")
     class Meta:
         verbose_name = 'Sản phẩm'
         verbose_name_plural = 'Sản phẩm'
 
     def count_colors(self):
-        return Variation.objects.filter(product=self, variation_category='color', variation_is_active=True).count()
+        # Tránh vòng lặp import
+        Variation = apps.get_model('store', 'Variation')
+        return Variation.objects.filter(
+            product=self,
+            variation_category='color',
+            variation_is_active=True
+        ).count()
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
 
     def __str__(self):
-        return self.product_name
+        return self.product_slug
     
     def averageReview(self):
         reviews = ReviewRating.objects.filter(product=self, review_status=True).aggregate(average=Avg('review_rating'))
@@ -78,15 +84,10 @@ class Product(models.Model):
             count = int(reviews['count'])
         return count
     
-    def update_stock(self, quantity):
-        self.product_stock += quantity
+    def update_total_stock(self):
+        total_stock = sum(variation.stock for variation in self.variation_set.all())
+        self.product_stock = total_stock  # Giả sử bạn có trường `product_stock` để lưu tổng tồn kho
         self.save()
-
-class VariationManager(models.Manager):
-    def colors(self):
-        return super(VariationManager, self).filter(variation_category='color', variation_is_active=True)
-    def sizes(self):
-        return super(VariationManager, self).filter(variation_category='size', variation_is_active=True)
 
 variation_category_choice = (
     ('color', 'Màu sắc'),
@@ -97,16 +98,21 @@ class Variation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
     variation_category = models.CharField(max_length=100, choices=variation_category_choice,verbose_name = "Danh mục biến thể")
     variation_value = models.CharField(max_length=100,verbose_name = "Gía trị")
+    variation_image = models.ImageField(upload_to='variations/', blank=True, null=True, verbose_name="Ảnh màu sắc")
+    stock = models.IntegerField(default=0, verbose_name="Tồn kho")
     variation_is_active = models.BooleanField(default=True,verbose_name = "Hoạt động")
     variation_created_date = models.DateTimeField(auto_now=True,verbose_name = "Thời gian tạo")
     class Meta:
         verbose_name = 'Biến thể'
         verbose_name_plural = 'Biến thể'
 
-    objects = VariationManager()
+    def save(self, *args, **kwargs):
+        # Lưu biến thể
+        super().save(*args, **kwargs)
+        self.product.update_total_stock()
 
     def __str__(self):
-        return self.variation_value
+        return f"{self.variation_category} - {self.variation_value}"
     
 class ReviewRating(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")

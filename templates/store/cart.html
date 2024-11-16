@@ -11,12 +11,22 @@
     <div class="cart-products">
         <h2>Giỏ hàng</h2>
         {% for cart_item in cart_items %}
-        
         <div class="cart-item">
             <img src="{{ cart_item.product.product_images.url }}" alt="Product 1" class="cart-image">
             <div class="cart-details">
                 <h3 class="cart-name"><a class="text-dark" style="text-decoration:none" href="{{ cart_item.product.get_url }}">{{ cart_item.product.product_name }}</a></h3>
-                {% comment %} Quantity {% endcomment %}
+    
+                <!-- Hiển thị thông tin màu sắc và kích cỡ đã chọn -->
+                <p class="text-muted small">
+                    {% for item in cart_item.variations.all %}
+                        {% if item.variation_category == "color" %}
+                            Màu sắc: {{ item.variation_value | capfirst }}<br>
+                        {% elif item.variation_category == "size" %}
+                            Kích cỡ: {{ item.variation_value | capfirst }}<br>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+    
                 <div class="input-group-cart mt-2 mb-2">
                     <a href="{% url 'remove_cart' cart_item.product.id cart_item.id %}" class="btn-minus" type="button" id="btn-minus">
                       <i class="bi bi-dash text-dark fs-5"></i>
@@ -25,25 +35,14 @@
                     <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
                         {% csrf_token %}
                         {% for item in cart_item.variations.all %}
-                        <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
+                            <input type="hidden" name="{{ item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
                         {% endfor %}
                         <button type="submit" id="btn-plus">
                             <i class="bi bi-plus text-dark fs-5"></i>
                         </button>
                     </form>
                 </div>
-                {% comment %} Quantity {% endcomment %}
-                <p class="text-muted small">
-                    {% if cart_item.variations.all %}
-                        {% for item in cart_item.variations.all %}
-                            {% if item.variation_category == "color" %}
-                                Màu sắc: {{ item.variation_value | capfirst }}<br>
-                            {% elif item.variation_category == "size" %}
-                                Kích cỡ: {{ item.variation_value | capfirst }}<br>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </p>
+    
                 <div class="box-icon-cart d-flex align-items-center mt-auto">
                     <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" onclick="return confirm('Bạn muốn xóa sản phẩm này?')"><p class="mb-0"><i class="bi bi-trash3 fs-5 text-secondary"></i></p></a>
                 </div>
@@ -55,6 +54,7 @@
         </div>
         {% endfor %}
     </div>
+    
 
     <!-- Phần 2: Thông tin thanh toán -->
     <div class="cart-summary">

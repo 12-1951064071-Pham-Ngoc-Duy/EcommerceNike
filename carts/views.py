@@ -20,31 +20,48 @@ def add_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product_variation = []
 
-    # Lấy các biến thể từ POST request
     if request.method == "POST":
-        for item in request.POST:
-            key = item
-            value = request.POST[key]
+        # Lấy giá trị của màu sắc và kích cỡ đã chọn từ POST
+        selected_color = request.POST.get('color')  # Lấy giá trị của màu sắc đã chọn
+        selected_size = request.POST.get('size')  # Lấy giá trị của kích cỡ đã chọn
+
+        # Kiểm tra nếu có màu sắc được chọn và tìm variation tương ứng
+        if selected_color:
             try:
-                variation = Variation.objects.get(
+                # Tìm variation tương ứng với màu sắc đã chọn
+                color_variation = Variation.objects.get(
                     product=product,
-                    variation_category__iexact=key,
-                    variation_value__iexact=value,
+                    variation_category='color',  # Kiểm tra biến thể là màu sắc
+                    variation_value=selected_color,
                 )
-                product_variation.append(variation)
+                product_variation.append(color_variation)  # Thêm vào danh sách variations
             except Variation.DoesNotExist:
-                pass
+                pass  # Nếu không tìm thấy, bỏ qua
+
+        # Kiểm tra nếu có kích cỡ được chọn và tìm variation tương ứng
+        if selected_size:
+            try:
+                # Tìm variation tương ứng với kích cỡ đã chọn
+                size_variation = Variation.objects.get(
+                    product=product,
+                    variation_category='size',  # Kiểm tra biến thể là kích cỡ
+                    variation_value=selected_size,
+                )
+                product_variation.append(size_variation)  # Thêm vào danh sách variations
+            except Variation.DoesNotExist:
+                pass  # Nếu không tìm thấy, bỏ qua
 
     # Tạo hoặc lấy giỏ hàng theo session
-    cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
+    cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
 
     if current_user.is_authenticated:
-        # Kiểm tra xem Cart của người dùng đã tồn tại hay chưa
+        # Kiểm tra xem CartItem đã tồn tại trong giỏ hàng của người dùng chưa
         cart_items = CartItem.objects.filter(product=product, user=current_user, cart=cart)
     else:
+        # Nếu người dùng không đăng nhập, tìm CartItem theo session
         cart_items = CartItem.objects.filter(product=product, cart=cart)
 
-    # Kiểm tra xem biến thể đã tồn tại trong giỏ hàng chưa
+    # Kiểm tra xem sản phẩm có biến thể giống nhau đã có trong giỏ hàng chưa
     existing_cart_item = None
     for item in cart_items:
         if set(item.variations.all()) == set(product_variation):
@@ -52,19 +69,20 @@ def add_cart(request, product_id):
             break
 
     if existing_cart_item:
-        # Nếu đã có cùng biến thể, tăng số lượng
+        # Nếu đã có cùng biến thể, tăng số lượng sản phẩm
         existing_cart_item.cart_item_quantity += 1
         existing_cart_item.save()
     else:
-        # Nếu chưa có, tạo mới
+        # Nếu chưa có, tạo mới CartItem
         cart_item = CartItem.objects.create(
             product=product,
             cart_item_quantity=1,
             user=current_user if current_user.is_authenticated else None,
-            cart=cart,  # Luôn gán cart cho CartItem, bất kể người dùng có đăng nhập hay không
+            cart=cart,  # Gán Cart vào CartItem
         )
+        # Lưu các biến thể vào CartItem
         if product_variation:
-            cart_item.variations.add(*product_variation)
+            cart_item.variations.add(*product_variation)  # Thêm các variations vào CartItem
         cart_item.save()
 
     return redirect('cart')

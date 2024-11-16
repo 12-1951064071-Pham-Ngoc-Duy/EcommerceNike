@@ -138,7 +138,29 @@ input:checked + label:hover, input:checked ~ label:hover, input:checked ~ label:
 label:hover ~ input:checked ~ label{
     color: #cc9000;
 }
+/* Đặt màu nền mặc định cho nút */
+.size-label {
+    background-color: white;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
+/* Khi nút radio được chọn */
+.size-label.selected {
+    background-color: black; /* Màu nền khi chọn (có thể thay đổi) */
+    color: white; /* Màu chữ khi chọn */
+}
+.color-img {
+    border: 0px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.color-img.selected {
+    border: 2px solid black;
+}
 @media (max-width: 1200px) {
     .product-info-container{
         max-height: 468px;

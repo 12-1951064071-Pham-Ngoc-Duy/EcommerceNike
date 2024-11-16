@@ -52,21 +52,6 @@ class ProductForm(forms.ModelForm):
         if Product.objects.filter(product_slug=product_slug).exists():
             raise forms.ValidationError("Nguồn sản phẩm đã tồn tại")
         return product_slug
-    
-
-    def clean_product_price(self):
-        price = self.cleaned_data.get('product_price')
-        if not price:
-            raise forms.ValidationError('Trường này là bắt buộc')
-        if price < 0:
-            raise forms.ValidationError("Giá trị sản phẩm không âm")
-        return price
-
-    def clean_product_stock(self):
-        stock = self.cleaned_data.get('product_stock')
-        if stock is None or stock < 0:
-            raise forms.ValidationError("Giá trị sản phẩm không âm")
-        return stock
 
 class ReviewForm(forms.ModelForm):
     class Meta:

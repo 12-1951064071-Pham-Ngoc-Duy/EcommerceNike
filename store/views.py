@@ -1,10 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect , get_object_or_404
-from django.db.models import Q
+from django.db.models import Q, Count
 from carts.models import CartItem
 from orders.models import OrderProduct
 from store.forms import ReviewForm
-from .models import GENDER_CHOICES, Product, ProductGallery, ReviewRating
+from .models import GENDER_CHOICES, Product, ProductGallery, ReviewRating, Variation
 from category.models import Category
 from carts.views import _cart_id
 from django.core.paginator import EmptyPage, PageNotAnInteger,Paginator
@@ -73,11 +73,11 @@ def store(request, category_slug_path=None):
 
 def product_detail(request, category_slug_path, product_slug_path):
     try:
-        single_product = Product.objects.get(category__category_slug = category_slug_path, product_slug=product_slug_path)
-        in_cart = CartItem.objects.filter(cart__cart_id = _cart_id(request), product=single_product).exists()
+        single_product = Product.objects.get(category__category_slug=category_slug_path, product_slug=product_slug_path)
+        in_cart = CartItem.objects.filter(cart__cart_id=_cart_id(request), product=single_product).exists()
     except Exception as e:
         raise e
-    
+
     if request.user.is_authenticated:
         try:
             orderproduct = OrderProduct.objects.filter(user=request.user, product_id=single_product.id).exists()
@@ -85,20 +85,30 @@ def product_detail(request, category_slug_path, product_slug_path):
             orderproduct = None
     else:
         orderproduct = None
-    
-    #get the reivew
+
+    # Get reviews
     reviews = ReviewRating.objects.filter(product_id=single_product.id, review_status=True)
 
+    # Get product gallery
     product_gallery = ProductGallery.objects.filter(product_id=single_product.id)
+    colors = Variation.objects.filter(product=single_product, variation_category='color', variation_is_active=True)
+    sizes = Variation.objects.filter(product=single_product, variation_category='size', variation_is_active=True)
+
+    # Get other products with the same name
+    related_products = Product.objects.filter(product_name=single_product.product_name).exclude(id=single_product.id)
 
     context = {
         'single_product': single_product,
         'in_cart': in_cart,
-        'orderproduct':orderproduct,
+        'orderproduct': orderproduct,
         'reviews': reviews,
         'product_gallery': product_gallery,
+        'colors': colors,
+        'sizes': sizes,
+        'related_products': related_products,
     }
     return render(request, 'store/product_detail.html', context)
+
 
 def search(request):
     products = Product.objects.order_by('-product_created_date')

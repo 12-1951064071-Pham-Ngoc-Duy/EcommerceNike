@@ -16,7 +16,7 @@
     <link href="{% static 'css/slide-header.css' %}" rel="stylesheet" />
     <link href="{% static 'css/banner-link.css' %}" rel="stylesheet" />
     <link href="{% static 'css/store.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/product-dt.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/product-detail.css' %}" rel="stylesheet" />
     <link href="{% static 'css/cart.css' %}" rel="stylesheet" />
     <link href="{% static 'css/register.css' %}" rel="stylesheet" />
     <link href="{% static 'css/login1.css' %}" rel="stylesheet" />
@@ -255,6 +255,57 @@
         });
     });
     </script>
+    <script>
+      // Lấy tất cả các radio button trong phần Kích cỡ
+      const sizeRadios = document.querySelectorAll('input[name="size"]');
+  
+      // Lặp qua từng radio và thêm sự kiện thay đổi
+      sizeRadios.forEach(radio => {
+          radio.addEventListener('change', function() {
+              // Xóa lớp 'selected' khỏi tất cả các label
+              document.querySelectorAll('.size-label').forEach(label => {
+                  label.classList.remove('selected');
+              });
+  
+              // Thêm lớp 'selected' vào label của radio được chọn
+              this.parentElement.classList.add('selected');
+          });
+      });
+  </script>
+  <script>
+    // Lấy tất cả các ảnh trong phần sản phẩm liên quan
+    const relatedProductImages = document.querySelectorAll('.related-product img');
+
+    // Lặp qua từng ảnh và thêm sự kiện click
+    relatedProductImages.forEach(image => {
+        image.addEventListener('click', function() {
+            // Lấy id của sản phẩm từ thuộc tính id của ảnh
+            const productId = this.parentElement.querySelector('input').id;
+
+            // Chọn input radio tương ứng
+            document.getElementById(productId).checked = true;
+        });
+    });
+</script>
+<script>
+  // Lấy tất cả radio buttons cho màu sắc
+  const colorRadios = document.querySelectorAll('input[name="color"]');
+
+  colorRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+          // Xóa lớp 'selected' khỏi tất cả các ảnh
+          document.querySelectorAll('.color-img').forEach(img => {
+              img.classList.remove('selected');
+          });
+
+          // Thêm lớp 'selected' vào ảnh được chọn
+          const selectedImage = document.querySelector(`label[for="${this.id}"] .color-img`);
+          if (selectedImage) {
+              selectedImage.classList.add('selected');
+          }
+      });
+  });
+</script>
     <script src="{% static 'js/style.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/dashboard.js' %}" type="text/javascript"></script> 
     <script src="{% static 'js/alerts.js' %}" type="text/javascript"></script> 

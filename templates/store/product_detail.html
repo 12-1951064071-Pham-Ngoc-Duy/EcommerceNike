@@ -21,7 +21,7 @@
 
         <!-- Phần 2: Thông tin sản phẩm -->
         <div class="col-lg-5 col-12 product-info-container">
-                <form action="{% url 'add_cart' single_product.id %}" method="POST">
+                <form braction="{% url 'add_cart' single_product.id %}" method="POST">
                     {% csrf_token %}
                         <h2 class="product-name">{{ single_product.product_name }}</h2>
                         <div class="rating-star">
@@ -35,22 +35,46 @@
                         </div>
                         
                         <p><strong>Gía:</strong> ${{ single_product.product_price }}</p>
-                        <div class="item-color-select mb-4">
-                            <select name="color" class="form-select" required>
-                                <option value="" disabled selected>Chọn màu sắc</option>
-                                {% for i in single_product.variation_set.colors %}
-                                <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
+                        <!-- Hiển thị màu sắc dưới dạng ảnh -->
+                        <div class="colors">
+                            <h4>Màu sắc:</h4>
+                            
+                            <!-- Hiển thị các màu sắc -->
+                            {% for color in colors %}
+                                <!-- Ẩn radio button nhưng khi chọn ảnh sẽ lấy giá trị màu sắc -->
+                                <input type="radio" name="color" value="{{ color.variation_value }}" id="color-{{ color.variation_value }}" class="color-radio" style="display:none;" required/>
+                                
+                                <label for="color-{{ color.variation_value }}" class="color-label">
+                                    <!-- Ảnh màu sắc sẽ được hiển thị -->
+                                    <img src="{{ color.product.product_images.url }}" alt="{{ color.variation_value }}" class="color-img" style="width: 50px; height: 60px;">
+                                </label>
+                            {% endfor %}
+                            
+                            <!-- Hiển thị các sản phẩm liên quan (cùng tên sản phẩm) -->
+                            <div class="related-products" style="display: inline-block; margin: 5px;">
+                                {% for related_product in related_products %}
+                                    <a href="{{ related_product.get_url }}" style="text-decoration:none" class="related-product">
+                                        <img src="{{ related_product.product_images.url }}" alt="{{ related_product.product_name }}" style="width: 50px; height: 60px;">
+                                    </a>
                                 {% endfor %}
-                            </select>
+                            </div>
                         </div>
-                        <div class="item-color-select mb-4" >
-                            <select name="size" class="form-select" required>
-                                <option value="" disabled selected>Chọn kích cỡ</option>
-                                {% for i in single_product.variation_set.sizes %}
-                                <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+
+
+
+<!-- Hiển thị kích cỡ dưới dạng button -->
+<div class="sizes">
+    <h4>Kích cỡ:</h4>
+    {% for size in sizes %}
+        <label class="btn btn-outline-dark size-label">
+            <input type="radio" name="size" value="{{ size.variation_value }}" style="display:none;" required>
+            <span>{{ size.variation_value }}</span>
+        </label>
+    {% endfor %}
+</div>
+
+
+
                         <p><strong>Ghi chú:</strong> {{ single_product.product_description }}</p>
                         <p><strong>Sản xuất bởi:</strong> {{ single_product.supplier }}</p>
                     <div class="product-actions mb-4">
@@ -94,7 +118,6 @@
                                 </form>
                                    {% endif %}
                                 {% endif %}
-                                <br>
                                 {% include "includes/alerts.html" %}
                 <div class="accordion" id="accordionExample">
                     <div class="accordion-item">
@@ -148,4 +171,3 @@
 
 
 {% endblock content %}
-
