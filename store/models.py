@@ -56,13 +56,25 @@ class Product(models.Model):
         verbose_name_plural = 'Sản phẩm'
 
     def count_colors(self):
-        # Tránh vòng lặp import
+    # Tránh vòng lặp import
         Variation = apps.get_model('store', 'Variation')
-        return Variation.objects.filter(
-            product=self,
-            variation_category='color',
-            variation_is_active=True
-        ).count()
+    
+    # Lấy tất cả sản phẩm có tên giống nhau
+        same_name_products = Product.objects.filter(product_name=self.product_name)
+    
+    # Biến lưu tổng số màu
+        total_colors = 0
+    
+    # Lặp qua tất cả các sản phẩm có tên giống nhau
+        for product in same_name_products:
+        # Cộng dồn số lượng màu của từng sản phẩm
+            total_colors += Variation.objects.filter(
+                product=product,
+                variation_category='color',
+                variation_is_active=True
+            ).count()
+
+        return total_colors
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
@@ -96,8 +108,8 @@ variation_category_choice = (
 
 class Variation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
-    variation_category = models.CharField(max_length=100, choices=variation_category_choice,verbose_name = "Danh mục biến thể")
-    variation_value = models.CharField(max_length=100,verbose_name = "Gía trị")
+    variation_category = models.CharField(max_length=100, choices=variation_category_choice,verbose_name = "Danh mục biến thể", blank=True, null=True)
+    variation_value = models.CharField(max_length=100,verbose_name = "Gía trị",blank=True, null=True)
     variation_image = models.ImageField(upload_to='variations/', blank=True, null=True, verbose_name="Ảnh màu sắc")
     stock = models.IntegerField(default=0, verbose_name="Tồn kho")
     variation_is_active = models.BooleanField(default=True,verbose_name = "Hoạt động")
