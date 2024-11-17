@@ -61,7 +61,12 @@
                                                     <p class="text-muted small">
                                                         {% if item.variations.all %}
                                                            {% for i in item.variations.all %}
-                                                              {{ i.variation_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
+                                                           {% if i.variation_category == "color" %}
+                                                               Màu sắc: {{ i.variation_color | capfirst }}<br>
+                                                           {% endif %}
+                                                           {% if i.variation_value == "size" %}
+                                                               Kích cỡ: {{ i.variation_size | capfirst }}<br>
+                                                           {% endif %}
                                                            {% endfor %}
                                                         {% endif %}
                                                     </p>

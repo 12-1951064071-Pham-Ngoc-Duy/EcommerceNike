@@ -128,15 +128,14 @@
                     <h3 class="cart-name"><a class="text-dark" style="text-decoration:none" href="{{ cart_item.product.get_url }}">{{ cart_item.product.product_name }}</a></h3>
                     <p class="mt-2">Số lượng: {{ cart_item.cart_item_quantity }}</p>
                     <p class="text-muted small">
-                        {% if cart_item.variations.all %}
-                        {% for item in cart_item.variations.all %}
-                        {% if item.variation_category == "color" %}
-                            Màu sắc: {{ item.variation_value | capfirst }} <br>
-                        {% elif item.variation_category == "size" %}
-                            Kích cỡ: {{ item.variation_value | capfirst }} <br>
-                        {% endif %}
-                    {% endfor %}
-                        {% endif %}
+                      {% for item in cart_item.variations.all %}
+                      {% if item.variation_category == "color" %}
+                          Màu sắc: {{ item.variation_color | capfirst }}<br>
+                      {% endif %}
+                      {% if item.variation_value == "size" %}
+                          Kích cỡ: {{ item.variation_size | capfirst }}<br>
+                      {% endif %}
+                      {% endfor %}
                     </p>
                 </div>
                 <div class="box-price-cart">

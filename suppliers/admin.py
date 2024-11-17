@@ -86,7 +86,7 @@ class SupplierAdmin(admin.ModelAdmin):
         form.save_m2m()
 class StockEntryAdmin(admin.ModelAdmin):
     form = StockEntryForm
-    fields = ['product', 'supplier', 'quantity','total_value', 'unit_price','stock_category','stock_value']
+    fields = ['product', 'supplier', 'quantity','total_value', 'unit_price','stock_category','stock_color','stock_value','stock_size']
     list_display = ['product', 'supplier', 'quantity','total_value', 'unit_price']  # Hiển thị thông tin trong danh sách
     readonly_fields = ['total_value']
     search_fields = ['supplier__supplier_name']

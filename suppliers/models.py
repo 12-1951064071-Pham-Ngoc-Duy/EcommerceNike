@@ -50,6 +50,8 @@ class Supplier(models.Model):
 
 stockentry_category_choice = (
     ('color', 'Màu sắc'),
+)
+stockentry_value_choice = (
     ('size', 'Kích cỡ'),
 )
     
@@ -57,8 +59,10 @@ class StockEntry(models.Model):
     product = models.ForeignKey('store.Product', on_delete=models.CASCADE,verbose_name = "Tên nguồn sản phẩm")
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,verbose_name = "Nhà cung cấp")
     quantity = models.IntegerField(verbose_name = "Số lượng")
-    stock_category = models.CharField(max_length=100, verbose_name="Danh mục",choices=stockentry_category_choice,blank=True,null=True)
-    stock_value = models.CharField(max_length=100, verbose_name="Gía trị", blank=True, null=True)
+    stock_category = models.CharField(max_length=100, verbose_name="Danh mục màu sắc",choices=stockentry_category_choice,blank=True,null=True)
+    stock_color = models.CharField(max_length=50, verbose_name="Màu sắc", blank=True,null=True)
+    stock_value = models.CharField(max_length=100, verbose_name="Danh mục kích cỡ",choices=stockentry_value_choice, blank=True, null=True)
+    stock_size = models.CharField(max_length=50, verbose_name="Kích cỡ", blank=True,null=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2,verbose_name = "Đơn giá")
     total_value = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name = "Tổng giá trị")  # Tổng giá trị
     entry_date = models.DateTimeField(auto_now_add=True,verbose_name = "Ngày nhập")
@@ -67,54 +71,58 @@ class StockEntry(models.Model):
         verbose_name_plural = 'Nhập kho'
 
     def save(self, *args, **kwargs):
-    # Tính tổng giá trị
+        # Tính tổng giá trị
         self.total_value = self.unit_price * self.quantity
 
-    # Lấy model Variation để tránh vòng lặp import
+        # Lấy model Variation để tránh vòng lặp import
         Variation = apps.get_model('store', 'Variation')
 
-        if self.stock_category == 'color':
-        # Kiểm tra biến thể màu sắc
+        stock_difference = self.quantity - self._get_previous_quantity()
+
+        if self.stock_category == 'color' and self.stock_color:
+            # Kiểm tra biến thể màu sắc
             color_variation = Variation.objects.filter(
                 product=self.product,
                 variation_category='color',
-                variation_value=self.stock_value,
+                variation_color=self.stock_color,
                 variation_is_active=True
             ).first()
+
             if not color_variation:
                 raise ValidationError("Màu sắc không hợp lệ!")
-        
-        # Cập nhật tồn kho biến thể màu sắc
-            stock_difference = self.quantity - self._get_previous_quantity()
+
+            # Cập nhật tồn kho biến thể màu sắc
             color_variation.stock += stock_difference
             color_variation.save()
 
-        elif self.stock_category == 'size':
-        # Kiểm tra biến thể kích cỡ
+        elif self.stock_value == 'size' and self.stock_size:
+            # Kiểm tra biến thể kích cỡ
             size_variation = Variation.objects.filter(
                 product=self.product,
-                variation_category='size',
-                variation_value=self.stock_value,
+                variation_value='size',
+                variation_size=self.stock_size,
                 variation_is_active=True
             ).first()
+
             if not size_variation:
                 raise ValidationError("Kích cỡ không hợp lệ!")
-        
-        # Cập nhật tồn kho biến thể kích cỡ
-            stock_difference = self.quantity - self._get_previous_quantity()
+
+            # Cập nhật tồn kho biến thể kích cỡ
             size_variation.stock += stock_difference
             size_variation.save()
- 
-    # Cập nhật tổng tồn kho sản phẩm
+
+        # Cập nhật tổng tồn kho sản phẩm
         self.product.update_total_stock()
         self.product.product_price = self.unit_price
         self.product.save()
 
-    # Lưu StockEntry
+        # Lưu StockEntry
         super().save(*args, **kwargs)
-    
-    def _get_previous_quantity(self):
 
+    def _get_previous_quantity(self):
+        """
+        Lấy số lượng của StockEntry trước đó để tính toán chênh lệch tồn kho.
+        """
         if self.pk:
             try:
                 previous_entry = StockEntry.objects.get(pk=self.pk)
@@ -122,7 +130,6 @@ class StockEntry(models.Model):
             except StockEntry.DoesNotExist:
                 return 0
         return 0
-
 
     def __str__(self):
         return f"{self.product} - {self.quantity}"

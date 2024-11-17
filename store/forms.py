@@ -61,29 +61,38 @@ class ReviewForm(forms.ModelForm):
 class VariationForm(forms.ModelForm):
     class Meta:
         model = Variation 
-        fields = ['product','variation_category','variation_value']
+        fields = ['product','variation_category','variation_value','variation_color','variation_size']
     def clean(self):
         cleaned_data = super().clean()
-        variation_category = cleaned_data.get('variation_category')
-        variation_value = cleaned_data.get('variation_value')
+        variation_color = cleaned_data.get('variation_color')
+        variation_size = cleaned_data.get('variation_size')
         product = cleaned_data.get('product')
 
-        if variation_category and variation_value and product:
-            # Kiểm tra xem đã tồn tại bản ghi nào với cùng category và value cho sản phẩm này chưa
+        if not variation_color and not variation_size:
+            raise forms.ValidationError("Phải nhập ít nhất một trong hai: Màu sắc hoặc Kích cỡ.")
+
+        if variation_color and variation_size and product:
+            # Kiểm tra xem đã tồn tại biến thể với cùng màu sắc và kích cỡ cho sản phẩm này chưa
             existing_variation = Variation.objects.filter(
                 product=product,
-                variation_category=variation_category,
-                variation_value=variation_value
+                variation_color=variation_color,
+                variation_size=variation_size
             )
 
-            # Bỏ qua bản ghi hiện tại nếu đang ở chế độ chỉnh sửa (edit)
+            # Bỏ qua bản ghi hiện tại nếu đang ở chế độ chỉnh sửa
             if self.instance.pk:
                 existing_variation = existing_variation.exclude(pk=self.instance.pk)
 
             if existing_variation.exists():
                 raise forms.ValidationError(
-                    f"Biến thể trường danh mục biến thể và giá trị đã tồn tại trong sản phẩm."
+                    f"Biến thể với màu sắc '{variation_color}' và kích cỡ '{variation_size}' đã tồn tại cho sản phẩm này."
                 )
+
+        if variation_color and not product:
+            raise forms.ValidationError("Phải chọn sản phẩm khi thêm màu sắc cho biến thể.")
+
+        if variation_size and not product:
+            raise forms.ValidationError("Phải chọn sản phẩm khi thêm kích cỡ cho biến thể.")
 
         return cleaned_data
     def clean_product(self):

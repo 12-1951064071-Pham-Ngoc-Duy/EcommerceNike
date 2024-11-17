@@ -42,11 +42,11 @@
                             <!-- Hiển thị các màu sắc -->
                             {% for color in colors %}
                                 <!-- Ẩn radio button nhưng khi chọn ảnh sẽ lấy giá trị màu sắc -->
-                                <input type="radio" name="color" value="{{ color.variation_value }}" id="color-{{ color.variation_value }}" class="color-radio" style="display:none;" required/>
+                                <input type="radio" name="color" value="{{ color.variation_category }}" id="color-{{ color.variation_category }}" class="color-radio" style="display:none;" required/>
                                 
-                                <label for="color-{{ color.variation_value }}" class="color-label">
+                                <label for="color-{{ color.variation_category }}" class="color-label">
                                     <!-- Ảnh màu sắc sẽ được hiển thị -->
-                                    <img src="{{ color.product.product_images.url }}" alt="{{ color.variation_value }}" class="color-img" style="width: 50px; height: 60px;">
+                                    <img src="{{ color.product.product_images.url }}" alt="{{ color.variation_category }}" class="color-img" style="width: 50px; height: 60px;">
                                 </label>
                             {% endfor %}
                             
@@ -67,8 +67,8 @@
     <h4>Kích cỡ:</h4>
     {% for size in sizes %}
         <label class="btn btn-outline-dark size-label">
-            <input type="radio" name="size" value="{{ size.variation_value }}" style="display:none;" required>
-            <span>{{ size.variation_value }}</span>
+            <input type="radio" name="size" value="{{ size.variation_size }}" style="display:none;" required>
+            <span>{{ size.variation_size }}</span>
         </label>
     {% endfor %}
 </div>

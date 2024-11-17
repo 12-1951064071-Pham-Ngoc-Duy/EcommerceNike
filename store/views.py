@@ -92,7 +92,11 @@ def product_detail(request, category_slug_path, product_slug_path):
     # Get product gallery
     product_gallery = ProductGallery.objects.filter(product_id=single_product.id)
     colors = Variation.objects.filter(product=single_product, variation_category='color', variation_is_active=True)
-    sizes = Variation.objects.filter(product=single_product, variation_category='size', variation_is_active=True)
+    unique_colors = {}  # Dùng dict để loại bỏ trùng lặp theo `variation_value`
+    for color in colors:
+        unique_colors[color.variation_color] = color  # Chỉ giữ bản ghi đầu tiên cho mỗi `variation_value`
+    colors = unique_colors.values()
+    sizes = Variation.objects.filter(product=single_product, variation_value='size', variation_is_active=True)
 
     # Get other products with the same name
     related_products = Product.objects.filter(product_name=single_product.product_name).exclude(id=single_product.id)

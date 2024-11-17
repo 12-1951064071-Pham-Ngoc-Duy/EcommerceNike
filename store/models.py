@@ -103,14 +103,17 @@ class Product(models.Model):
 
 variation_category_choice = (
     ('color', 'Màu sắc'),
+)
+variation_value_choice = (
     ('size', 'Kích cỡ'),
 )
 
 class Variation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
-    variation_category = models.CharField(max_length=100, choices=variation_category_choice,verbose_name = "Danh mục biến thể", blank=True, null=True)
-    variation_value = models.CharField(max_length=100,verbose_name = "Gía trị",blank=True, null=True)
-    variation_image = models.ImageField(upload_to='variations/', blank=True, null=True, verbose_name="Ảnh màu sắc")
+    variation_category = models.CharField(max_length=100, choices=variation_category_choice,verbose_name = "Danh mục màu sắc", blank=True, null=True)
+    variation_color = models.CharField(max_length=50, verbose_name="Màu sắc", blank=True,null=True)
+    variation_value = models.CharField(max_length=100,verbose_name = "Danh mục kích cỡ",choices=variation_value_choice,blank=True, null=True)
+    variation_size = models.CharField(max_length=50, verbose_name="Kích cỡ", blank=True,null=True)
     stock = models.IntegerField(default=0, verbose_name="Tồn kho")
     variation_is_active = models.BooleanField(default=True,verbose_name = "Hoạt động")
     variation_created_date = models.DateTimeField(auto_now=True,verbose_name = "Thời gian tạo")

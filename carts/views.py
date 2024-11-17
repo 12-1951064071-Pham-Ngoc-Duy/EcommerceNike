@@ -25,31 +25,28 @@ def add_cart(request, product_id):
         selected_color = request.POST.get('color')  # Lấy giá trị của màu sắc đã chọn
         selected_size = request.POST.get('size')  # Lấy giá trị của kích cỡ đã chọn
 
-        # Kiểm tra nếu có màu sắc được chọn và tìm variation tương ứng
         if selected_color:
             try:
-                # Tìm variation tương ứng với màu sắc đã chọn
                 color_variation = Variation.objects.get(
                     product=product,
-                    variation_category='color',  # Kiểm tra biến thể là màu sắc
-                    variation_value=selected_color,
+                    variation_category='color',  # Chọn loại biến thể là màu sắc
+                    variation_color=selected_color,
                 )
-                product_variation.append(color_variation)  # Thêm vào danh sách variations
+                product_variation.append(color_variation)  # Thêm vào danh sách biến thể
             except Variation.DoesNotExist:
-                pass  # Nếu không tìm thấy, bỏ qua
+                pass  # Nếu không tìm thấy biến thể, bỏ qua
 
-        # Kiểm tra nếu có kích cỡ được chọn và tìm variation tương ứng
+        # Kiểm tra và thêm biến thể kích cỡ vào danh sách product_variation
         if selected_size:
             try:
-                # Tìm variation tương ứng với kích cỡ đã chọn
                 size_variation = Variation.objects.get(
                     product=product,
-                    variation_category='size',  # Kiểm tra biến thể là kích cỡ
-                    variation_value=selected_size,
+                    variation_value='size',  # Chọn loại biến thể là kích cỡ
+                    variation_size=selected_size,
                 )
-                product_variation.append(size_variation)  # Thêm vào danh sách variations
+                product_variation.append(size_variation)  # Thêm vào danh sách biến thể
             except Variation.DoesNotExist:
-                pass  # Nếu không tìm thấy, bỏ qua
+                pass  # Nếu không tìm thấy biến thể, bỏ qua
 
     # Tạo hoặc lấy giỏ hàng theo session
     cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
@@ -64,7 +61,11 @@ def add_cart(request, product_id):
     # Kiểm tra xem sản phẩm có biến thể giống nhau đã có trong giỏ hàng chưa
     existing_cart_item = None
     for item in cart_items:
-        if set(item.variations.all()) == set(product_variation):
+        # Lấy tất cả các biến thể của CartItem
+        item_variations = item.variations.all()
+
+        # Kiểm tra xem tất cả các biến thể trong product_variation có khớp với các biến thể của CartItem không
+        if all(variation in item_variations for variation in product_variation):
             existing_cart_item = item
             break
 
@@ -86,6 +87,8 @@ def add_cart(request, product_id):
         cart_item.save()
 
     return redirect('cart')
+
+
 
 
 
