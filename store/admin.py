@@ -35,7 +35,7 @@ class ProductAdmin(admin.ModelAdmin):
       form = ProductForm
       list_display = ('product_name', 'product_price', 'product_stock', 'category', 'product_gender', 'product_modifield_date', 'product_is_availabel')
       search_fields = ['product_name']
-      readonly_fields = ['product_price','product_stock']
+      readonly_fields = ['product_stock']
       prepopulated_fields = {'product_slug': ('product_name',)}
       inlines = [ProductGalleryInline, ReviewRatingInline]
       def has_view_permission(self, request, obj=None):

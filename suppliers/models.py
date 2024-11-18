@@ -103,7 +103,6 @@ class StockEntry(models.Model):
 
     # Cập nhật tổng tồn kho sản phẩm
         self.product.update_total_stock()
-        self.product.product_price = self.unit_price
         self.product.save()
 
     # Lưu StockEntry
