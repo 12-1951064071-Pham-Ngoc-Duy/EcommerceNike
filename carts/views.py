@@ -14,7 +14,6 @@ def _cart_id(request):
     if not cart:
         cart = request.session.create()
     return cart
-
 def add_cart(request, product_id):
     current_user = request.user
     product = get_object_or_404(Product, id=product_id)
@@ -26,27 +25,24 @@ def add_cart(request, product_id):
         selected_size = request.POST.get('size')  # Lấy giá trị của kích cỡ đã chọn
 
         if selected_color:
-            try:
-                color_variation = Variation.objects.get(
-                    product=product,
-                    variation_category='color',  # Chọn loại biến thể là màu sắc
-                    variation_color=selected_color,
-                )
-                product_variation.append(color_variation)  # Thêm vào danh sách biến thể
-            except Variation.DoesNotExist:
-                pass  # Nếu không tìm thấy biến thể, bỏ qua
+            # Lấy biến thể màu sắc phù hợp
+            color_variations = Variation.objects.filter(
+                product=product,
+                variation_category='color',  # Chọn loại biến thể là màu sắc
+                variation_color=selected_color,
+            )
+            if color_variations.exists():
+                product_variation.append(color_variations.first())  # Thêm biến thể màu sắc vào danh sách
 
-        # Kiểm tra và thêm biến thể kích cỡ vào danh sách product_variation
         if selected_size:
-            try:
-                size_variation = Variation.objects.get(
-                    product=product,
-                    variation_value='size',  # Chọn loại biến thể là kích cỡ
-                    variation_size=selected_size,
-                )
-                product_variation.append(size_variation)  # Thêm vào danh sách biến thể
-            except Variation.DoesNotExist:
-                pass  # Nếu không tìm thấy biến thể, bỏ qua
+            # Lấy biến thể kích cỡ phù hợp
+            size_variations = Variation.objects.filter(
+                product=product,
+                variation_value='size',  # Chọn loại biến thể là kích cỡ
+                variation_size=selected_size,
+            )
+            if size_variations.exists():
+                product_variation.append(size_variations.first())  # Thêm biến thể kích cỡ vào danh sách
 
     # Tạo hoặc lấy giỏ hàng theo session
     cart, created = Cart.objects.get_or_create(cart_id=_cart_id(request))
@@ -64,10 +60,21 @@ def add_cart(request, product_id):
         # Lấy tất cả các biến thể của CartItem
         item_variations = item.variations.all()
 
-        # Kiểm tra xem tất cả các biến thể trong product_variation có khớp với các biến thể của CartItem không
-        if all(variation in item_variations for variation in product_variation):
-            existing_cart_item = item
-            break
+        # Kiểm tra xem sự kết hợp màu sắc và kích cỡ đã có chưa
+        # Chỉ cần sự kết hợp của color và size là giống nhau thì coi là trùng khớp
+        if (selected_color and selected_size):
+            if (selected_color == item_variations.filter(variation_category='color').first().variation_color and
+                selected_size == item_variations.filter(variation_value='size').first().variation_size):
+                existing_cart_item = item
+                break
+        elif selected_color:
+            if selected_color == item_variations.filter(variation_category='color').first().variation_color:
+                existing_cart_item = item
+                break
+        elif selected_size:
+            if selected_size == item_variations.filter(variation_value='size').first().variation_size:
+                existing_cart_item = item
+                break
 
     if existing_cart_item:
         # Nếu đã có cùng biến thể, tăng số lượng sản phẩm
@@ -87,6 +94,10 @@ def add_cart(request, product_id):
         cart_item.save()
 
     return redirect('cart')
+
+
+
+
 
 
 
