@@ -9,6 +9,8 @@ from category.models import Category
 from carts.views import _cart_id
 from django.core.paginator import EmptyPage, PageNotAnInteger,Paginator
 from django.contrib import messages
+from django.db.models import Min
+
 
 def store_by_gender(request, gender):
     products = Product.objects.filter(product_is_availabel=True, product_gender=gender)
@@ -31,7 +33,14 @@ def store_by_gender(request, gender):
 
 def store(request, category_slug_path=None):
     categories = None
-    products = Product.objects.filter(product_is_availabel=True)
+    products = Product.objects.filter(product_is_availabel=True)\
+        .values('product_name', 'category')\
+        .annotate(min_id=Min('id'))\
+        .values_list('min_id', flat=True)
+
+    # Lọc lại sản phẩm từ danh sách ID duy nhất
+    products = Product.objects.filter(id__in=products)
+
 
     # Lấy danh sách các checkbox được chọn từ request
     selected_categories = request.GET.getlist('category')  # Lấy category từ request

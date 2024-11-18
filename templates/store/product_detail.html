@@ -66,13 +66,19 @@
 <div class="sizes">
     <h4>Kích cỡ:</h4>
     {% for size in sizes %}
-        <label class="btn btn-outline-dark size-label">
-            <input type="radio" name="size" value="{{ size.variation_size }}" style="display:none;" required>
+        <label class="btn btn-outline-dark size-label {% if size.stock == 0 %}disabled{% endif %}">
+            <input 
+                type="radio" 
+                name="size" 
+                value="{{ size.variation_size }}" 
+                style="display:none;" 
+                {% if size.stock == 0 %}disabled{% endif %} 
+                required>
             <span>{{ size.variation_size }}</span>
         </label>
     {% endfor %}
 </div>
-
+<div class="product-stock">Số lượng sản phẩm: {{single_product.product_stock}}</div>
 
 
                         <p><strong>Ghi chú:</strong> {{ single_product.product_description }}</p>

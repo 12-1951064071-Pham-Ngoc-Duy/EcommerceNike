@@ -43,6 +43,10 @@ def payments(request):
         orderproduct = OrderProduct.objects.get(id=orderproduct.id)
         orderproduct.variations.set(product_variation)
         orderproduct.save()
+        
+        for variation in product_variation:
+                variation.stock -= item.cart_item_quantity
+                variation.save()
 
         #reduce the quantity of the sold products
         product = Product.objects.get(id = item.product_id)
@@ -81,10 +85,7 @@ def place_order(request, total=0, cart_item_quantity=0):
     for cart_item in cart_items:
         total += (cart_item.product.product_price * cart_item.cart_item_quantity)
         cart_item_quantity += cart_item.cart_item_quantity
-    if cart_item_quantity > 1:
-        tax = 0
-    else:
-        tax = (2 * total) / 100
+    tax = (2 * total) / 100
     grand_total = total + tax
     
     if request.method == 'POST':
@@ -118,7 +119,7 @@ def place_order(request, total=0, cart_item_quantity=0):
                 'order': order,
                 'cart_items': cart_items,
                 'total': total,
-                'tax': tax if tax > 0 else 'Free',
+                'tax': tax,
                 'grand_total': grand_total,
             }
             return render(request, 'orders/payments.html', context)

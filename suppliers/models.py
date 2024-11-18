@@ -71,53 +71,44 @@ class StockEntry(models.Model):
         verbose_name_plural = 'Nhập kho'
 
     def save(self, *args, **kwargs):
-        # Tính tổng giá trị
+    # Tính tổng giá trị
         self.total_value = self.unit_price * self.quantity
 
-        # Lấy model Variation để tránh vòng lặp import
+    # Lấy model Variation để tránh vòng lặp import
         Variation = apps.get_model('store', 'Variation')
 
+    # Tính toán chênh lệch tồn kho
         stock_difference = self.quantity - self._get_previous_quantity()
 
-        if self.stock_category == 'color' and self.stock_color:
-            # Kiểm tra biến thể màu sắc
-            color_variation = Variation.objects.filter(
+    # Xử lý cho màu sắc và kích cỡ
+        if self.stock_color and self.stock_size:
+        # Tìm kiếm biến thể với cả màu sắc và kích cỡ
+            variation = Variation.objects.filter(
                 product=self.product,
                 variation_category='color',
                 variation_color=self.stock_color,
-                variation_is_active=True
-            ).first()
-
-            if not color_variation:
-                raise ValidationError("Màu sắc không hợp lệ!")
-
-            # Cập nhật tồn kho biến thể màu sắc
-            color_variation.stock += stock_difference
-            color_variation.save()
-
-        elif self.stock_value == 'size' and self.stock_size:
-            # Kiểm tra biến thể kích cỡ
-            size_variation = Variation.objects.filter(
-                product=self.product,
                 variation_value='size',
                 variation_size=self.stock_size,
                 variation_is_active=True
             ).first()
 
-            if not size_variation:
-                raise ValidationError("Kích cỡ không hợp lệ!")
+            if not variation:
+                raise ValidationError(
+                    f"Biến thể với màu '{self.stock_color}' và kích cỡ '{self.stock_size}' không hợp lệ!"
+                )
 
-            # Cập nhật tồn kho biến thể kích cỡ
-            size_variation.stock += stock_difference
-            size_variation.save()
+        # Cập nhật tồn kho cho biến thể
+            variation.stock += stock_difference
+            variation.save()
 
-        # Cập nhật tổng tồn kho sản phẩm
+    # Cập nhật tổng tồn kho sản phẩm
         self.product.update_total_stock()
         self.product.product_price = self.unit_price
         self.product.save()
 
-        # Lưu StockEntry
+    # Lưu StockEntry
         super().save(*args, **kwargs)
+
 
     def _get_previous_quantity(self):
         """

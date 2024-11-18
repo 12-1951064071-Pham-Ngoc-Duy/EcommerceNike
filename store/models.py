@@ -58,23 +58,19 @@ class Product(models.Model):
     def count_colors(self):
     # Tránh vòng lặp import
         Variation = apps.get_model('store', 'Variation')
-    
-    # Lấy tất cả sản phẩm có tên giống nhau
-        same_name_products = Product.objects.filter(product_name=self.product_name)
-    
-    # Biến lưu tổng số màu
-        total_colors = 0
-    
-    # Lặp qua tất cả các sản phẩm có tên giống nhau
-        for product in same_name_products:
-        # Cộng dồn số lượng màu của từng sản phẩm
-            total_colors += Variation.objects.filter(
-                product=product,
-                variation_category='color',
-                variation_is_active=True
-            ).count()
 
-        return total_colors
+    # Lấy tất cả các sản phẩm có cùng tên
+        same_name_products = Product.objects.filter(product_name=self.product_name)
+
+    # Lấy tất cả các màu sắc không trùng lặp (distinct) trong danh sách sản phẩm đó
+        unique_colors = Variation.objects.filter(
+            product__in=same_name_products,
+            variation_category='color',
+            variation_is_active=True
+        ).values_list('variation_color', flat=True).distinct()
+
+    # Trả về số lượng màu sắc
+        return unique_colors.count()
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.category_slug, self.product_slug])
