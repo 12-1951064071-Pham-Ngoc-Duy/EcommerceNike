@@ -15,17 +15,18 @@ def payments(request):
     order = Order.objects.get(user=request.user, order_is_ordered=False, order_number=body['orderID'])
     
     payment = Payment(
-        user = request.user,
-        payment_id = body['transID'],
-        payment_method = body['payment_method'],
-        amount_paid = order.order_total,
-        status = body['status'],
+        user=request.user,
+        payment_id=body['transID'],
+        payment_method=body['payment_method'],
+        amount_paid=order.order_total,
+        status=body['status'],
     )
     payment.save()
     order.payment = payment
     order.order_is_ordered = True
     order.save()
-    #move the cart items to order product table
+
+    # Chuyển các item trong giỏ hàng sang bảng OrderProduct
     cart_items = CartItem.objects.filter(user=request.user)
     for item in cart_items:
         orderproduct = OrderProduct() 
@@ -38,24 +39,26 @@ def payments(request):
         orderproduct.order_product_ordered = True
         orderproduct.save()
 
-        cart_item = CartItem.objects.get(id = item.id)
+        cart_item = CartItem.objects.get(id=item.id)
         product_variation = cart_item.variations.all()
         orderproduct = OrderProduct.objects.get(id=orderproduct.id)
         orderproduct.variations.set(product_variation)
         orderproduct.save()
-        
-        for variation in product_variation:
-                variation.stock -= item.cart_item_quantity
-                variation.save()
 
-        #reduce the quantity of the sold products
-        product = Product.objects.get(id = item.product_id)
-        product.product_stock -= item.cart_item_quantity
-        product.save()
-    #clear cart
+        # Giảm số lượng của từng variation
+        for variation in product_variation:
+            variation.stock -= item.cart_item_quantity
+            variation.save()
+
+        # # Giảm số lượng của sản phẩm chính chỉ một lần (di chuyển ra ngoài vòng lặp variations)
+        # product = Product.objects.get(id=item.product_id)
+        # product.product_stock -= item.cart_item_quantity  # Giảm số lượng đúng số lượng sản phẩm
+        # product.save()
+
+    # Xóa tất cả các CartItem trong giỏ hàng
     CartItem.objects.filter(user=request.user).delete()
-    #send order recieved email to customer
-    #USER ACTIVATION
+
+    # Gửi email xác nhận
     mail_subject = 'Cảm ơn bạn đã đặt hàng!'
     message = render_to_string('orders/order_recieved_email.html', {
         'user': request.user,
@@ -64,14 +67,15 @@ def payments(request):
     to_email = request.user.email
     send_email = EmailMessage(mail_subject, message, to=[to_email])
     send_email.send()
-    #USER ACTIVATION
 
-    #Send order number and transaction id back to sendData method via JsonResponse
+    # Gửi lại order_number và transID cho phương thức sendData
     data = {
         'order_number': order.order_number,
         'transID': payment.payment_id,
     }
     return JsonResponse(data)
+
+
 
 def place_order(request, total=0, cart_item_quantity=0):
     current_user = request.user

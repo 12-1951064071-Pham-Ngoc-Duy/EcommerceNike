@@ -55,7 +55,7 @@ class VariationAdmin(admin.ModelAdmin):
       readonly_fields = ['stock']
       list_display = ('product', 'variation_color', 'variation_size','stock', 'variation_is_active')
       list_editable = ('variation_is_active',)
-      list_filter = ('product', 'variation_category', 'variation_value')
+      list_filter = ('product',)
       def has_view_permission(self, request, obj=None):
         return request.user.is_staff
       def has_change_permission(self, request, obj=None):
