@@ -123,7 +123,7 @@ class Variation(models.Model):
         self.product.update_total_stock()
 
     def __str__(self):
-        return f"{self.variation_category} - {self.variation_value}"
+        return f"{self.variation_color} - {self.variation_size}"
     
 class ReviewRating(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
