@@ -73,6 +73,7 @@
             <p>Tổng</p>
             <p>$ {{ grand_total }}</p>
         </div>
+        {% include "includes/alerts.html" %}
         <a href="{% url 'checkout' %}"  class="btn btn-dark w-100">Đi tới Thanh toán</a>
     </div>
 </div>

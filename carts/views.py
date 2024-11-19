@@ -7,6 +7,7 @@ from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 import json
+from django.contrib import messages
 # Create your views here.
 
 def _cart_id(request):
@@ -77,9 +78,18 @@ def add_cart(request, product_id):
                 break
 
     if existing_cart_item:
-        # Nếu đã có cùng biến thể, tăng số lượng sản phẩm
-        existing_cart_item.cart_item_quantity += 1
-        existing_cart_item.save()
+        # Nếu đã có cùng biến thể, kiểm tra tồn kho trước khi tăng số lượng
+        variation = Variation.objects.filter(
+            product=product,
+            variation_color=selected_color,
+            variation_size=selected_size
+        ).first()
+
+        if variation and existing_cart_item.cart_item_quantity + 1 > variation.stock:
+            messages.error(request, "Số lượng vượt quá sản phẩm hiện có.")
+        else:
+            existing_cart_item.cart_item_quantity += 1
+            existing_cart_item.save()
     else:
         # Nếu chưa có, tạo mới CartItem
         cart_item = CartItem.objects.create(
