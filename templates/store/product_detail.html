@@ -37,10 +37,9 @@
                         <p><strong>Gía:</strong> ${{ single_product.product_price }}</p>
                         <!-- Hiển thị màu sắc dưới dạng ảnh -->
                         <div class="colors">
-                            <h4>Màu sắc:</h4>
-                            
                             <!-- Hiển thị các màu sắc -->
                             {% for color in colors %}
+                            <h4>Màu sắc: {{color.variation_color}}</h4>
                                 <!-- Ẩn radio button nhưng khi chọn ảnh sẽ lấy giá trị màu sắc -->
                                 <input type="radio" name="color" value="{{ color.variation_category }}" id="color-{{ color.variation_category }}" class="color-radio" style="display:none;" required/>
                                 

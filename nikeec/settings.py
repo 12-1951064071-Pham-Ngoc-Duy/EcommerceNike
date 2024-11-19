@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'orders',
     'custom_admin_honeypot.apps.CustomAdminHoneypotConfig',
     'suppliers',
+    'statistic',
 ]
 
 MIDDLEWARE = [

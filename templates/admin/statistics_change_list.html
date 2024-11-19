@@ -1,0 +1,14 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+<h2>Thống kê tài chính</h2>
+<div>
+    <ul>
+        <li><strong>Chi phí:</strong> {{ total_cost }}</li>
+        <li><strong>Doanh thu:</strong> {{ total_revenue }}</li>
+        <li><strong>Lợi nhuận:</strong> {{ total_profit }}</li>
+    </ul>
+</div>
+<hr>
+{{ block.super }}
+{% endblock %}
