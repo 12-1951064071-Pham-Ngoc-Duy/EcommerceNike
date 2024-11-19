@@ -60,7 +60,7 @@
                     <!-- Previous Page -->
                     {% if products.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ products.previous_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Previous</a>
+                        <a class="page-link" href="?page={{ products.previous_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}{% if selected_categories %}&category={{ selected_categories|join:'&category=' }}{% endif %}{% if selected_genders %}&gender={{ selected_genders|join:'&gender=' }}{% endif %}">Trước</a>
                     </li>
                     {% else %}
                     <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
