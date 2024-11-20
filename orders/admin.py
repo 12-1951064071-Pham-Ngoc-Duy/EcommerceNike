@@ -15,11 +15,10 @@ def export_profit_to_excel(modeladmin, request, queryset):
     # --- Sheet 1: Lợi Nhuận Hàng Ngày ---
     sheet1 = workbook.active
     sheet1.title = "Lợi Nhuận Ngày"
-    sheet1.append(['Ngày', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
+    sheet1.append(['Ngày', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận', '% Tăng Trưởng'])
 
-    # Chỉ lấy doanh thu từ các đơn hàng đã thanh toán
     doanh_thu_ngay = (
-        Order.objects.filter(order_is_ordered=True)  # Chỉ lấy đơn hàng đã được thanh toán
+        Order.objects.filter(order_is_ordered=True)
         .annotate(ngay=TruncDay('order_created_at'))
         .values('ngay')
         .annotate(doanh_thu=Sum('order_total'))
@@ -31,7 +30,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
         .annotate(chi_phi=Sum('total_value'))
     )
 
-    # Tính lợi nhuận theo ngày
+    previous_day_revenue = None
     for doanh_thu in doanh_thu_ngay:
         ngay = doanh_thu['ngay'].astimezone(timezone.utc).replace(tzinfo=None)
         doanh_thu_value = Decimal(doanh_thu['doanh_thu'])
@@ -43,14 +42,20 @@ def export_profit_to_excel(modeladmin, request, queryset):
         )
         loi_nhuan = doanh_thu_value - chi_phi
 
-        sheet1.append([ngay, doanh_thu_value, chi_phi, loi_nhuan])
+        # Tính % tăng trưởng theo ngày
+        growth_rate = Decimal(0)
+        if previous_day_revenue is not None and previous_day_revenue > 0:
+            growth_rate = ((doanh_thu_value - previous_day_revenue) / previous_day_revenue) * 100
+
+        sheet1.append([ngay, doanh_thu_value, chi_phi, loi_nhuan, f"{growth_rate:.2f}%"])
+        previous_day_revenue = doanh_thu_value
 
     # --- Sheet 2: Lợi Nhuận Hàng Tháng ---
     sheet2 = workbook.create_sheet(title="Lợi Nhuận Tháng")
-    sheet2.append(['Tháng', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
+    sheet2.append(['Tháng', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận', '% Tăng Trưởng'])
 
     doanh_thu_thang = (
-        Order.objects.filter(order_is_ordered=True)  # Chỉ lấy đơn hàng đã thanh toán
+        Order.objects.filter(order_is_ordered=True)
         .annotate(thang=TruncMonth('order_created_at'))
         .values('thang')
         .annotate(doanh_thu=Sum('order_total'))
@@ -62,6 +67,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
         .annotate(chi_phi=Sum('total_value'))
     )
 
+    previous_month_revenue = None
     for doanh_thu in doanh_thu_thang:
         thang = doanh_thu['thang'].month
         doanh_thu_value = Decimal(doanh_thu['doanh_thu'])
@@ -72,14 +78,20 @@ def export_profit_to_excel(modeladmin, request, queryset):
         )
         loi_nhuan = doanh_thu_value - chi_phi
 
-        sheet2.append([thang, doanh_thu_value, chi_phi, loi_nhuan])
+        # Tính % tăng trưởng theo tháng
+        growth_rate = Decimal(0)
+        if previous_month_revenue is not None and previous_month_revenue > 0:
+            growth_rate = ((doanh_thu_value - previous_month_revenue) / previous_month_revenue) * 100
+
+        sheet2.append([thang, doanh_thu_value, chi_phi, loi_nhuan, f"{growth_rate:.2f}%"])
+        previous_month_revenue = doanh_thu_value
 
     # --- Sheet 3: Lợi Nhuận Hàng Năm ---
     sheet3 = workbook.create_sheet(title="Lợi Nhuận Năm")
-    sheet3.append(['Năm', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận'])
+    sheet3.append(['Năm', 'Doanh Thu', 'Chi Phí', 'Lợi Nhuận', '% Tăng Trưởng'])
 
     doanh_thu_nam = (
-        Order.objects.filter(order_is_ordered=True)  # Chỉ lấy đơn hàng đã thanh toán
+        Order.objects.filter(order_is_ordered=True)
         .annotate(nam=TruncYear('order_created_at'))
         .values('nam')
         .annotate(doanh_thu=Sum('order_total'))
@@ -91,6 +103,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
         .annotate(chi_phi=Sum('total_value'))
     )
 
+    previous_year_revenue = None
     for doanh_thu in doanh_thu_nam:
         nam = doanh_thu['nam'].year
         doanh_thu_value = Decimal(doanh_thu['doanh_thu'])
@@ -101,7 +114,13 @@ def export_profit_to_excel(modeladmin, request, queryset):
         )
         loi_nhuan = doanh_thu_value - chi_phi
 
-        sheet3.append([nam, doanh_thu_value, chi_phi, loi_nhuan])
+        # Tính % tăng trưởng theo năm
+        growth_rate = Decimal(0)
+        if previous_year_revenue is not None and previous_year_revenue > 0:
+            growth_rate = ((doanh_thu_value - previous_year_revenue) / previous_year_revenue) * 100
+
+        sheet3.append([nam, doanh_thu_value, chi_phi, loi_nhuan, f"{growth_rate:.2f}%"])
+        previous_year_revenue = doanh_thu_value
 
     # Tạo response trả về file Excel
     response = HttpResponse(
@@ -111,6 +130,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
 
     workbook.save(response)
     return response
+
 export_profit_to_excel.short_description = "Xuất Lợi Nhuận Ra Excel"
 
 
