@@ -23,6 +23,7 @@
             <th>Chi phí</th>
             <th>Doanh thu</th>
             <th>Lợi nhuận</th>
+            <th>%Tăng trưởng theo ngày</th>
         </tr>
     </thead>
     <tbody>
@@ -33,6 +34,7 @@
             <td>{{ stat.total_cost }}</td>
             <td>{{ stat.total_revenue }}</td>
             <td>{{ stat.total_profit }}</td>
+            <td>{{ stat.growth_rate }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -49,6 +51,7 @@
             <th>Chi phí</th>
             <th>Doanh thu</th>
             <th>Lợi nhuận</th>
+            <th>%Tăng trưởng theo tháng</th>
         </tr>
     </thead>
     <tbody>
@@ -59,6 +62,7 @@
             <td>{{ stat.total_cost }}</td>
             <td>{{ stat.total_revenue }}</td>
             <td>{{ stat.total_profit }}</td>
+            <td>{{ stat.growth_rate }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -75,6 +79,7 @@
             <th>Chi phí</th>
             <th>Doanh thu</th>
             <th>Lợi nhuận</th>
+            <th>%Tăng trưởng theo năm</th>
         </tr>
     </thead>
     <tbody>
@@ -85,6 +90,7 @@
             <td>{{ stat.total_cost }}</td>
             <td>{{ stat.total_revenue }}</td>
             <td>{{ stat.total_profit }}</td>
+            <td>{{ stat.growth_rate }}</td>
         </tr>
         {% endfor %}
     </tbody>

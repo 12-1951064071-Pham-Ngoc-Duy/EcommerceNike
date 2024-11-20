@@ -32,6 +32,7 @@ class StatisticsAdmin(admin.ModelAdmin):
         statistics = []
         total_cost_all = Decimal("0.0")
         total_revenue_all = Decimal("0.0")
+        previous_day_revenue = None  # Doanh thu ngày hôm trước
 
         dates = set(
             list(stock["entry_date__date"] for stock in stock_data)
@@ -54,13 +55,24 @@ class StatisticsAdmin(admin.ModelAdmin):
             total_cost_all += total_cost
             total_revenue_all += total_revenue
 
+            # Tính % tăng trưởng theo ngày
+            growth_rate = None
+            if previous_day_revenue is not None and previous_day_revenue > 0:
+                growth_rate = ((total_revenue - previous_day_revenue) / previous_day_revenue) * 100
+                growth_rate = round_decimal(growth_rate)
+            else:
+                growth_rate = Decimal("0.0")  # Trường hợp không có doanh thu ngày hôm trước
+
             statistics.append({
                 "stt": idx + 1,
                 "date": date.strftime("%d-%m-%Y"),
                 "total_cost": total_cost,
                 "total_revenue": total_revenue,
                 "total_profit": total_profit,
+                "growth_rate": f"{growth_rate}%",
             })
+
+            previous_day_revenue = total_revenue  # Cập nhật doanh thu ngày hôm trước
 
         total_profit_all = round_decimal(total_revenue_all - total_cost_all)
 
@@ -84,6 +96,7 @@ class StatisticsAdmin(admin.ModelAdmin):
             list(stock["month"] for stock in stock_monthly)
             + list(order["month"] for order in order_monthly)
         )
+        previous_month_revenue = None  # Doanh thu tháng trước
 
         for idx, month in enumerate(sorted(months)):
             stock_entry = next((s for s in stock_monthly if s["month"] == month), None)
@@ -98,13 +111,24 @@ class StatisticsAdmin(admin.ModelAdmin):
             total_revenue = round_decimal(total_revenue)
             total_profit = round_decimal(total_profit)
 
+            # Tính % tăng trưởng theo tháng
+            growth_rate = None
+            if previous_month_revenue is not None and previous_month_revenue > 0:
+                growth_rate = ((total_revenue - previous_month_revenue) / previous_month_revenue) * 100
+                growth_rate = round_decimal(growth_rate)
+            else:
+                growth_rate = Decimal("0.0")
+
             monthly_statistics.append({
                 "stt": idx + 1,
                 "month": month.strftime("%m-%Y"),
                 "total_cost": total_cost,
                 "total_revenue": total_revenue,
                 "total_profit": total_profit,
+                "growth_rate": f"{growth_rate}%",
             })
+
+            previous_month_revenue = total_revenue
 
         # Thống kê theo năm
         stock_yearly = (
@@ -126,6 +150,7 @@ class StatisticsAdmin(admin.ModelAdmin):
             list(stock["year"] for stock in stock_yearly)
             + list(order["year"] for order in order_yearly)
         )
+        previous_year_revenue = None  # Doanh thu năm trước
 
         for idx, year in enumerate(sorted(years)):
             stock_entry = next((s for s in stock_yearly if s["year"] == year), None)
@@ -140,13 +165,24 @@ class StatisticsAdmin(admin.ModelAdmin):
             total_revenue = round_decimal(total_revenue)
             total_profit = round_decimal(total_profit)
 
+            # Tính % tăng trưởng theo năm
+            growth_rate = None
+            if previous_year_revenue is not None and previous_year_revenue > 0:
+                growth_rate = ((total_revenue - previous_year_revenue) / previous_year_revenue) * 100
+                growth_rate = round_decimal(growth_rate)
+            else:
+                growth_rate = Decimal("0.0")
+
             yearly_statistics.append({
                 "stt": idx + 1,
                 "year": year.year,
                 "total_cost": total_cost,
                 "total_revenue": total_revenue,
                 "total_profit": total_profit,
+                "growth_rate": f"{growth_rate}%",
             })
+
+            previous_year_revenue = total_revenue
 
         # Thêm dữ liệu vào context
         extra_context = extra_context or {}
@@ -165,4 +201,3 @@ class StatisticsAdmin(admin.ModelAdmin):
         return False
 
 admin.site.register(StatisticsPlaceholder, StatisticsAdmin)
-
