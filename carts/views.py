@@ -21,19 +21,7 @@ def add_cart(request, product_id):
     product_variation = []
 
     if request.method == "POST":
-        # Lấy giá trị của màu sắc và kích cỡ đã chọn từ POST
-        selected_color = request.POST.get('color')  # Lấy giá trị của màu sắc đã chọn
         selected_size = request.POST.get('size')  # Lấy giá trị của kích cỡ đã chọn
-
-        if selected_color:
-            # Lấy biến thể màu sắc phù hợp
-            color_variations = Variation.objects.filter(
-                product=product,
-                variation_category='color',  # Chọn loại biến thể là màu sắc
-                variation_color=selected_color,
-            )
-            if color_variations.exists():
-                product_variation.append(color_variations.first())  # Thêm biến thể màu sắc vào danh sách
 
         if selected_size:
             # Lấy biến thể kích cỡ phù hợp
@@ -60,19 +48,7 @@ def add_cart(request, product_id):
     for item in cart_items:
         # Lấy tất cả các biến thể của CartItem
         item_variations = item.variations.all()
-
-        # Kiểm tra xem sự kết hợp màu sắc và kích cỡ đã có chưa
-        # Chỉ cần sự kết hợp của color và size là giống nhau thì coi là trùng khớp
-        if (selected_color and selected_size):
-            if (selected_color == item_variations.filter(variation_category='color').first().variation_color and
-                selected_size == item_variations.filter(variation_value='size').first().variation_size):
-                existing_cart_item = item
-                break
-        elif selected_color:
-            if selected_color == item_variations.filter(variation_category='color').first().variation_color:
-                existing_cart_item = item
-                break
-        elif selected_size:
+        if selected_size:
             if selected_size == item_variations.filter(variation_value='size').first().variation_size:
                 existing_cart_item = item
                 break
@@ -81,7 +57,6 @@ def add_cart(request, product_id):
         # Nếu đã có cùng biến thể, kiểm tra tồn kho trước khi tăng số lượng
         variation = Variation.objects.filter(
             product=product,
-            variation_color=selected_color,
             variation_size=selected_size
         ).first()
 
