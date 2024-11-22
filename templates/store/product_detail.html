@@ -40,7 +40,7 @@
                             <!-- Hiển thị các màu sắc -->
                             {% for color in colors %}
                                 <!-- Ẩn radio button nhưng khi chọn ảnh sẽ lấy giá trị màu sắc -->
-                                <input type="radio" name="color" value="{{ color.variation_color }}" id="color-{{ color.variation_color }}" class="color-radio" style="display:none;" required/>
+                                <input type="radio" name="color" value="{{ color.variation_color }}" id="color-{{ color.variation_color }}" class="color-radio" style="display:none;"/>
                                 
                                 <label for="color-{{ color.variation_color }}" class="color-label">
                                     <!-- Ảnh màu sắc sẽ được hiển thị -->
@@ -49,7 +49,7 @@
                             {% endfor %}
                             
                             <!-- Hiển thị các sản phẩm liên quan (cùng tên sản phẩm) -->
-                            <div class="related-products" style="display: inline-block; margin: 5px;">
+                            <div class="related-products" style="display: inline-block; margin: 5px;margin-left:1px">
                                 {% for related_product in related_products %}
                                     <a href="{{ related_product.get_url }}" style="text-decoration:none" class="related-product">
                                         <img src="{{ related_product.product_images.url }}" alt="{{ related_product.product_name }}" style="width: 50px; height: 60px;">

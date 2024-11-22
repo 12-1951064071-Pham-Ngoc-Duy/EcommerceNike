@@ -154,12 +154,15 @@ label:hover ~ input:checked ~ label{
     color: white; /* Màu chữ khi chọn */
 }
 .color-img {
-    border: 0px solid transparent;
-    transition: border-color 0.3s;
+    transition: border 0.3s ease; /* Hiệu ứng mượt */
 }
 
 .color-img.selected {
-    border: 2px solid black;
+    border:1px solid black; /* Viền xanh khi được chọn */
+}
+
+.color-img.error {
+    border-color: red; /* Viền đỏ khi có lỗi */
 }
 @media (max-width: 1200px) {
     .product-info-container{

@@ -1,6 +1,8 @@
 from django import forms
 from phonenumbers import NumberParseException
 import phonenumbers
+
+from store.models import Variation
 from .models import StockEntry, Supplier
 import re
 
@@ -98,8 +100,44 @@ class StockEntryForm(forms.ModelForm):
     class Meta:
         model = StockEntry
         fields = [
-            'product', 'supplier', 'quantity','unit_price',
+            'product', 'supplier', 'quantity','unit_price','stock_category','stock_color','stock_value','stock_size'
         ]
+    
+    def clean_stock_category(self):
+        stock_category = self.cleaned_data.get('stock_category')
+        if not stock_category:
+            raise forms.ValidationError("Trường này là bắt buộc")
+        
+    def clean_stock_color(self):
+        stock_color = self.cleaned_data.get('stock_color')
+        product = self.cleaned_data.get('product')
+        
+        if not stock_color:
+            raise forms.ValidationError("Trường này là bắt buộc")
+        
+        # Kiểm tra màu sắc trong Variation
+        if not Variation.objects.filter(product=product, variation_color=stock_color).exists():
+            raise forms.ValidationError("Màu sắc không tồn tại với sản phẩm hãy thêm biến thể cho sản phẩm này")
+        
+        return stock_color
+        
+    def clean_stock_value(self):
+        stock_size = self.cleaned_data.get('stock_size')
+        product = self.cleaned_data.get('product')
+        
+        if not stock_size:
+            raise forms.ValidationError("Trường này là bắt buộc")
+        
+        # Kiểm tra kích cỡ trong Variation
+        if not Variation.objects.filter(product=product, variation_size=stock_size).exists():
+            raise forms.ValidationError("Kích cỡ không tồn tại với sản phẩm hãy thêm biến thể cho sản phẩm này")
+        
+        return stock_size
+        
+    def clean_stock_size(self):
+        stock_size = self.cleaned_data.get('stock_size')
+        if not stock_size:
+            raise forms.ValidationError("Trường này là bắt buộc")
 
     def clean_product(self):
         product = self.cleaned_data.get('product')
@@ -108,8 +146,14 @@ class StockEntryForm(forms.ModelForm):
         return product
     def clean_supplier(self):
         supplier = self.cleaned_data.get('supplier')
+        product = self.cleaned_data.get('product')
+
         if not supplier:
             raise forms.ValidationError("Trường này là bắt buộc")
+
+        if product and product.supplier != supplier:
+            raise forms.ValidationError("Nhà cung cấp không đúng với sản phẩm. Vui lòng vào trang sản phẩm để xem thông tin")
+
         return supplier
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
