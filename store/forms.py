@@ -68,9 +68,6 @@ class VariationForm(forms.ModelForm):
         variation_size = cleaned_data.get('variation_size')
         product = cleaned_data.get('product')
 
-        if not variation_color and not variation_size:
-            raise forms.ValidationError("Phải nhập ít nhất một trong hai: Màu sắc hoặc Kích cỡ.")
-
         if variation_color and variation_size and product:
             # Kiểm tra xem đã tồn tại biến thể với cùng màu sắc và kích cỡ cho sản phẩm này chưa
             existing_variation = Variation.objects.filter(
@@ -88,12 +85,6 @@ class VariationForm(forms.ModelForm):
                     f"Biến thể với màu sắc '{variation_color}' và kích cỡ '{variation_size}' đã tồn tại cho sản phẩm này."
                 )
 
-        if variation_color and not product:
-            raise forms.ValidationError("Phải chọn sản phẩm khi thêm màu sắc cho biến thể.")
-
-        if variation_size and not product:
-            raise forms.ValidationError("Phải chọn sản phẩm khi thêm kích cỡ cho biến thể.")
-
         return cleaned_data
     def clean_product(self):
         product = self.cleaned_data.get('product')
@@ -110,5 +101,15 @@ class VariationForm(forms.ModelForm):
         if not variation_value:
             raise forms.ValidationError('Trường này là bắt buộc')
         return variation_value
+    def clean_variation_color(self):
+        variation_color = self.cleaned_data.get('variation_color')
+        if not variation_color:
+            raise forms.ValidationError('Trường này là bắt buộc')
+        return variation_color
+    def clean_variation_size(self):
+        variation_size = self.cleaned_data.get('variation_size')
+        if not variation_size:
+            raise forms.ValidationError('Trường này là bắt buộc')
+        return variation_size
     
     
