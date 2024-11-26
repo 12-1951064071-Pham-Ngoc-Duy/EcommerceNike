@@ -48,8 +48,8 @@
                     </p>
                 </div>
                 <div class="box-price-cart">
-                    <p class="cart-price mb-0">$ {{ cart_item.sub_total }}</p>
-                    <small class="text-muted">$ {{cart_item.product.product_price}}</small>
+                    <p id="formattedPrice_1" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
+                    <small id="formattedPrice_2" class="text-muted">{{cart_item.product.product_price}} VND</small>
                 </div>
             </div>
             {% endfor %}
@@ -62,15 +62,15 @@
         <h2>Bản tóm tắt</h2>
         <div class="summary-item">
             <p>Tổng phụ</p>
-            <p>$ {{total}}</p>
+            <p id="formattedPrice_3">{{total}} VND</p>
         </div>
         <div class="summary-item">
             <p>Ước tính giao hàng và xử lý</p>
-            <p>$ {{tax }}</p>
+            <p id="formattedPrice_4">{{tax }} VND</p>
         </div>
         <div class="summary-item total">
             <p>Tổng</p>
-            <p>$ {{ grand_total }}</p>
+            <p id="formattedPrice_5">{{ grand_total }} VND</p>
         </div>
         <div id="paypal-button-container">
 
@@ -78,6 +78,41 @@
     </div>
 </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_1");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_2");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_3");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_4");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_5");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
 <script src="https://www.paypal.com/sdk/js?client-id=AeP2UArGbZfS7VH5kwbxirMOBKcGxVsJfaD9cz77SE2DTbmZJPHyni18WWD8VEfoBNFMvi2X2R5ppOWc&currency=USD"></script>
 <script>
     function getCookie(name) {
@@ -137,7 +172,7 @@
                         orderID: orderID,
                         transID: details.id,
                         payment_method: payment_method,
-                        status: details.status,
+                        status: 'Đã thanh toán',
                     }),
                 })
                 .then((response) => response.json())

@@ -30,7 +30,7 @@
                             <th scope="row"><a style="text-decoration:none" href="{% url 'order_detail' order.order_number %}">{{ order.order_number }}</a></th>
                             <td>{{ order.full_name }}</td>
                             <td>{{ order.order_phone }}</td>
-                            <td>{{ order.order_total }}</td>
+                            <td class="formattedPrice">{{ order.order_total }}</td>
                             <td>{{ order.order_created_at }}</td>
                           </tr>
                           {% endfor %}
@@ -43,5 +43,17 @@
 	</main>
 </div> <!-- row.// -->
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Lấy tất cả các phần tử có class 'formattedPrice'
+    var priceElements = document.querySelectorAll('.formattedPrice');
+  
+    // Duyệt qua tất cả các phần tử và thay đổi giá trị
+    priceElements.forEach(function(priceElement) {
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  });
+</script>
 {% endblock content %}
  

@@ -11,8 +11,8 @@ class SupplierForm(forms.ModelForm):
         model = Supplier
         fields = [
             'supplier_name', 'supplier_email', 'supplier_phone', 
-            'supplier_address', 'supplier_country', 'supplier_is_active', 
-            'products'
+            'supplier_country','supplier_city', 'supplier_is_active', 
+            'products',
         ]
 
     def clean_supplier_email(self):
@@ -39,6 +39,12 @@ class SupplierForm(forms.ModelForm):
         if not supplier_name:
             raise forms.ValidationError("Trường này là bắt buộc")
         return supplier_name
+    
+    def clean_supplier_city(self):
+        supplier_city = self.cleaned_data.get('supplier_city')
+        if not supplier_city:
+            raise forms.ValidationError("Trường này là bắt buộc")
+        return supplier_city
 
     def clean_supplier_country(self):
         supplier_country = self.cleaned_data.get('supplier_country')
@@ -83,12 +89,6 @@ class SupplierForm(forms.ModelForm):
             raise forms.ValidationError("Số điện thoại đã tồn tại.")
         return supplier_phone
     
-    def clean_supplier_address(self):
-        supplier_address = self.cleaned_data.get('supplier_address')
-        if not supplier_address:
-            raise forms.ValidationError("Trường này là bắt buộc")
-        return supplier_address
-    
     def clean_products(self):
         products = self.cleaned_data.get('products')
         if not products:
@@ -122,22 +122,22 @@ class StockEntryForm(forms.ModelForm):
         return stock_color
         
     def clean_stock_value(self):
+        stock_value = self.cleaned_data.get('stock_value')
+        if not stock_value:
+            raise forms.ValidationError("Trường này là bắt buộc")
+        
+    def clean_stock_size(self):
         stock_size = self.cleaned_data.get('stock_size')
         product = self.cleaned_data.get('product')
         
         if not stock_size:
             raise forms.ValidationError("Trường này là bắt buộc")
         
-        # Kiểm tra kích cỡ trong Variation
+        # Kiểm tra màu sắc trong Variation
         if not Variation.objects.filter(product=product, variation_size=stock_size).exists():
             raise forms.ValidationError("Kích cỡ không tồn tại với sản phẩm hãy thêm biến thể cho sản phẩm này")
         
         return stock_size
-        
-    def clean_stock_size(self):
-        stock_size = self.cleaned_data.get('stock_size')
-        if not stock_size:
-            raise forms.ValidationError("Trường này là bắt buộc")
 
     def clean_product(self):
         product = self.cleaned_data.get('product')

@@ -6,9 +6,9 @@
 
 <div>
     <ul>
-        <li><strong>Chi phí tổng:</strong> {{ total_cost }} $</li>
-        <li><strong>Doanh thu tổng:</strong> {{ total_revenue }} $</li>
-        <li><strong>Lợi nhuận tổng:</strong> {{ total_profit }} $</li>
+        <li><strong>Chi phí tổng:</strong> {{ total_cost }} VND</li>
+        <li><strong>Doanh thu tổng:</strong> {{ total_revenue }} VND</li>
+        <li><strong>Lợi nhuận tổng:</strong> {{ total_profit }} VND</li>
     </ul>
 </div>
 
@@ -23,6 +23,7 @@
             <th>Chi phí</th>
             <th>Doanh thu</th>
             <th>Lợi nhuận</th>
+            <th>Đơn vị tính</th>
             <th>%Tăng trưởng theo ngày</th>
         </tr>
     </thead>
@@ -34,6 +35,7 @@
             <td>{{ stat.total_cost }}</td>
             <td>{{ stat.total_revenue }}</td>
             <td>{{ stat.total_profit }}</td>
+            <td>VND</td>
             <td>{{ stat.growth_rate }}</td>
         </tr>
         {% endfor %}
@@ -51,6 +53,7 @@
             <th>Chi phí</th>
             <th>Doanh thu</th>
             <th>Lợi nhuận</th>
+            <th>Đơn vị tính</th>
             <th>%Tăng trưởng theo tháng</th>
         </tr>
     </thead>
@@ -62,6 +65,7 @@
             <td>{{ stat.total_cost }}</td>
             <td>{{ stat.total_revenue }}</td>
             <td>{{ stat.total_profit }}</td>
+            <td>VND</td>
             <td>{{ stat.growth_rate }}</td>
         </tr>
         {% endfor %}
@@ -79,6 +83,7 @@
             <th>Chi phí</th>
             <th>Doanh thu</th>
             <th>Lợi nhuận</th>
+            <th>Đơn vị tính</th>
             <th>%Tăng trưởng theo năm</th>
         </tr>
     </thead>
@@ -90,6 +95,7 @@
             <td>{{ stat.total_cost }}</td>
             <td>{{ stat.total_revenue }}</td>
             <td>{{ stat.total_profit }}</td>
+            <td>VND</td>
             <td>{{ stat.growth_rate }}</td>
         </tr>
         {% endfor %}

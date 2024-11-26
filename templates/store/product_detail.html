@@ -34,7 +34,7 @@
                             </span>
                         </div>
                         
-                        <strong class="mb-0">${{ single_product.product_price }}</strong>
+                        <strong class="formattedPrice" class="mb-0">{{ single_product.product_price }} VND</strong>
                         <!-- Hiển thị màu sắc dưới dạng ảnh -->
                         <div class="colors">
                             <!-- Hiển thị các màu sắc -->
@@ -178,6 +178,17 @@
             </div>
     </div>
 </div>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Lấy tất cả các phần tử có class 'formattedPrice'
+        var priceElements = document.querySelectorAll('.formattedPrice');
+      
+        // Duyệt qua tất cả các phần tử và thay đổi giá trị
+        priceElements.forEach(function(priceElement) {
+          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+        });
+      });
+  </script>
 
 {% endblock content %}

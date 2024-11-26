@@ -126,9 +126,13 @@ def cart(request, total=0, cart_item_quantity=0, cart_items=None, tax=0, grand_t
         for cart_item in cart_items:
             total += (cart_item.product.product_price * cart_item.cart_item_quantity)
             cart_item_quantity += cart_item.cart_item_quantity
-        
-        tax = (2 * total) / 100
+        if cart_item_quantity <= 1: 
+           tax = (2 * total) / 100
+        else:
+           tax = 0
         grand_total = total + tax
+        grand_total = round(grand_total)
+        tax_display = str(int(tax)) if tax == int(tax) else str(tax)
     except ObjectDoesNotExist:
         pass
 
@@ -136,7 +140,7 @@ def cart(request, total=0, cart_item_quantity=0, cart_items=None, tax=0, grand_t
         'total': total,
         'cart_item_quantity': cart_item_quantity,
         'cart_items': cart_items,
-        'tax': tax,
+        'tax': tax_display if tax > 0 else 'Miễn phí',
         'grand_total': grand_total,
     }
     return render(request, 'store/cart.html', context)

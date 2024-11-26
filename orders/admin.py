@@ -136,8 +136,12 @@ export_profit_to_excel.short_description = "Xuất Lợi Nhuận Ra Excel"
 
 class OrderProductInline(admin.TabularInline):
     model = OrderProduct
-    readonly_fields = ('payment', 'user', 'product', 'order_product_quantity', 'order_product_price', 'order_product_ordered')
+    readonly_fields = ('payment', 'user', 'product', 'order_product_quantity', 'formatted_order_product_price', 'order_product_ordered')
+    list_display = ('payment', 'user', 'product', 'order_product_quantity', 'formatted_order_product_price', 'order_product_ordered')
     extra = 0
+    def formatted_order_product_price(self, obj):
+        return "{:,.0f}".format(obj.order_product_price)  # Định dạng với dấu phẩy
+    formatted_order_product_price.short_description = 'Gía'
     def has_add_permission(self, request, obj=None):
         return False
     
@@ -153,12 +157,20 @@ class OrderProductInline(admin.TabularInline):
 
 class OrderAdmin(admin.ModelAdmin):
     form = OrderFormAdmin
-    list_display = ['order_number', 'full_name', 'order_phone', 'order_email', 'order_country', 'order_city', 'order_total', 'order_village', 'order_tax', 'order_status', 'order_created_at', 'order_is_ordered']
+    list_display = ['order_number', 'full_name', 'order_phone', 'order_email', 'order_country', 'order_city', 'formatted_order_total', 'order_village', 'formatted_order_tax', 'order_status', 'order_created_at', 'order_is_ordered']
     list_filter = ['order_status', 'order_is_ordered']
     search_fields = ['order_number', 'payment__payment_id']
     list_per_page = 20
     inlines = [OrderProductInline]
     actions = [export_profit_to_excel]
+
+    def formatted_order_total(self, obj):
+        return "{:,.0f}".format(obj.order_total)  # Định dạng với dấu phẩy
+    formatted_order_total.short_description = 'Tổng'
+
+    def formatted_order_tax(self, obj):
+        return "{:,.0f}".format(obj.order_tax)  # Định dạng với dấu phẩy
+    formatted_order_tax.short_description = 'Phí giao hàng'
 
     def get_total_cost(self, obj):
         total_cost = StockEntry.objects.filter(entry_date__year=obj.order_created_at.year).aggregate(

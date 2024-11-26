@@ -5,31 +5,24 @@ from django.core.exceptions import ValidationError
 # Create your models here.
 NIKE_FACTORY_CHOICES = [
     ('Vietnam', 'Vietnam'),
-    ('China', 'China'),
-    ('Indonesia', 'Indonesia'),
-    ('Thailand', 'Thailand'),
-    ('India', 'India'),
-    ('Philippines', 'Philippines'),
-    ('Pakistan', 'Pakistan'),
-    ('Taiwan', 'Taiwan'),
-    ('Malaysia', 'Malaysia'),
-    ('Bangladesh', 'Bangladesh'),
-    ('Mexico', 'Mexico'),
-    ('Italy', 'Italy'),
-    ('Brazil', 'Brazil'),
-    ('Egypt', 'Egypt'),
-    ('Turkey', 'Turkey'),
-    ('South Korea', 'South Korea'),
-    ('United States', 'United States'),
-    ('Cambodia', 'Cambodia'),
 ]
+CITY_CHOICES = {
+    'Vietnam': [
+        ('TP. Hồ Chí Minh', 'TP. Hồ Chí Minh'),
+        ('Bình Dương', 'Bình Dương'),
+        ('Đồng Nai', 'Đồng Nai'),
+        ('Tây Ninh', 'Tây Ninh'),
+        ('Đà Nẵng', 'Đà Nẵng'),
+        ('Quảng Nam', 'Quảng Nam'),
+    ]
+}
 
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=200,verbose_name = "Tên nhà cung cấp")
     supplier_email = models.EmailField(verbose_name = "Thư điện tử")
     supplier_phone = models.CharField(max_length=15, blank=True,verbose_name = "Số điện thoại")
-    supplier_address = models.TextField(blank=True,verbose_name = "Địa chỉ")
     supplier_country = models.CharField(max_length=100, choices=NIKE_FACTORY_CHOICES,verbose_name = "Đất nước")
+    supplier_city = models.CharField(max_length=100, choices=CITY_CHOICES,verbose_name = "Thành phố",blank=True, null=True)
     supplier_is_active = models.BooleanField(default=True,verbose_name = "Hoạt động")
     created_at = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")
     updated_at = models.DateTimeField(auto_now=True,verbose_name = "Thời gian cập nhật")
@@ -63,8 +56,8 @@ class StockEntry(models.Model):
     stock_color = models.CharField(max_length=50, verbose_name="Màu sắc", blank=True,null=True)
     stock_value = models.CharField(max_length=100, verbose_name="Danh mục kích cỡ",choices=stockentry_value_choice, blank=True, null=True)
     stock_size = models.CharField(max_length=50, verbose_name="Kích cỡ", blank=True,null=True)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2,verbose_name = "Đơn giá")
-    total_value = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name = "Tổng giá trị")  # Tổng giá trị
+    unit_price = models.IntegerField(verbose_name = "Đơn giá")
+    total_value = models.IntegerField(default=0, verbose_name = "Tổng giá trị")  # Tổng giá trị
     entry_date = models.DateTimeField(auto_now_add=True,verbose_name = "Ngày nhập")
     class Meta:
         verbose_name = 'Nhập kho'
@@ -96,16 +89,10 @@ class StockEntry(models.Model):
                 raise ValidationError(
                     f"Biến thể với màu '{self.stock_color}' và kích cỡ '{self.stock_size}' không hợp lệ!"
                 )
-
-        # Cập nhật tồn kho cho biến thể
             variation.stock += stock_difference
             variation.save()
-
-    # Cập nhật tổng tồn kho sản phẩm
         self.product.update_total_stock()
         self.product.save()
-
-    # Lưu StockEntry
         super().save(*args, **kwargs)
 
 

@@ -4,160 +4,179 @@ from store.models import Product, Variation
 from django.db.models import Sum
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 
-# Create your models here.
-# Create your models here.
 COUNTRY_CHOICES = [
-    ('United States', 'United States'),
-    ('Canada', 'Canada'),
-    ('Mexico', 'Mexico'),
-    ('United Kingdom', 'United Kingdom'),
-    ('Germany', 'Germany'),
-    ('France', 'France'),
-    ('Italy', 'Italy'),
-    ('Spain', 'Spain'),
-    ('Netherlands', 'Netherlands'),
-    ('Belgium', 'Belgium'),
-    ('Austria', 'Austria'),
-    ('Switzerland', 'Switzerland'),
-    ('Sweden', 'Sweden'),
-    ('Denmark', 'Denmark'),
-    ('Norway', 'Norway'),
-    ('Finland', 'Finland'),
-    ('Ireland', 'Ireland'),
-    ('Portugal', 'Portugal'),
-    ('Greece', 'Greece'),
-    ('Poland', 'Poland'),
-    ('Czech Republic', 'Czech Republic'),
-    ('Hungary', 'Hungary'),
-    ('Romania', 'Romania'),
-    ('Russia', 'Russia'),
-    ('Australia', 'Australia'),
-    ('New Zealand', 'New Zealand'),
-    ('Japan', 'Japan'),
-    ('South Korea', 'South Korea'),
-    ('China', 'China'),
-    ('Hong Kong', 'Hong Kong'),
-    ('Taiwan', 'Taiwan'),
-    ('Singapore', 'Singapore'),
-    ('Malaysia', 'Malaysia'),
-    ('Thailand', 'Thailand'),
-    ('Indonesia', 'Indonesia'),
-    ('Philippines', 'Philippines'),
-    ('Vietnam', 'Vietnam'),
-    ('India', 'India'),
-    ('United Arab Emirates', 'United Arab Emirates'),
-    ('Saudi Arabia', 'Saudi Arabia'),
-    ('Turkey', 'Turkey'),
-    ('South Africa', 'South Africa'),
-    ('Brazil', 'Brazil'),
-    ('Argentina', 'Argentina'),
-    ('Chile', 'Chile'),
-    ('Colombia', 'Colombia'),
-    ('Peru', 'Peru'),
-    ('Israel', 'Israel'),
-    ('Egypt', 'Egypt'),
+    ('Vietnam', 'Vietnam')
 ]
 
 CITY_CHOICES = {
-    'United States': [
-        ('New York', 'New York'),
-        ('Los Angeles', 'Los Angeles'),
-        ('Chicago', 'Chicago'),
-        # Thêm các thành phố khác của Mỹ
-    ],
-    'Canada': [
-        ('Toronto', 'Toronto'),
-        ('Vancouver', 'Vancouver'),
-        ('Montreal', 'Montreal'),
-        # Thêm các thành phố khác của Canada
-    ],
-    'Mexico': [
-        ('Mexico City', 'Mexico City'),
-        ('Guadalajara', 'Guadalajara'),
-        ('Monterrey', 'Monterrey'),
-        # Thêm các thành phố khác của Mexico
-    ],
-    'United Kingdom': [
-        ('London', 'London'),
-        ('Manchester', 'Manchester'),
-        ('Birmingham', 'Birmingham'),
-        # Thêm các thành phố khác của Vương Quốc Anh
-    ],
-    'Germany': [
-        ('Berlin', 'Berlin'),
-        ('Munich', 'Munich'),
-        ('Hamburg', 'Hamburg'),
-        # Thêm các thành phố khác của Đức
-    ],
-    'France': [
-        ('Paris', 'Paris'),
-        ('Marseille', 'Marseille'),
-        ('Lyon', 'Lyon'),
-        # Thêm các thành phố khác của Pháp
-    ],
-    'Italy': [
-        ('Rome', 'Rome'),
-        ('Milan', 'Milan'),
-        ('Naples', 'Naples'),
-        # Thêm các thành phố khác của Ý
-    ],
-    'Spain': [
-        ('Madrid', 'Madrid'),
-        ('Barcelona', 'Barcelona'),
-        ('Valencia', 'Valencia'),
-        # Thêm các thành phố khác của Tây Ban Nha
-    ],
-    # Tiếp tục thêm các lựa chọn thành phố cho các quốc gia khác...
+    'Vietnam': [
+        ('An Giang', 'An Giang'),
+    ('Bà Rịa - Vũng Tàu', 'Bà Rịa - Vũng Tàu'),
+    ('Bắc Giang', 'Bắc Giang'),
+    ('Bắc Kạn', 'Bắc Kạn'),
+    ('Bạc Liêu', 'Bạc Liêu'),
+    ('Bắc Ninh', 'Bắc Ninh'),
+    ('Bến Tre', 'Bến Tre'),
+    ('Bình Định', 'Bình Định'),
+    ('Bình Dương', 'Bình Dương'),
+    ('Bình Phước', 'Bình Phước'),
+    ('Bình Thuận', 'Bình Thuận'),
+    ('Cà Mau', 'Cà Mau'),
+    ('Cần Thơ', 'Cần Thơ'),
+    ('Cao Bằng', 'Cao Bằng'),
+    ('Đà Nẵng', 'Đà Nẵng'),
+    ('Đắk Lắk', 'Đắk Lắk'),
+    ('Đắk Nông', 'Đắk Nông'),
+    ('Điện Biên', 'Điện Biên'),
+    ('Đồng Nai', 'Đồng Nai'),
+    ('Đồng Tháp', 'Đồng Tháp'),
+    ('Gia Lai', 'Gia Lai'),
+    ('Hà Giang', 'Hà Giang'),
+    ('Hà Nam', 'Hà Nam'),
+    ('Hà Nội', 'Hà Nội'),
+    ('Hà Tĩnh', 'Hà Tĩnh'),
+    ('Hải Dương', 'Hải Dương'),
+    ('Hải Phòng', 'Hải Phòng'),
+    ('Hậu Giang', 'Hậu Giang'),
+    ('Hòa Bình', 'Hòa Bình'),
+    ('Hưng Yên', 'Hưng Yên'),
+    ('Khánh Hòa', 'Khánh Hòa'),
+    ('Kiên Giang', 'Kiên Giang'),
+    ('Kon Tum', 'Kon Tum'),
+    ('Lai Châu', 'Lai Châu'),
+    ('Lâm Đồng', 'Lâm Đồng'),
+    ('Lạng Sơn', 'Lạng Sơn'),
+    ('Lào Cai', 'Lào Cai'),
+    ('Long An', 'Long An'),
+    ('Nam Định', 'Nam Định'),
+    ('Nghệ An', 'Nghệ An'),
+    ('Ninh Bình', 'Ninh Bình'),
+    ('Ninh Thuận', 'Ninh Thuận'),
+    ('Phú Thọ', 'Phú Thọ'),
+    ('Phú Yên', 'Phú Yên'),
+    ('Quảng Bình', 'Quảng Bình'),
+    ('Quảng Nam', 'Quảng Nam'),
+    ('Quảng Ngãi', 'Quảng Ngãi'),
+    ('Quảng Ninh', 'Quảng Ninh'),
+    ('Quảng Trị', 'Quảng Trị'),
+    ('Sóc Trăng', 'Sóc Trăng'),
+    ('Sơn La', 'Sơn La'),
+    ('Tây Ninh', 'Tây Ninh'),
+    ('Thái Bình', 'Thái Bình'),
+    ('Thái Nguyên', 'Thái Nguyên'),
+    ('Thanh Hóa', 'Thanh Hóa'),
+    ('Thừa Thiên Huế', 'Thừa Thiên Huế'),
+    ('Tiền Giang', 'Tiền Giang'),
+    ('TP. Hồ Chí Minh', 'TP. Hồ Chí Minh'),
+    ('Trà Vinh', 'Trà Vinh'),
+    ('Tuyên Quang', 'Tuyên Quang'),
+    ('Vĩnh Long', 'Vĩnh Long'),
+    ('Vĩnh Phúc', 'Vĩnh Phúc'),
+    ('Yên Bái', 'Yên Bái')
+    ]
 }
 
 VILLAGE_CHOICES = {
-    'New York': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của New York
+    'An Giang': [
+        ('Tp. Long Xuyên', 'Tp. Long Xuyên'),
+        ('Tp. Châu Đốc', 'Tp. Châu Đốc'),
+        ('Thị xã Tân Châu', 'Thị xã Tân Châu'),
+        ('Huyện An Phú', 'Huyện An Phú'),
+        ('Huyện Châu Phú', 'Huyện Châu Phú'),
+        ('Huyện Châu Thành', 'Huyện Châu Thành'),
+        ('Huyện Chợ Mới', 'Huyện Chợ Mới'),
+        ('Huyện Phú Tân', 'Huyện Phú Tân'),
+        ('Huyện Thoại Sơn', 'Huyện Thoại Sơn'),
+        ('Huyện Tịnh Biên', 'Huyện Tịnh Biên'),
+        ('Huyện Tri Tôn', 'Huyện Tri Tôn'),
     ],
-    'Los Angeles': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Los Angeles
+    'Bà Rịa - Vũng Tàu': [
+        ('Tp. Vũng Tàu', 'Tp. Vũng Tàu'),
+        ('Tp. Bà Rịa', 'Tp. Bà Rịa'),
+        ('Thị xã Phú Mỹ', 'Thị xã Phú Mỹ'),
+        ('Huyện Châu Đức', 'Huyện Châu Đức'),
+        ('Huyện Côn Đảo', 'Huyện Côn Đảo'),
+        ('Huyện Đất Đỏ', 'Huyện Đất Đỏ'),
+        ('Huyện Long Điền', 'Huyện Long Điền'),
+        ('Huyện Xuyên Mộc', 'Huyện Xuyên Mộc'),
     ],
-    'Toronto': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Toronto
+    'Bắc Giang': [
+        ('Tp. Bắc Giang', 'Tp. Bắc Giang'),
+        ('Huyện Hiệp Hòa', 'Huyện Hiệp Hòa'),
+        ('Huyện Lạng Giang', 'Huyện Lạng Giang'),
+        ('Huyện Lục Nam', 'Huyện Lục Nam'),
+        ('Huyện Lục Ngạn', 'Huyện Lục Ngạn'),
+        ('Huyện Sơn Động', 'Huyện Sơn Động'),
+        ('Huyện Tân Yên', 'Huyện Tân Yên'),
+        ('Huyện Việt Yên', 'Huyện Việt Yên'),
+        ('Huyện Yên Dũng', 'Huyện Yên Dũng'),
+        ('Huyện Yên Thế', 'Huyện Yên Thế'),
     ],
-    'Vancouver': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Vancouver
+    'Bắc Ninh': [
+        ('Tp. Bắc Ninh', 'Tp. Bắc Ninh'),
+        ('Thị xã Từ Sơn', 'Thị xã Từ Sơn'),
+        ('Huyện Gia Bình', 'Huyện Gia Bình'),
+        ('Huyện Lương Tài', 'Huyện Lương Tài'),
+        ('Huyện Quế Võ', 'Huyện Quế Võ'),
+        ('Huyện Thuận Thành', 'Huyện Thuận Thành'),
+        ('Huyện Tiên Du', 'Huyện Tiên Du'),
+        ('Huyện Yên Phong', 'Huyện Yên Phong'),
     ],
-    'Mexico City': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Mexico City
+    'Cần Thơ': [
+        ('Quận Ninh Kiều', 'Quận Ninh Kiều'),
+        ('Quận Bình Thủy', 'Quận Bình Thủy'),
+        ('Quận Cái Răng', 'Quận Cái Răng'),
+        ('Quận Ô Môn', 'Quận Ô Môn'),
+        ('Quận Thốt Nốt', 'Quận Thốt Nốt'),
+        ('Huyện Cờ Đỏ', 'Huyện Cờ Đỏ'),
+        ('Huyện Phong Điền', 'Huyện Phong Điền'),
+        ('Huyện Thới Lai', 'Huyện Thới Lai'),
+        ('Huyện Vĩnh Thạnh', 'Huyện Vĩnh Thạnh'),
     ],
-    'London': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của London
+    'Đà Nẵng': [
+        ('Quận Hải Châu', 'Quận Hải Châu'),
+        ('Quận Thanh Khê', 'Quận Thanh Khê'),
+        ('Quận Sơn Trà', 'Quận Sơn Trà'),
+        ('Quận Ngũ Hành Sơn', 'Quận Ngũ Hành Sơn'),
+        ('Quận Liên Chiểu', 'Quận Liên Chiểu'),
+        ('Quận Cẩm Lệ', 'Quận Cẩm Lệ'),
+        ('Huyện Hòa Vang', 'Huyện Hòa Vang'),
+        ('Huyện Hoàng Sa', 'Huyện Hoàng Sa'),
     ],
-    'Berlin': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Berlin
+    'Hà Nội': [
+        ('Quận Ba Đình', 'Quận Ba Đình'),
+        ('Quận Hoàn Kiếm', 'Quận Hoàn Kiếm'),
+        ('Quận Hai Bà Trưng', 'Quận Hai Bà Trưng'),
+        ('Quận Đống Đa', 'Quận Đống Đa'),
+        ('Quận Tây Hồ', 'Quận Tây Hồ'),
+        ('Quận Cầu Giấy', 'Quận Cầu Giấy'),
+        ('Quận Thanh Xuân', 'Quận Thanh Xuân'),
+        ('Quận Hoàng Mai', 'Quận Hoàng Mai'),
+        ('Quận Long Biên', 'Quận Long Biên'),
+        ('Huyện Ba Vì', 'Huyện Ba Vì'),
+        ('Huyện Chương Mỹ', 'Huyện Chương Mỹ'),
+        ('Huyện Đan Phượng', 'Huyện Đan Phượng'),
+        # Thêm các huyện còn lại
     ],
-    'Paris': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Paris
+    'TP. Hồ Chí Minh': [
+        ('Quận 1', 'Quận 1'),
+        ('Quận 2', 'Quận 2'),
+        ('Quận 3', 'Quận 3'),
+        ('Quận 4', 'Quận 4'),
+        ('Quận 5', 'Quận 5'),
+        ('Quận 6', 'Quận 6'),
+        ('Quận 7', 'Quận 7'),
+        ('Quận 8', 'Quận 8'),
+        ('Quận 9', 'Quận 9'),
+        ('Quận 10', 'Quận 10'),
+        ('Quận 11', 'Quận 11'),
+        ('Quận 12', 'Quận 12'),
+        ('Huyện Cần Giờ', 'Huyện Cần Giờ'),
+        ('Huyện Nhà Bè', 'Huyện Nhà Bè'),
+        # Thêm các huyện còn lại
     ],
-    'Rome': [
-        ('Village1', 'Village 1'),
-        ('Village2', 'Village 2'),
-        # Thêm các làng khác của Rome
-    ],
-    # Tiếp tục thêm các lựa chọn làng cho các thành phố khác...
 }
+
     
 class Payment(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE,verbose_name = "Người dùng")
@@ -198,8 +217,8 @@ class Order(models.Model):
     order_city = models.CharField(max_length=50, blank=True, null=True,verbose_name = "Thành phố")
     order_village = models.CharField(max_length=50, blank=True, null=True,verbose_name = "Huyện")
     order_note = models.CharField(max_length=100, blank=True,verbose_name = "Ghi chú")
-    order_total = models.FloatField(verbose_name = "Tổng")
-    order_tax = models.FloatField(verbose_name = "Phí giao hàng")
+    order_total = models.IntegerField(verbose_name = "Tổng")
+    order_tax = models.IntegerField(verbose_name = "Phí giao hàng")
     order_status = models.CharField(max_length=100, choices=STATUS, default='Đang xử lý',verbose_name = "Trạng thái")
     order_ip = models.CharField(max_length=20, blank=True,verbose_name = "Giao thức")
     order_is_ordered = models.BooleanField(default=False,verbose_name = "Được đặt hàng")

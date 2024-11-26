@@ -139,8 +139,8 @@
                     </p>
                 </div>
                 <div class="box-price-cart">
-                    <p class="cart-price mb-0">$ {{ cart_item.sub_total }}</p>
-                    <small class="text-muted">$ {{cart_item.product.product_price}}</small>
+                    <p id="formattedPrice_1" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
+                    <small id="formattedPrice_2" class="text-muted">{{cart_item.product.product_price}} VND</small>
                 </div>
             </div>
             {% endfor %}
@@ -149,5 +149,19 @@
     </div>
     </form>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var priceElement = document.getElementById("formattedPrice_1");
+    var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+    priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var priceElement = document.getElementById("formattedPrice_2");
+    var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+    priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+  });
+</script>
 
 {% endblock content %}

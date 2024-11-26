@@ -1,11 +1,8 @@
-from datetime import datetime
 from django.db.models import Sum
-from decimal import Decimal
 from django.contrib import admin
 from suppliers.models import StockEntry
 from orders.models import Order
 from .models import StatisticsPlaceholder
-from decimal import Decimal, ROUND_HALF_UP
 from django.db.models.functions import TruncMonth, TruncYear
 
 class StatisticsAdmin(admin.ModelAdmin):
@@ -13,8 +10,6 @@ class StatisticsAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None):
         # Hàm làm tròn đến 2 chữ số thập phân
-        def round_decimal(value):
-            return value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
         # Thống kê theo ngày
         stock_data = (
@@ -30,8 +25,8 @@ class StatisticsAdmin(admin.ModelAdmin):
         )
 
         statistics = []
-        total_cost_all = Decimal("0.0")
-        total_revenue_all = Decimal("0.0")
+        total_cost_all = 0
+        total_revenue_all = 0
         previous_day_revenue = None  # Doanh thu ngày hôm trước
 
         dates = set(
@@ -43,14 +38,9 @@ class StatisticsAdmin(admin.ModelAdmin):
             stock_entry = next((s for s in stock_data if s["entry_date__date"] == date), None)
             order_entry = next((o for o in order_data if o["order_created_at__date"] == date), None)
 
-            total_cost = Decimal(stock_entry["total_cost"]) if stock_entry else Decimal("0.0")
-            total_revenue = Decimal(order_entry["total_revenue"]) if order_entry else Decimal("0.0")
+            total_cost = stock_entry["total_cost"] if stock_entry else 0
+            total_revenue = order_entry["total_revenue"] if order_entry else 0
             total_profit = total_revenue - total_cost
-
-            # Làm tròn giá trị
-            total_cost = round_decimal(total_cost)
-            total_revenue = round_decimal(total_revenue)
-            total_profit = round_decimal(total_profit)
 
             total_cost_all += total_cost
             total_revenue_all += total_revenue
@@ -59,22 +49,22 @@ class StatisticsAdmin(admin.ModelAdmin):
             growth_rate = None
             if previous_day_revenue is not None and previous_day_revenue > 0:
                 growth_rate = ((total_revenue - previous_day_revenue) / previous_day_revenue) * 100
-                growth_rate = round_decimal(growth_rate)
+                growth_rate = growth_rate
             else:
-                growth_rate = Decimal("0.0")  # Trường hợp không có doanh thu ngày hôm trước
+                growth_rate = 0  # Trường hợp không có doanh thu ngày hôm trước
 
             statistics.append({
                 "stt": idx + 1,
                 "date": date.strftime("%d-%m-%Y"),
-                "total_cost": total_cost,
-                "total_revenue": total_revenue,
-                "total_profit": total_profit,
-                "growth_rate": f"{growth_rate}%",
+                "total_cost": format(total_cost, ","),
+                "total_revenue": format(total_revenue, ","),
+                "total_profit": format(total_profit, ","),
+                "growth_rate": f"{growth_rate:.2f}%",
             })
 
             previous_day_revenue = total_revenue  # Cập nhật doanh thu ngày hôm trước
 
-        total_profit_all = round_decimal(total_revenue_all - total_cost_all)
+        total_profit_all = total_revenue_all - total_cost_all
 
         # Thống kê theo tháng
         stock_monthly = (
@@ -102,30 +92,30 @@ class StatisticsAdmin(admin.ModelAdmin):
             stock_entry = next((s for s in stock_monthly if s["month"] == month), None)
             order_entry = next((o for o in order_monthly if o["month"] == month), None)
 
-            total_cost = Decimal(stock_entry["total_cost"]) if stock_entry else Decimal("0.0")
-            total_revenue = Decimal(order_entry["total_revenue"]) if order_entry else Decimal("0.0")
+            total_cost = stock_entry["total_cost"] if stock_entry else 0
+            total_revenue = order_entry["total_revenue"] if order_entry else 0
             total_profit = total_revenue - total_cost
 
             # Làm tròn giá trị
-            total_cost = round_decimal(total_cost)
-            total_revenue = round_decimal(total_revenue)
-            total_profit = round_decimal(total_profit)
+            total_cost = total_cost
+            total_revenue = total_revenue
+            total_profit = total_profit
 
             # Tính % tăng trưởng theo tháng
             growth_rate = None
             if previous_month_revenue is not None and previous_month_revenue > 0:
                 growth_rate = ((total_revenue - previous_month_revenue) / previous_month_revenue) * 100
-                growth_rate = round_decimal(growth_rate)
+                growth_rate = growth_rate
             else:
-                growth_rate = Decimal("0.0")
+                growth_rate = 0
 
             monthly_statistics.append({
                 "stt": idx + 1,
                 "month": month.strftime("%m-%Y"),
-                "total_cost": total_cost,
-                "total_revenue": total_revenue,
-                "total_profit": total_profit,
-                "growth_rate": f"{growth_rate}%",
+                "total_cost": format(total_cost, ","),
+                "total_revenue": format(total_revenue, ","),
+                "total_profit": format(total_profit, ","),
+                "growth_rate": f"{growth_rate:.2f}%",
             })
 
             previous_month_revenue = total_revenue
@@ -156,30 +146,30 @@ class StatisticsAdmin(admin.ModelAdmin):
             stock_entry = next((s for s in stock_yearly if s["year"] == year), None)
             order_entry = next((o for o in order_yearly if o["year"] == year), None)
 
-            total_cost = Decimal(stock_entry["total_cost"]) if stock_entry else Decimal("0.0")
-            total_revenue = Decimal(order_entry["total_revenue"]) if order_entry else Decimal("0.0")
+            total_cost = stock_entry["total_cost"] if stock_entry else 0
+            total_revenue = order_entry["total_revenue"] if order_entry else 0
             total_profit = total_revenue - total_cost
 
             # Làm tròn giá trị
-            total_cost = round_decimal(total_cost)
-            total_revenue = round_decimal(total_revenue)
-            total_profit = round_decimal(total_profit)
+            total_cost = total_cost
+            total_revenue = total_revenue
+            total_profit = total_profit
 
             # Tính % tăng trưởng theo năm
             growth_rate = None
             if previous_year_revenue is not None and previous_year_revenue > 0:
                 growth_rate = ((total_revenue - previous_year_revenue) / previous_year_revenue) * 100
-                growth_rate = round_decimal(growth_rate)
+                growth_rate = growth_rate
             else:
-                growth_rate = Decimal("0.0")
+                growth_rate = 0
 
             yearly_statistics.append({
                 "stt": idx + 1,
                 "year": year.year,
-                "total_cost": total_cost,
-                "total_revenue": total_revenue,
-                "total_profit": total_profit,
-                "growth_rate": f"{growth_rate}%",
+                "total_cost": format(total_cost, ","),
+                "total_revenue": format(total_revenue, ","),
+                "total_profit": format(total_profit, ","),
+                "growth_rate": f"{growth_rate:.2f}%",
             })
 
             previous_year_revenue = total_revenue
@@ -190,9 +180,9 @@ class StatisticsAdmin(admin.ModelAdmin):
             "statistics": statistics,
             "monthly_statistics": monthly_statistics,
             "yearly_statistics": yearly_statistics,
-            "total_cost": round_decimal(total_cost_all),
-            "total_revenue": round_decimal(total_revenue_all),
-            "total_profit": round_decimal(total_profit_all),
+            "total_cost": format(total_cost_all, ","),
+            "total_revenue": format(total_revenue_all, ","),
+            "total_profit":format(total_profit_all, ","),
         })
 
         return super().changelist_view(request, extra_context=extra_context)

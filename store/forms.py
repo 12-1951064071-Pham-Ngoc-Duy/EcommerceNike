@@ -26,11 +26,6 @@ class ProductForm(forms.ModelForm):
         if not product_gender:
             raise forms.ValidationError('Trường này là bắt buộc')
         return product_gender
-    def clean_product_made_in(self):
-        product_made_in = self.cleaned_data.get('product_made_in')
-        if not product_made_in:
-            raise forms.ValidationError('Trường này là bắt buộc')
-        return product_made_in
     def clean_category(self):
         category = self.cleaned_data.get('category')
         if not category:

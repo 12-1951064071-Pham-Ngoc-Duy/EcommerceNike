@@ -19,7 +19,7 @@ def payments(request):
         payment_id=body['transID'],
         payment_method=body['payment_method'],
         amount_paid=order.order_total,
-        status=body['status'],
+        status="Đã thanh toán",
     )
     payment.save()
     order.payment = payment
@@ -89,8 +89,13 @@ def place_order(request, total=0, cart_item_quantity=0):
     for cart_item in cart_items:
         total += (cart_item.product.product_price * cart_item.cart_item_quantity)
         cart_item_quantity += cart_item.cart_item_quantity
-    tax = (2 * total) / 100
+    if cart_item_quantity <= 1: 
+           tax = (2 * total) / 100
+    else:
+           tax = 0
     grand_total = total + tax
+    grand_total = round(grand_total)
+    tax_display = str(int(tax)) if tax == int(tax) else str(tax)
     
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -123,7 +128,7 @@ def place_order(request, total=0, cart_item_quantity=0):
                 'order': order,
                 'cart_items': cart_items,
                 'total': total,
-                'tax': tax,
+                'tax': tax_display if tax > 0 else 'Miễn phí',
                 'grand_total': grand_total,
             }
             return render(request, 'orders/payments.html', context)
@@ -132,7 +137,7 @@ def place_order(request, total=0, cart_item_quantity=0):
                 'form': form,
                 'cart_items': cart_items,
                 'total': total,
-                'tax': tax,
+                'tax': tax_display if tax > 0 else 'Miễn phí',
                 'grand_total': grand_total,
             }
             return render(request, 'orders/checkout.html', context )
@@ -152,15 +157,15 @@ def order_complete(request):
         subtotal = 0
         for i in ordered_products:
             subtotal += i.order_product_price * i.order_product_quantity
+            
         payment = Payment.objects.get(payment_id=transID)
-
         context = {
             'order':order,
             'ordered_products':ordered_products,
             'order_number': order.order_number,
             'transID': payment.payment_id,
             'payment': payment,
-            'subtotal':subtotal,
+            'subtotal':round(subtotal),
         }
         return render(request, 'orders/order_complete.html', context)
     except (Payment.DoesNotExist, Order.DoesNotExist):

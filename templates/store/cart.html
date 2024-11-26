@@ -50,8 +50,8 @@
                 </div>
             </div>
             <div class="box-price-cart">
-                <p class="cart-price mb-0">$ {{ cart_item.sub_total }}</p>
-                <small class="text-muted">$ {{cart_item.product.product_price}}</small>
+                <p id="formattedPrice_5" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
+                <small id="formattedPrice_4" class="text-muted">{{cart_item.product.product_price}} VND</small>
             </div>
         </div>
         {% endfor %}
@@ -63,15 +63,15 @@
         <h2>Bản tóm tắt</h2>
         <div class="summary-item">
             <p>Tổng phụ</p>
-            <p>$ {{total}}</p>
+            <p id="formattedPrice_3">{{total}} VND</p>
         </div>
         <div class="summary-item">
             <p>Ước tính giao hàng và xử lý</p>
-            <p>$ {{tax }}</p>
+            <p id="formattedPrice_1">{{tax }} VND</p>
         </div>
         <div class="summary-item total">
             <p>Tổng</p>
-            <p>$ {{ grand_total }}</p>
+            <p id="formattedPrice_2">{{ grand_total }} VND</p>
         </div>
         {% include "includes/alerts.html" %}
         <a href="{% url 'checkout' %}"  class="btn btn-dark w-100">Đi tới Thanh toán</a>
@@ -81,7 +81,48 @@
         <p class="text-center fs-3 mt-5 mb-5">Không có sản phẩm nào trong giỏ hàng. <a class="text-dark" href="{% url 'store' %}">Trở về cửa hàng</a></p>
 {% endif %}
 </div>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_1");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_2");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_3");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_4");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_5");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var priceElement = document.getElementById("formattedPrice_6");
+      var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+      priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+    });
+  </script>
 {% endblock content %}
 
 

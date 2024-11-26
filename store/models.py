@@ -15,27 +15,6 @@ GENDER_CHOICES = [
         ('Nam Nữ', 'Nam Nữ'),
     ]
 
-COUNTRY_CHOICES = [
-    ('Vietnam', 'Vietnam'),
-    ('China', 'China'),
-    ('Indonesia', 'Indonesia'),
-    ('Thailand', 'Thailand'),
-    ('India', 'India'),
-    ('Philippines', 'Philippines'),
-    ('Pakistan', 'Pakistan'),
-    ('Taiwan', 'Taiwan'),
-    ('Malaysia', 'Malaysia'),
-    ('Bangladesh', 'Bangladesh'),
-    ('Mexico', 'Mexico'),
-    ('Italy', 'Italy'),
-    ('Brazil', 'Brazil'),
-    ('Egypt', 'Egypt'),
-    ('Turkey', 'Turkey'),
-    ('South Korea', 'South Korea'),
-    ('United States', 'United States'),
-    ('Cambodia', 'Cambodia'),
-]
-
 
 class Product(models.Model):
     product_name = models.CharField(max_length=200,verbose_name = "Tên sản phẩm")
@@ -45,7 +24,6 @@ class Product(models.Model):
     product_images = models.ImageField(upload_to="photos/products",verbose_name = "Ảnh sản phẩm")
     product_stock = models.IntegerField(verbose_name = "Tồn kho", default=0)
     product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Nam Nữ',verbose_name = "Giới tính")
-    product_made_in = models.CharField(max_length=100, choices=COUNTRY_CHOICES, default='Vietnam',verbose_name = "Nơi sản xuất")
     product_is_availabel = models.BooleanField(default=True,verbose_name = "Có sẵn")
     category = models.ForeignKey(Category, on_delete=models.CASCADE,verbose_name = "Danh mục")
     product_created_date = models.DateTimeField(auto_now_add=True,verbose_name = "Thời gian tạo")

@@ -44,7 +44,7 @@
                                 <h2 class="product-name">{{ product.product_name }}</h2>
                                 <p><strong class="text-secondary">{{ product.product_gender | capfirst }} {{ product.category.category_name }}</strong></p>
                                 <p><strong class="text-secondary">{{ product.count_colors }} Màu sắc</strong></p>
-                                <p><strong>${{ product.product_price }}</strong></p>
+                                <p><strong class="formattedPrice">{{ product.product_price }} VND</strong></p>
                             </div>
                         </a>
                     </div>
@@ -92,7 +92,17 @@
         </div>
     </div>
 </div>
-
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Lấy tất cả các phần tử có class 'formattedPrice'
+        var priceElements = document.querySelectorAll('.formattedPrice');
+      
+        // Duyệt qua tất cả các phần tử và thay đổi giá trị
+        priceElements.forEach(function(priceElement) {
+          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+        });
+      });
+  </script>
 {% endblock content %}
 

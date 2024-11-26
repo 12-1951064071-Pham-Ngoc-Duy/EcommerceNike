@@ -80,23 +80,23 @@
                                                     </p>
                                                 </td>
                                                 <td class="text-center">{{ item.order_product_quantity }}</td>
-                                                <td class="text-center">${{ item.order_product_price }} USD</td>
+                                                <td id="formattedPrice_4" class="text-center">{{ item.order_product_price|floatformat:0 }} VND</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
                                         <tfoot>
                                             <tr>
                                                 <th colspan="2" class="text-right">Tổng phụ:</th>
-                                                <th class="text-center">${{ subtotal }} USD</th>
+                                                <th id="formattedPrice_3" class="text-center">{{ subtotal }} VND</th>
                                             </tr>
                                             <tr>
                                                 <th colspan="2" class="text-right">Phí giao hàng:</th>
-                                                <th class="text-center">${{ order.order_tax }} USD</th>
+                                                <th id="formattedPrice_2" class="text-center">{{ order.order_tax }} VND</th>
                                             </tr>
                                             
                                             <tr>
                                                 <th colspan="2" class="text-right">Tổng cộng:</th>
-                                                <th class="text-center">${{ order.order_total }} USD</th>
+                                                <th id="formattedPrice_1" class="text-center">{{ order.order_total }} VND</th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -116,6 +116,34 @@
         <!-- col-lg-12 end here -->
     </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var priceElement = document.getElementById("formattedPrice_1");
+          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+        });
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var priceElement = document.getElementById("formattedPrice_2");
+          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+        });
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var priceElement = document.getElementById("formattedPrice_3");
+          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+        });
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var priceElement = document.getElementById("formattedPrice_4");
+          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+        });
+      </script>
 
 {% endblock content %}
 

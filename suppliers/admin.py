@@ -79,7 +79,7 @@ def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
 export_daily_monthly_yearly_costs_to_excel.short_description = "Xuất Chi Phí Ra Excel"
 class SupplierAdmin(admin.ModelAdmin):
     form = SupplierForm
-    list_display = ['supplier_name', 'supplier_email', 'supplier_phone', 'supplier_country', 'supplier_is_active']
+    list_display = ['supplier_name', 'supplier_email', 'supplier_phone', 'supplier_country','supplier_city', 'supplier_is_active']
     search_fields = ['supplier_name', 'supplier_email']
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -87,12 +87,18 @@ class SupplierAdmin(admin.ModelAdmin):
 class StockEntryAdmin(admin.ModelAdmin):
     form = StockEntryForm
     fields = ['product', 'supplier', 'quantity','total_value', 'unit_price','stock_category','stock_color','stock_value','stock_size']
-    list_display = ['product', 'stock_color','stock_size', 'supplier', 'quantity','total_value', 'unit_price','entry_date']  # Hiển thị thông tin trong danh sách
+    list_display = ['product', 'stock_color','stock_size', 'supplier', 'quantity','formatted_total_value', 'formatted_unit_price','entry_date']  # Hiển thị thông tin trong danh sách
     readonly_fields = ['total_value']
     search_fields = ['supplier__supplier_name']
     actions = [export_daily_monthly_yearly_costs_to_excel]  # Thêm action vào admin
     def has_delete_permission(self, request, obj=None):
         return True
+    def formatted_total_value(self, obj):
+        return "{:,.0f}".format(obj.total_value)  # Định dạng với dấu phẩy
+    formatted_total_value.short_description = 'Tổng giá'
+    def formatted_unit_price(self, obj):
+        return "{:,.0f}".format(obj.unit_price)  # Định dạng với dấu phẩy
+    formatted_unit_price.short_description = 'Đơn giá'
 
 admin.site.register(StockEntry, StockEntryAdmin)
 admin.site.register(Supplier, SupplierAdmin)

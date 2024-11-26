@@ -33,7 +33,7 @@ class ReviewRatingInline(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
       form = ProductForm
-      list_display = ('product_name', 'product_price', 'product_stock', 'category', 'product_gender', 'product_modifield_date', 'product_is_availabel')
+      list_display = ('product_name', 'formatted_price', 'product_stock', 'category', 'product_gender', 'product_modifield_date', 'product_is_availabel')
       search_fields = ['product_name']
       readonly_fields = ['product_stock']
       prepopulated_fields = {'product_slug': ('product_name',)}
@@ -48,11 +48,14 @@ class ProductAdmin(admin.ModelAdmin):
 
       def has_delete_permission(self, request, obj=None):
         return request.user.is_staff  # Staff có thể xóa
+      def formatted_price(self, obj):
+        return "{:,.0f}".format(obj.product_price)  # Định dạng với dấu phẩy
+      formatted_price.short_description = 'Giá'
 
 class VariationAdmin(admin.ModelAdmin):
       form = VariationForm
       fields = ['product', 'variation_category','variation_color', 'variation_value','variation_size', 'variation_is_active','stock']
-      readonly_fields = ['stock']
+      readonly_fields = []
       list_display = ('product', 'variation_color', 'variation_size','stock', 'variation_is_active')
       list_editable = ('variation_is_active',)
       list_filter = ('product',)
@@ -65,7 +68,7 @@ class VariationAdmin(admin.ModelAdmin):
         return request.user.is_staff  # Staff có thể thêm
 
       def has_delete_permission(self, request, obj=None):
-        return request.user.is_staff  # Staff có thể xóa
+        return request.user.is_staff
       
 
 admin.site.register(Product, ProductAdmin)
