@@ -41,10 +41,11 @@ def store(request, category_slug_path=None):
     # Lọc lại sản phẩm từ danh sách ID duy nhất
     products = Product.objects.filter(id__in=products)
 
-
     # Lấy danh sách các checkbox được chọn từ request
     selected_categories = request.GET.getlist('category')  # Lấy category từ request
     selected_genders = request.GET.getlist('gender')      # Lấy gender từ request
+    selected_colors = request.GET.getlist('color')
+    selected_prices = request.GET.getlist('price')
 
     # Kiểm tra nếu 'all' được chọn
     if 'all' in selected_categories:
@@ -59,6 +60,22 @@ def store(request, category_slug_path=None):
     # Lọc theo các checkbox đã chọn trong Gender
     if selected_genders:
         products = products.filter(product_gender__in=selected_genders)
+    if selected_colors:
+        products = products.filter(variation__variation_color__in=selected_colors).distinct()
+
+    # Lấy tất cả màu sắc không trùng lặp từ bảng Variation
+    unique_colors = Variation.objects.filter(
+        variation_category='color',
+        variation_is_active=True
+    ).values_list('variation_color', flat=True).distinct()
+
+# Lọc theo khoảng giá đã chọn
+    if '0-500000' in selected_prices:
+        products = products.filter(product_price__lte=500000)
+    if '500000-1000000' in selected_prices:
+        products = products.filter(product_price__gt=500000, product_price__lte=1000000)
+    if 'over-1000000' in selected_prices:
+        products = products.filter(product_price__gt=1000000)
 
     # Phân trang
     paginator = Paginator(products, 6)
@@ -74,6 +91,9 @@ def store(request, category_slug_path=None):
         'GENDER_CHOICES': GENDER_CHOICES,  # Truyền GENDER_CHOICES vào context
         'selected_categories': selected_categories,  # Truyền danh sách category đã chọn vào context
         'selected_genders': selected_genders,  # Truyền danh sách gender đã chọn vào context
+        'selected_colors': selected_colors,
+        'unique_colors': unique_colors,
+        'selected_prices': selected_prices,
     }
 
     return render(request, 'store/store.html', context)
