@@ -139,8 +139,8 @@
                     </p>
                 </div>
                 <div class="box-price-cart">
-                    <p id="formattedPrice_1" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
-                    <small id="formattedPrice_2" class="text-muted">{{cart_item.product.product_price}} VND</small>
+                    <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
+                    <small class="formattedPrice" class="text-muted">{{cart_item.product.product_price}} VND</small>
                 </div>
             </div>
             {% endfor %}
@@ -151,17 +151,15 @@
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    var priceElement = document.getElementById("formattedPrice_1");
-    var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
-    priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var priceElement = document.getElementById("formattedPrice_2");
-    var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
-    priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
-  });
+      // Lấy tất cả các phần tử có class 'formattedPrice'
+      var priceElements = document.querySelectorAll('.formattedPrice');
+    
+      // Duyệt qua tất cả các phần tử và thay đổi giá trị
+      priceElements.forEach(function(priceElement) {
+        var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+        priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+      });
+    });
 </script>
 
 {% endblock content %}

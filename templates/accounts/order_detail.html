@@ -72,7 +72,7 @@
                                                     </p>
                                                 </td>
                                                 <td class="text-center">{{ item.order_product_quantity }}</td>
-                                                <td id="formattedPrice_2" class="text-center">{{ item.order_product_price|floatformat:0 }} VND</td>
+                                                <td class="formattedPrice text-center">{{ item.order_product_price|floatformat:0 }} VND</td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -117,10 +117,15 @@
       </script>
       <script>
         document.addEventListener("DOMContentLoaded", function() {
-          var priceElement = document.getElementById("formattedPrice_2");
-          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
-          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
-        });
+            // Lấy tất cả các phần tử có class 'formattedPrice'
+            var priceElements = document.querySelectorAll('.formattedPrice');
+          
+            // Duyệt qua tất cả các phần tử và thay đổi giá trị
+            priceElements.forEach(function(priceElement) {
+              var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+              priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+            });
+          });
       </script>
       <script>
         document.addEventListener("DOMContentLoaded", function() {
