@@ -140,7 +140,7 @@ def cart(request, total=0, cart_item_quantity=0, cart_items=None, tax=0, grand_t
         'total': total,
         'cart_item_quantity': cart_item_quantity,
         'cart_items': cart_items,
-        'tax': tax_display if tax > 0 else 'Miễn phí',
+        'tax': tax_display if tax > 0 else 0,
         'grand_total': grand_total,
     }
     return render(request, 'store/cart.html', context)

@@ -128,7 +128,7 @@ def place_order(request, total=0, cart_item_quantity=0):
                 'order': order,
                 'cart_items': cart_items,
                 'total': total,
-                'tax': tax_display if tax > 0 else 'Miễn phí',
+                'tax': tax_display if tax > 0 else 0,
                 'grand_total': grand_total,
             }
             return render(request, 'orders/payments.html', context)
@@ -137,7 +137,7 @@ def place_order(request, total=0, cart_item_quantity=0):
                 'form': form,
                 'cart_items': cart_items,
                 'total': total,
-                'tax': tax_display if tax > 0 else 'Miễn phí',
+                'tax': tax_display if tax > 0 else 0,
                 'grand_total': grand_total,
             }
             return render(request, 'orders/checkout.html', context )
