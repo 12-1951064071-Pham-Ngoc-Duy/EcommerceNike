@@ -4,6 +4,7 @@ from suppliers.models import StockEntry
 from orders.models import Order
 from .models import StatisticsPlaceholder
 from django.db.models.functions import TruncMonth, TruncYear
+import json
 
 class StatisticsAdmin(admin.ModelAdmin):
     change_list_template = "admin/statistics_change_list.html"
@@ -96,11 +97,6 @@ class StatisticsAdmin(admin.ModelAdmin):
             total_revenue = order_entry["total_revenue"] if order_entry else 0
             total_profit = total_revenue - total_cost
 
-            # Làm tròn giá trị
-            total_cost = total_cost
-            total_revenue = total_revenue
-            total_profit = total_profit
-
             # Tính % tăng trưởng theo tháng
             growth_rate = None
             if previous_month_revenue is not None and previous_month_revenue > 0:
@@ -150,11 +146,6 @@ class StatisticsAdmin(admin.ModelAdmin):
             total_revenue = order_entry["total_revenue"] if order_entry else 0
             total_profit = total_revenue - total_cost
 
-            # Làm tròn giá trị
-            total_cost = total_cost
-            total_revenue = total_revenue
-            total_profit = total_profit
-
             # Tính % tăng trưởng theo năm
             growth_rate = None
             if previous_year_revenue is not None and previous_year_revenue > 0:
@@ -183,6 +174,33 @@ class StatisticsAdmin(admin.ModelAdmin):
             "total_cost": format(total_cost_all, ","),
             "total_revenue": format(total_revenue_all, ","),
             "total_profit":format(total_profit_all, ","),
+            "daily_chart_data": json.dumps([
+                {
+                "date": stat["date"],
+                "total_cost": float(stat["total_cost"].replace(",", "")),
+                "total_revenue": float(stat["total_revenue"].replace(",", "")),
+                "total_profit": float(stat["total_profit"].replace(",", ""))
+                } 
+                for stat in statistics
+            ]),
+            "monthly_chart_data": json.dumps([
+                {
+                "month": stat["month"],
+                "total_cost": float(stat["total_cost"].replace(",", "")),
+                "total_revenue": float(stat["total_revenue"].replace(",", "")),
+                "total_profit": float(stat["total_profit"].replace(",", ""))
+                } 
+                for stat in monthly_statistics
+            ]),
+            "yearly_chart_data": json.dumps([
+                {
+                "year": stat["year"],
+                "total_cost": float(stat["total_cost"].replace(",", "")),
+                "total_revenue": float(stat["total_revenue"].replace(",", "")),
+                "total_profit": float(stat["total_profit"].replace(",", ""))
+                } 
+                for stat in yearly_statistics
+            ]),
         })
 
         return super().changelist_view(request, extra_context=extra_context)

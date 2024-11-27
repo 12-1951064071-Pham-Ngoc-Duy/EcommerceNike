@@ -41,7 +41,8 @@
         {% endfor %}
     </tbody>
 </table>
-
+<h2>Biểu đồ thống kê theo ngày</h2>
+<canvas id="dailyChart" width="400" height="200"></canvas>
 <hr>
 <h2>Thống kê theo tháng</h2>
 
@@ -71,7 +72,8 @@
         {% endfor %}
     </tbody>
 </table>
-
+<h2>Biểu đồ thống kê theo tháng</h2>
+<canvas id="monthlyChart" width="400" height="200"></canvas>
 <hr>
 <h2>Thống kê theo năm</h2>
 
@@ -101,5 +103,196 @@
         {% endfor %}
     </tbody>
 </table>
+<h2>Biểu đồ thống kê theo năm</h2>
+<canvas id="yearlyChart" width="400" height="200"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dailyData = {{ daily_chart_data|safe }};
+        const dailyLabels = dailyData.map(item => item.date);
+        const totalRevenue = dailyData.map(item => item.total_revenue);
+        const totalCost = dailyData.map(item => item.total_cost);
+        const totalProfit = dailyData.map(item => item.total_profit);
+        Chart.register(ChartDataLabels);
+        const ctx = document.getElementById('dailyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dailyLabels,
+                datasets: [
+                    {
+                        label: 'Doanh Thu',
+                        data: totalRevenue,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Chi Phí',
+                        data: totalCost,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Lợi nhuận',
+                        data: totalProfit,
+                        backgroundColor: 'rgba(255, 255, 132, 0.6)',
+                        borderColor: 'rgba(255, 255, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',  // Hiển thị nhãn trên cùng cột
+                        align: 'end',
+                        formatter: function(value) {
+                            return value === 0 ? '0' : value;  // Hiển thị '0' cho giá trị bằng 0
+                        },
+                        color: '#000',  // Màu chữ cho nhãn
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]  // Kích hoạt plugin datalabels
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const monthlyData = {{ monthly_chart_data|safe }};
+        const monthlyLabels = monthlyData.map(item => item.month);
+        const totalRevenue = monthlyData.map(item => item.total_revenue);
+        const totalCost = monthlyData.map(item => item.total_cost);
+        const totalProfit = monthlyData.map(item => item.total_profit);
+
+        Chart.register(ChartDataLabels);
+        const ctx = document.getElementById('monthlyChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'bar',  // Biểu đồ cột
+            data: {
+                labels: monthlyLabels,
+                datasets: [
+                    {
+                        label: 'Doanh Thu',
+                        data: totalRevenue,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Chi Phí',
+                        data: totalCost,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Lợi nhuận',
+                        data: totalProfit,
+                        backgroundColor: 'rgba(255, 255, 132, 0.6)',
+                        borderColor: 'rgba(255, 255, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',  // Hiển thị nhãn trên cùng cột
+                        align: 'end',
+                        formatter: function(value) {
+                            return value === 0 ? '0' : value;  // Hiển thị '0' cho giá trị bằng 0
+                        },
+                        color: '#000',  // Màu chữ cho nhãn
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]  // Kích hoạt plugin datalabels
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const yearlyData = {{ yearly_chart_data|safe }};
+        const yearlyLabels = yearlyData.map(item => item.year);
+        const totalRevenue = yearlyData.map(item => item.total_revenue);
+        const totalCost = yearlyData.map(item => item.total_cost);
+        const totalProfit = yearlyData.map(item => item.total_profit);
+
+        Chart.register(ChartDataLabels);
+        const ctx = document.getElementById('yearlyChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'bar',  // Biểu đồ cột
+            data: {
+                labels: yearlyLabels,
+                datasets: [
+                    {
+                        label: 'Doanh Thu',
+                        data: totalRevenue,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Chi Phí',
+                        data: totalCost,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Lợi nhuận',
+                        data: totalProfit,
+                        backgroundColor: 'rgba(255, 255, 132, 0.6)',
+                        borderColor: 'rgba(255, 255, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',  // Hiển thị nhãn trên cùng cột
+                        align: 'end',
+                        formatter: function(value) {
+                            return value === 0 ? '0' : value;  // Hiển thị '0' cho giá trị bằng 0
+                        },
+                        color: '#000',  // Màu chữ cho nhãn
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]  // Kích hoạt plugin datalabels
+        });
+    });
+</script>
 
 {% endblock %}
