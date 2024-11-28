@@ -55,7 +55,7 @@ class ProductAdmin(admin.ModelAdmin):
 class VariationAdmin(admin.ModelAdmin):
       form = VariationForm
       fields = ['product', 'variation_category','variation_color', 'variation_value','variation_size', 'variation_is_active','stock']
-      readonly_fields = []
+      readonly_fields = ['stock']
       list_display = ('product', 'variation_color', 'variation_size','stock', 'variation_is_active')
       list_editable = ('variation_is_active',)
       list_filter = ('product',)
