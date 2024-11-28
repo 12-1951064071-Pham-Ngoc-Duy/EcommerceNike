@@ -22,17 +22,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    max-height: 558px;
-}
-
-.product-info-scroll {
-    max-height: 558px; /* Giới hạn chiều cao để kích hoạt scroll */
-    overflow-y: auto;
-    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
-}
-
-.product-info-scroll::-webkit-scrollbar {
-    display: none; /* Ẩn thanh cuộn trên Chrome, Safari và Edge */
+    max-height: 580px;
 }
 
 /* Thông tin sản phẩm */
@@ -65,7 +55,7 @@
 }
 
 .product-info-scroll {
-    max-height: 670px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
+    max-height: 580px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
     overflow-y: scroll; /* Kích hoạt cuộn theo chiều dọc */
     scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
 }
@@ -75,7 +65,7 @@
 }
 
 .product-info-container {
-    max-height: 670px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
+    max-height: 580px; /* Đặt chiều cao tối đa để kích hoạt cuộn */
     overflow-y: scroll; /* Kích hoạt cuộn theo chiều dọc */
     scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
 }

@@ -107,6 +107,7 @@ class StockEntryForm(forms.ModelForm):
         stock_category = self.cleaned_data.get('stock_category')
         if not stock_category:
             raise forms.ValidationError("Trường này là bắt buộc")
+        return stock_category
         
     def clean_stock_color(self):
         stock_color = self.cleaned_data.get('stock_color')
@@ -125,6 +126,7 @@ class StockEntryForm(forms.ModelForm):
         stock_value = self.cleaned_data.get('stock_value')
         if not stock_value:
             raise forms.ValidationError("Trường này là bắt buộc")
+        return stock_value
         
     def clean_stock_size(self):
         stock_size = self.cleaned_data.get('stock_size')
