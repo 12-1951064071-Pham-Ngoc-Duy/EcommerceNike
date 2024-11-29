@@ -124,8 +124,10 @@ def cart(request, total=0, cart_item_quantity=0, cart_items=None, tax=0, grand_t
             cart = Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, cart_item_is_active=True)
         for cart_item in cart_items:
-            total += (cart_item.product.product_price * cart_item.cart_item_quantity)
-            cart_item_quantity += cart_item.cart_item_quantity
+            product_price = cart_item.product.discounted_price  # Lấy giá giảm hoặc giá gốc
+            if product_price is not None:
+                total += (product_price * cart_item.cart_item_quantity)
+                cart_item_quantity += cart_item.cart_item_quantity
         if cart_item_quantity <= 1: 
            tax = (2 * total) / 100
         else:
@@ -155,8 +157,10 @@ def checkout(request, total=0, cart_item_quantity=0, cart_items=None, tax = 0, g
             cart = Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, cart_item_is_active=True)
         for cart_item in cart_items:
-            total += (cart_item.product.product_price * cart_item.cart_item_quantity)
-            cart_item_quantity += cart_item.cart_item_quantity
+            product_price = cart_item.product.discounted_price  # Lấy giá giảm hoặc giá gốc
+            if product_price is not None:
+                total += (product_price * cart_item.cart_item_quantity)
+                cart_item_quantity += cart_item.cart_item_quantity
         tax = (2 * total) / 100
         grand_total = total + tax
     except ObjectDoesNotExist:

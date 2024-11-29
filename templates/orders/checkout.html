@@ -139,8 +139,13 @@
                     </p>
                 </div>
                 <div class="box-price-cart">
-                    <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
-                    <small class="formattedPrice" class="text-muted">{{cart_item.product.product_price}} VND</small>
+                  {% if cart_item.product.discount_code > 0 and cart_item.product.discounted_price is not None %}
+                  <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
+                  <small class="formattedPrice text-muted">{{ cart_item.product.discounted_price }} VND</small>
+              {% else %}
+              <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.product.product_price }} VND</p>
+              <small class="formattedPrice text-muted">{{ cart_item.product.product_price }} VND</small>
+              {% endif %}
                 </div>
             </div>
             {% endfor %}

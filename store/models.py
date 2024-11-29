@@ -21,6 +21,7 @@ class Product(models.Model):
     product_slug = models.SlugField(max_length=200, unique=True,verbose_name = "Tên nguồn sản phẩm")
     product_description = models.TextField(max_length=500, blank=True,verbose_name = "Mô tả sản phẩm")
     product_price = models.IntegerField(verbose_name = "Gía", default=0)
+    discount_code = models.IntegerField(default=0, verbose_name="Mã giảm giá")
     product_images = models.ImageField(upload_to="photos/products",verbose_name = "Ảnh sản phẩm")
     product_stock = models.IntegerField(verbose_name = "Tồn kho", default=0)
     product_gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Nam Nữ',verbose_name = "Giới tính")
@@ -32,6 +33,16 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'Sản phẩm'
         verbose_name_plural = 'Sản phẩm'
+
+    @property
+    def discounted_price(self):
+        """Tính giá sau khi áp dụng giảm giá."""
+        if self.product_price is None or self.discount_code is None:
+            return self.product_price  # Tránh NaN nếu giá trị rỗng hoặc None
+        
+        if self.discount_code > 0:
+            return int(self.product_price - (self.product_price * (self.discount_code/100)))
+        return self.product_price
 
     def count_colors(self):
     # Tránh vòng lặp import

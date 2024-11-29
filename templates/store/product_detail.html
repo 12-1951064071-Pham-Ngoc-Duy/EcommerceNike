@@ -34,7 +34,14 @@
                             </span>
                         </div>
                         
-                        <strong class="formattedPrice" class="mb-0">{{ single_product.product_price }} VND</strong>
+                        {% if single_product.discount_code > 0 and single_product.discounted_price is not None %}
+                        <strong class="formattedPrice">{{ single_product.discounted_price }} VND</strong>
+                        <br>
+                        <strong class="formattedPrice text-muted" style="text-decoration: line-through;" >{{ single_product.product_price }} VND</strong>
+                    {% else %}
+                    <strong class="formattedPrice">{{ single_product.product_price }} VND</strong>
+                    {% endif %}
+                    
                         <!-- Hiển thị màu sắc dưới dạng ảnh -->
                         <div class="colors">
                             <!-- Hiển thị các màu sắc -->
@@ -181,15 +188,19 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Lấy tất cả các phần tử có class 'formattedPrice'
-        var priceElements = document.querySelectorAll('.formattedPrice');
-      
-        // Duyệt qua tất cả các phần tử và thay đổi giá trị
-        priceElements.forEach(function(priceElement) {
-          var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
-          priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
-        });
+      var priceElements = document.querySelectorAll('.formattedPrice');
+      priceElements.forEach(function(priceElement) {
+          var priceText = priceElement.innerText.trim();  // Xóa khoảng trắng thừa
+          priceText = priceText.replace(/[^\d]/g, '');  // Xóa tất cả ký tự không phải số
+  
+          var priceValue = parseFloat(priceText);
+          if (!isNaN(priceValue)) {
+              priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';
+          } else {
+              priceElement.innerText = "Không hợp lệ";
+          }
       });
+  });
   </script>
 
 {% endblock content %}

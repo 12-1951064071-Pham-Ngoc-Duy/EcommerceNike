@@ -28,7 +28,19 @@ class CartItem(models.Model):
 
     @property
     def sub_total(self):
-        return self.product.product_price * self.cart_item_quantity
+        product_price = self.product.product_price
+        discount_code = self.product.discount_code
+
+        # Áp dụng giảm giá nếu có mã giảm giá
+        if discount_code > 0:
+            discount_amount = product_price * (discount_code / 100)
+            discounted_price = product_price - discount_amount
+        else:
+            discounted_price = product_price
+        
+        # Tính tổng
+        total = discounted_price * self.cart_item_quantity
+        return int(total)
 
     def __unicode__(self):
         return self.product

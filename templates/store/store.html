@@ -108,7 +108,15 @@
                                 <h2 class="product-name">{{ product.product_name }}</h2>
                                 <p><strong class="text-secondary">{{ product.product_gender | capfirst }} {{ product.category.category_name }}</strong></p>
                                 <p><strong class="text-secondary">{{ product.count_colors }} Màu sắc</strong></p>
-                                <p><strong class="formattedPrice">{{ product.product_price }} VND</strong></p>
+                                <p>{% if product.discount_code > 0 and product.discounted_price is not None %}
+                                  <strong class="formattedPrice">{{ product.discounted_price }} VND</strong>
+                                  <strong class="formattedPrice text-muted" style="text-decoration: line-through;" >{{ product.product_price }} VND</strong>
+                              {% else %}
+                              <strong class="formattedPrice">{{ product.product_price }} VND</strong>
+                              {% endif %}</p>
+                                {% if product.discount_code %}
+<p><strong style="color:rgb(0, 125, 72)">Giảm: {{ product.discount_code }}%</strong></p>
+{% endif %}
                             </div>
                         </a>
                     </div>

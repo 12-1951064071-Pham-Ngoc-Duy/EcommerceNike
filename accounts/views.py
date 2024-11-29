@@ -346,12 +346,26 @@ def change_password(request):
 def order_detail(request, order_id):
     order_detail = OrderProduct.objects.filter(order__order_number=order_id)
     order = Order.objects.get(order_number=order_id)
-    subtotal = 0
-    for i in order_detail:
-        subtotal += i.order_product_price * i.order_product_quantity
+    subtotal = 0  # Khởi tạo subtotal
+
+    # Tính toán giá trị sản phẩm sau giảm giá
+    for item in order_detail:
+        product = item.product  # Lấy sản phẩm từ đơn hàng
+        discount_code = product.discount_code  # Giả sử đây là phần trăm giảm giá, ví dụ: 10%
+
+        # Tính giá sau giảm giá
+        if discount_code > 0:
+            discount_amount = item.order_product_price * (discount_code / 100)
+            discounted_price = item.order_product_price - discount_amount
+        else:
+            discounted_price = item.order_product_price  # Không có giảm giá
+
+        item.order_product_price = discounted_price * item.order_product_quantity # Cập nhật giá mới cho sản phẩm
+        subtotal += item.order_product_price  # Cập nhật subtotal
+
     context = {
-        'order_detail':order_detail,
+        'order_detail': order_detail,
         'order': order,
-        'subtotal':subtotal,
+        'subtotal': round(subtotal),  # Làm tròn subtotal và gửi tới template
     }
     return render(request, 'accounts/order_detail.html', context)

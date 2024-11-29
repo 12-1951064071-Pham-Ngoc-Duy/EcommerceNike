@@ -87,8 +87,10 @@ def place_order(request, total=0, cart_item_quantity=0):
     grand_total = 0
     tax = 0
     for cart_item in cart_items:
-        total += (cart_item.product.product_price * cart_item.cart_item_quantity)
-        cart_item_quantity += cart_item.cart_item_quantity
+        product_price = cart_item.product.discounted_price  # Lấy giá giảm hoặc giá gốc
+        if product_price is not None:
+                total += (product_price * cart_item.cart_item_quantity)
+                cart_item_quantity += cart_item.cart_item_quantity
     if cart_item_quantity <= 1: 
            tax = (2 * total) / 100
     else:
@@ -154,19 +156,36 @@ def order_complete(request):
     try:
         order = Order.objects.get(order_number=order_number, order_is_ordered=True)
         ordered_products = OrderProduct.objects.filter(order_id=order.id)
-        subtotal = 0
-        for i in ordered_products:
-            subtotal += i.order_product_price * i.order_product_quantity
-            
+        
+        subtotal = 0  # Khởi tạo subtotal
+
+        # Tính toán giá trị sản phẩm sau giảm giá
+        for item in ordered_products:
+            product = item.product  # Lấy sản phẩm từ đơn hàng
+            discount_code = product.discount_code  # Giả sử đây là phần trăm giảm giá, ví dụ: 10%
+
+            # Tính giá sau giảm giá
+            if discount_code > 0:
+                discount_amount = item.order_product_price * (discount_code / 100)
+                discounted_price = item.order_product_price - discount_amount
+            else:
+                discounted_price = item.order_product_price  # Không có giảm giá
+
+            item.order_product_price = discounted_price * item.order_product_quantity # Cập nhật giá mới cho sản phẩm
+            subtotal += item.order_product_price  # Cập nhật subtotal
+
         payment = Payment.objects.get(payment_id=transID)
+
         context = {
-            'order':order,
-            'ordered_products':ordered_products,
+            'order': order,
+            'ordered_products': ordered_products,
             'order_number': order.order_number,
             'transID': payment.payment_id,
             'payment': payment,
-            'subtotal':round(subtotal),
+            'subtotal': round(subtotal),  # Làm tròn subtotal và gửi tới template
         }
         return render(request, 'orders/order_complete.html', context)
+    
     except (Payment.DoesNotExist, Order.DoesNotExist):
         return redirect('home')
+
