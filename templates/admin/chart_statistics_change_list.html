@@ -2,109 +2,12 @@
 {% load static %}
 
 {% block content %}
-<h2>Tổng thông tin</h2>
-
-<div>
-    <ul>
-        <li><strong>Chi phí tổng:</strong> {{ total_cost }} VND</li>
-        <li><strong>Doanh thu tổng:</strong> {{ total_revenue }} VND</li>
-        <li><strong>Lợi nhuận tổng:</strong> {{ total_profit }} VND</li>
-    </ul>
-</div>
-
-<hr>
-<h2>Thống kê theo ngày</h2>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Ngày</th>
-            <th>Chi phí</th>
-            <th>Doanh thu</th>
-            <th>Lợi nhuận</th>
-            <th>Đơn vị tính</th>
-            <th>%Tăng trưởng theo ngày</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for stat in statistics %}
-        <tr>
-            <td>{{ stat.stt }}</td>
-            <td>{{ stat.date }}</td>
-            <td>{{ stat.total_cost }}</td>
-            <td>{{ stat.total_revenue }}</td>
-            <td>{{ stat.total_profit }}</td>
-            <td>VND</td>
-            <td>{{ stat.growth_rate }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% comment %} <h2>Biểu đồ thống kê theo ngày</h2>
-<canvas id="dailyChart" width="400" height="200"></canvas> {% endcomment %}
-<hr>
-<h2>Thống kê theo tháng</h2>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Tháng</th>
-            <th>Chi phí</th>
-            <th>Doanh thu</th>
-            <th>Lợi nhuận</th>
-            <th>Đơn vị tính</th>
-            <th>%Tăng trưởng theo tháng</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for stat in monthly_statistics %}
-        <tr>
-            <td>{{ stat.stt }}</td>
-            <td>{{ stat.month }}</td>
-            <td>{{ stat.total_cost }}</td>
-            <td>{{ stat.total_revenue }}</td>
-            <td>{{ stat.total_profit }}</td>
-            <td>VND</td>
-            <td>{{ stat.growth_rate }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% comment %} <h2>Biểu đồ thống kê theo tháng</h2>
-<canvas id="monthlyChart" width="400" height="200"></canvas> {% endcomment %}
-<hr>
-<h2>Thống kê theo năm</h2>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>STT</th>
-            <th>Năm</th>
-            <th>Chi phí</th>
-            <th>Doanh thu</th>
-            <th>Lợi nhuận</th>
-            <th>Đơn vị tính</th>
-            <th>%Tăng trưởng theo năm</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for stat in yearly_statistics %}
-        <tr>
-            <td>{{ stat.stt }}</td>
-            <td>{{ stat.year }}</td>
-            <td>{{ stat.total_cost }}</td>
-            <td>{{ stat.total_revenue }}</td>
-            <td>{{ stat.total_profit }}</td>
-            <td>VND</td>
-            <td>{{ stat.growth_rate }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% comment %} <h2>Biểu đồ thống kê theo năm</h2>
-<canvas id="yearlyChart" width="400" height="200"></canvas> {% endcomment %}
+<h2>Biểu đồ thống kê theo ngày</h2>
+<canvas id="dailyChart" width="400" height="200"></canvas>
+<h2>Biểu đồ thống kê theo tháng</h2>
+<canvas id="monthlyChart" width="400" height="200"></canvas>
+<h2>Biểu đồ thống kê theo năm</h2>
+<canvas id="yearlyChart" width="400" height="200"></canvas>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script>
