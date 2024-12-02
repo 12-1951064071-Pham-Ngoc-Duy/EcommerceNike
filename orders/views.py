@@ -10,6 +10,8 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib import messages
 
+from suppliers.models import StockEntry
+
 def payments(request):
     body = json.loads(request.body)
     order = Order.objects.get(user=request.user, order_is_ordered=False, order_number=body['orderID'])
@@ -45,15 +47,32 @@ def payments(request):
         orderproduct.variations.set(product_variation)
         orderproduct.save()
 
-        # Giảm số lượng của từng variation
+        # Giảm số lượng của từng variation theo FIFO
         for variation in product_variation:
+            total_to_deduct = item.cart_item_quantity  # Tổng số lượng cần giảm
+
+    # Lấy tất cả các lô hàng liên quan đến sản phẩm theo FIFO (cũ trước)
+            stock_entries = StockEntry.objects.filter(
+                product=item.product,
+                stock_color=variation.variation_color,
+                stock_size=variation.variation_size,
+                remaining_quantity__gt=0  # Chỉ lấy các lô còn hàng
+            ).order_by('entry_date')  # Sắp xếp theo ngày nhập
+
+    # Giảm tồn kho từ các lô hàng theo thứ tự FIFO
+            for stock_entry in stock_entries:
+                if total_to_deduct <= 0:
+                    break  # Đã giảm hết số lượng cần thiết
+
+        # Xác định số lượng có thể giảm trong lô này
+                quantity_to_reduce = min(stock_entry.remaining_quantity, total_to_deduct)
+                stock_entry.remaining_quantity -= quantity_to_reduce
+                stock_entry.save()
+
+        # Cập nhật số lượng còn cần giảm
+                total_to_deduct -= quantity_to_reduce
             variation.stock -= item.cart_item_quantity
             variation.save()
-
-        # # Giảm số lượng của sản phẩm chính chỉ một lần (di chuyển ra ngoài vòng lặp variations)
-        # product = Product.objects.get(id=item.product_id)
-        # product.product_stock -= item.cart_item_quantity  # Giảm số lượng đúng số lượng sản phẩm
-        # product.save()
 
     # Xóa tất cả các CartItem trong giỏ hàng
     CartItem.objects.filter(user=request.user).delete()

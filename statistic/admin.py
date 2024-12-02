@@ -4,6 +4,7 @@ from suppliers.models import StockEntry
 from orders.models import Order
 from .models import StatisticsChartPlaceholder, StatisticsPlaceholder
 from django.db.models.functions import TruncMonth, TruncYear
+from django.db.models import F
 import json
 
 class StatisticsAdmin(admin.ModelAdmin):
@@ -14,8 +15,8 @@ class StatisticsAdmin(admin.ModelAdmin):
 
         # Thống kê theo ngày
         stock_data = (
-            StockEntry.objects.values("entry_date__date")
-            .annotate(total_cost=Sum("total_value"))
+            StockEntry.objects.values("entry_date__date", "product", "unit_price")
+            .annotate(total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price")))
             .order_by("entry_date__date")
         )
         order_data = (
@@ -39,6 +40,7 @@ class StatisticsAdmin(admin.ModelAdmin):
             stock_entry = next((s for s in stock_data if s["entry_date__date"] == date), None)
             order_entry = next((o for o in order_data if o["order_created_at__date"] == date), None)
 
+    # Tính toán lại tổng chi phí cho ngày (theo công thức Số lượng nhập - Số lượng còn * Đơn giá)
             total_cost = stock_entry["total_cost"] if stock_entry else 0
             total_revenue = order_entry["total_revenue"] if order_entry else 0
             total_profit = total_revenue - total_cost
@@ -46,11 +48,10 @@ class StatisticsAdmin(admin.ModelAdmin):
             total_cost_all += total_cost
             total_revenue_all += total_revenue
 
-            # Tính % tăng trưởng theo ngày
+    # Tính % tăng trưởng theo ngày
             growth_rate = None
             if previous_day_revenue is not None and previous_day_revenue > 0:
                 growth_rate = ((total_revenue - previous_day_revenue) / previous_day_revenue) * 100
-                growth_rate = growth_rate
             else:
                 growth_rate = 0  # Trường hợp không có doanh thu ngày hôm trước
 
@@ -65,15 +66,19 @@ class StatisticsAdmin(admin.ModelAdmin):
 
             previous_day_revenue = total_revenue  # Cập nhật doanh thu ngày hôm trước
 
+# Tổng chi phí tổng hợp
         total_profit_all = total_revenue_all - total_cost_all
 
         # Thống kê theo tháng
         stock_monthly = (
             StockEntry.objects.annotate(month=TruncMonth("entry_date"))
             .values("month")
-            .annotate(total_cost=Sum("total_value"))
+            .annotate(
+            total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price"))
+            )
             .order_by("month")
         )
+
         order_monthly = (
             Order.objects.filter(order_is_ordered=True)
             .annotate(month=TruncMonth("order_created_at"))
@@ -120,7 +125,9 @@ class StatisticsAdmin(admin.ModelAdmin):
         stock_yearly = (
             StockEntry.objects.annotate(year=TruncYear("entry_date"))
             .values("year")
-            .annotate(total_cost=Sum("total_value"))
+            .annotate(
+            total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price"))
+            )
             .order_by("year")
         )
         order_yearly = (
@@ -216,8 +223,8 @@ class ChartStatisticsAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         # Thống kê theo ngày
         stock_data = (
-            StockEntry.objects.values("entry_date__date")
-            .annotate(total_cost=Sum("total_value"))
+            StockEntry.objects.values("entry_date__date", "product", "unit_price")
+            .annotate(total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price")))
             .order_by("entry_date__date")
         )
         order_data = (
@@ -272,7 +279,9 @@ class ChartStatisticsAdmin(admin.ModelAdmin):
         stock_monthly = (
             StockEntry.objects.annotate(month=TruncMonth("entry_date"))
             .values("month")
-            .annotate(total_cost=Sum("total_value"))
+            .annotate(
+            total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price"))
+            )
             .order_by("month")
         )
         order_monthly = (
@@ -320,7 +329,9 @@ class ChartStatisticsAdmin(admin.ModelAdmin):
         stock_yearly = (
             StockEntry.objects.annotate(year=TruncYear("entry_date"))
             .values("year")
-            .annotate(total_cost=Sum("total_value"))
+            .annotate(
+            total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price"))
+            )
             .order_by("year")
         )
         order_yearly = (

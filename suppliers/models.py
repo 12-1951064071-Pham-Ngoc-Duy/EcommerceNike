@@ -51,7 +51,8 @@ stockentry_value_choice = (
 class StockEntry(models.Model):
     product = models.ForeignKey('store.Product', on_delete=models.CASCADE,verbose_name = "Tên nguồn sản phẩm")
     supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,verbose_name = "Nhà cung cấp")
-    quantity = models.IntegerField(verbose_name = "Số lượng")
+    quantity = models.IntegerField(verbose_name = "Số lượng nhập")
+    remaining_quantity = models.IntegerField(verbose_name="Số lượng còn", default=0)
     stock_category = models.CharField(max_length=100, verbose_name="Danh mục màu sắc",choices=stockentry_category_choice,blank=True,null=True)
     stock_color = models.CharField(max_length=50, verbose_name="Màu sắc", blank=True,null=True)
     stock_value = models.CharField(max_length=100, verbose_name="Danh mục kích cỡ",choices=stockentry_value_choice, blank=True, null=True)
@@ -66,6 +67,9 @@ class StockEntry(models.Model):
     def save(self, *args, **kwargs):
     # Tính tổng giá trị
         self.total_value = self.unit_price * self.quantity
+
+        if not self.pk:  # Nếu là bản ghi mới
+            self.remaining_quantity = self.quantity
 
     # Lấy model Variation để tránh vòng lặp import
         Variation = apps.get_model('store', 'Variation')

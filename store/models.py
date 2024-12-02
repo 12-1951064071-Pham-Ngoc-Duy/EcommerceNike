@@ -83,7 +83,7 @@ class Product(models.Model):
     
     def update_total_stock(self):
         total_stock = sum(variation.stock for variation in self.variation_set.all())
-        self.product_stock = total_stock  # Giả sử bạn có trường `product_stock` để lưu tổng tồn kho
+        self.product_stock = total_stock  
         self.save()
 
 variation_category_choice = (
