@@ -4,7 +4,7 @@ from suppliers.models import StockEntry
 from .models import Payment, Order, OrderProduct
 from django.http import HttpResponse
 from openpyxl import Workbook
-from django.db.models import Sum
+from django.db.models import Sum,F
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from datetime import timezone
 from decimal import Decimal
@@ -27,7 +27,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
     chi_phi_ngay = (
         StockEntry.objects.annotate(ngay=TruncDay('entry_date'))
         .values('ngay')
-        .annotate(chi_phi=Sum('total_value'))
+        .annotate(chi_phi=Sum((F('quantity') - F('remaining_quantity')) * F('unit_price')))
     )
 
     previous_day_revenue = None
@@ -64,7 +64,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
     chi_phi_thang = (
         StockEntry.objects.annotate(thang=TruncMonth('entry_date'))
         .values('thang')
-        .annotate(chi_phi=Sum('total_value'))
+        .annotate(chi_phi=Sum((F('quantity') - F('remaining_quantity')) * F('unit_price')))
     )
 
     previous_month_revenue = None
@@ -100,8 +100,9 @@ def export_profit_to_excel(modeladmin, request, queryset):
     chi_phi_nam = (
         StockEntry.objects.annotate(nam=TruncYear('entry_date'))
         .values('nam')
-        .annotate(chi_phi=Sum('total_value'))
+        .annotate(chi_phi=Sum((F('quantity') - F('remaining_quantity')) * F('unit_price')))
     )
+
 
     previous_year_revenue = None
     for doanh_thu in doanh_thu_nam:
