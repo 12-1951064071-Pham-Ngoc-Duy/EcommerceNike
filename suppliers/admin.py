@@ -8,98 +8,68 @@ from django.db.models import Sum
 from django.utils.timezone import now
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from django.db.models import F, ExpressionWrapper, DecimalField
+from openpyxl.styles import Alignment
 # Register your models here.
+
 def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
-    # Lấy năm hiện tại để đặt tên file
-    current_year = now().year
+    current_year = now().year  # Lấy năm hiện tại để đặt tên file
 
-    # Nhóm dữ liệu theo ngày, tháng và năm rồi tính tổng chi tiêu
-    # Tính tổng chi phí theo ngày
-    daily_data = (
+    # Tính tổng chi phí theo ngày, tháng, năm
+    def calculate_total_data(trunc_func):
+        return (
             queryset
-            .annotate(day=TruncDay('entry_date'))  # Truncation theo ngày
-            .annotate(
-                    cost_per_entry=ExpressionWrapper(
-                    F('quantity') - F('remaining_quantity'),
-                    output_field=DecimalField()
-                    ) * F('unit_price')  # Tính chi phí cho mỗi mục nhập
-            )
-            .values('day')
-            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng ngày
-        )
-
-# Tính tổng chi phí theo tháng
-    monthly_data = (
-            queryset
-            .annotate(month=TruncMonth('entry_date'))  # Truncation theo tháng
+            .annotate(period=trunc_func('entry_date'))  # Truncation theo ngày, tháng, năm
             .annotate(
                 cost_per_entry=ExpressionWrapper(
-                    F('quantity') - F('remaining_quantity'),
+                    (F('quantity') - F('remaining_quantity')) * F('unit_price'),
                     output_field=DecimalField()
-                ) * F('unit_price')  # Tính chi phí cho mỗi mục nhập
+                )
             )
-            .values('month')
-            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng tháng
+            .values('period')
+            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng khoảng thời gian
         )
 
-# Tính tổng chi phí theo năm
-    yearly_data = (
-            queryset
-            .annotate(year=TruncYear('entry_date'))  # Truncation theo năm
-            .annotate(
-                cost_per_entry=ExpressionWrapper(
-                    F('quantity') - F('remaining_quantity'),
-                    output_field=DecimalField()
-                ) * F('unit_price')  # Tính chi phí cho mỗi mục nhập
-            )
-            .values('year')
-            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng năm
-        )
+    daily_data = calculate_total_data(TruncDay)
+    monthly_data = calculate_total_data(TruncMonth)
+    yearly_data = calculate_total_data(TruncYear)
 
     # Tạo workbook mới
     workbook = openpyxl.Workbook()
+    
+    def populate_sheet(sheet, data, period_format, title):
+        sheet.title = title
+        sheet.append([period_format, 'Tổng chi tiêu'])  # Thêm tiêu đề cột
 
-    # Tạo sheet cho từng trường (ngày, tháng, năm)
-    day_sheet = workbook.active  # Sheet mặc định là cho ngày
-    day_sheet.title = 'Daily Costs'
-    month_sheet = workbook.create_sheet(title='Monthly Costs')
-    year_sheet = workbook.create_sheet(title='Yearly Costs')
+        total_cost = 0
+        
+        for entry in data:
+            # Định dạng ngày, tháng, năm tương ứng
+            formatted_period = entry['period'].strftime('%d-%m-%Y') if title == 'Chi tiêu theo ngày' else (
+                entry['period'].strftime('%m-%Y') if title == 'Chi tiêu theo tháng' else entry['period'].strftime('%Y')
+            )
+            total_cost += entry['total_cost']
 
-    # Thêm tiêu đề cho các cột
-    day_sheet.append(['Day', 'Total Cost'])
-    month_sheet.append(['Month', 'Total Cost'])
-    year_sheet.append(['Year', 'Total Cost'])
+        sheet.append([formatted_period, total_cost])
+        
+        sheet.cell(row=2, column=2).number_format = '#,##0'
+        sheet.cell(row=2, column=2).alignment = Alignment(horizontal='right')
 
-    # Thêm dữ liệu vào sheet cho Ngày
-    total_daily_cost = 0  # Biến để giữ tổng chi phí trong ngày
-    for entry in daily_data:
-        total_daily_cost += entry['total_cost']
-        day_sheet.append([entry['day'], float(entry['total_cost'])])
+    # Tạo và định dạng sheet cho từng trường hợp
+    day_sheet = workbook.active
+    populate_sheet(day_sheet, daily_data, 'Ngày', 'Chi tiêu theo ngày')
+    month_sheet = workbook.create_sheet()
+    populate_sheet(month_sheet, monthly_data, 'Tháng', 'Chi tiêu theo tháng')
+    year_sheet = workbook.create_sheet()
+    populate_sheet(year_sheet, yearly_data, 'Năm', 'Chi tiêu theo năm')
 
-    # Thêm dữ liệu vào sheet cho Tháng
-    total_monthly_cost = 0  # Biến để giữ tổng chi phí trong tháng
-    for entry in monthly_data:
-        total_monthly_cost += entry['total_cost']
-        month_sheet.append([entry['month'], float(entry['total_cost'])])
-
-    # Thêm dữ liệu vào sheet cho Năm
-    total_yearly_cost = 0  # Biến để giữ tổng chi phí trong năm
-    for entry in yearly_data:
-        total_yearly_cost += entry['total_cost']
-        year_sheet.append([entry['year'], float(entry['total_cost'])])
-
-    # Thêm hàng tổng cộng vào mỗi sheet
-    day_sheet.append(['Total', total_daily_cost])
-    month_sheet.append(['Total', total_monthly_cost])
-    year_sheet.append(['Total', total_yearly_cost])
-
-    # Thiết lập response để trả về file Excel
+    # Trả về file Excel
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = f'attachment; filename=costs_{current_year}.xlsx'
     workbook.save(response)
     return response
+
 export_daily_monthly_yearly_costs_to_excel.short_description = "Xuất Chi Phí Ra Excel"
 class SupplierAdmin(admin.ModelAdmin):
     form = SupplierForm

@@ -9,6 +9,12 @@ from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from datetime import timezone
 from decimal import Decimal
 
+def format_number_cells(sheet, row_start, column_indices):
+    for row in sheet.iter_rows(min_row=row_start, max_row=sheet.max_row):
+        for col_index in column_indices:
+            cell = row[col_index - 1]
+            cell.number_format = '#,##0'
+
 def export_profit_to_excel(modeladmin, request, queryset):
     workbook = Workbook()
 
@@ -49,6 +55,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
 
         sheet1.append([ngay, doanh_thu_value, chi_phi, loi_nhuan, f"{growth_rate:.2f}%"])
         previous_day_revenue = doanh_thu_value
+    format_number_cells(sheet1, row_start=2, column_indices=[2, 3, 4])
 
     # --- Sheet 2: Lợi Nhuận Hàng Tháng ---
     sheet2 = workbook.create_sheet(title="Lợi Nhuận Tháng")
@@ -85,6 +92,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
 
         sheet2.append([thang, doanh_thu_value, chi_phi, loi_nhuan, f"{growth_rate:.2f}%"])
         previous_month_revenue = doanh_thu_value
+    format_number_cells(sheet2, row_start=2, column_indices=[2, 3, 4])
 
     # --- Sheet 3: Lợi Nhuận Hàng Năm ---
     sheet3 = workbook.create_sheet(title="Lợi Nhuận Năm")
@@ -122,6 +130,7 @@ def export_profit_to_excel(modeladmin, request, queryset):
 
         sheet3.append([nam, doanh_thu_value, chi_phi, loi_nhuan, f"{growth_rate:.2f}%"])
         previous_year_revenue = doanh_thu_value
+    format_number_cells(sheet3, row_start=2, column_indices=[2, 3, 4])
 
     # Tạo response trả về file Excel
     response = HttpResponse(
