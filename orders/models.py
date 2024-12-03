@@ -206,7 +206,7 @@ class Order(models.Model):
     
 
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True,verbose_name = "Người dùng")
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True,verbose_name = "Thanh toán")
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True,verbose_name = "Mã thanh toán")
     order_number = models.CharField(max_length=20,verbose_name = "Số đơn hàng")
     order_first_name = models.CharField(max_length=50,verbose_name = "Tên đầu")
     order_last_name = models.CharField(max_length=50,verbose_name = "Tên cuối")
@@ -251,7 +251,7 @@ class Order(models.Model):
     
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE,verbose_name = "Đơn hàng")
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null = True,verbose_name = "Thanh toán")
+    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null = True,verbose_name = "Mã thanh toán")
     user = models.ForeignKey(Account, on_delete=models.CASCADE,verbose_name = "Người dùng")
     product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name = "Sản phẩm")
     variations = models.ManyToManyField(Variation, blank=True,verbose_name = "Biến thể")
