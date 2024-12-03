@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 import json
 from django.contrib import messages
+from django.db.models import Sum
 # Create your views here.
 
 def _cart_id(request):
@@ -42,6 +43,11 @@ def add_cart(request, product_id):
     else:
         # Nếu người dùng không đăng nhập, tìm CartItem theo session
         cart_items = CartItem.objects.filter(product=product, cart=cart)
+
+    total_quantity_in_cart = CartItem.objects.filter(cart=cart).aggregate(total_quantity=Sum('cart_item_quantity'))['total_quantity'] or 0
+    if total_quantity_in_cart >= 10:
+        messages.error(request, "Giỏ hàng chỉ chứa tối đa 10 sản phẩm.")
+        return redirect('cart')
 
     # Kiểm tra xem sản phẩm có biến thể giống nhau đã có trong giỏ hàng chưa
     existing_cart_item = None

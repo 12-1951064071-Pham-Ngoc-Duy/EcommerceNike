@@ -52,7 +52,7 @@
                   <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
                   <small class="formattedPrice text-muted">{{ cart_item.product.discounted_price }} VND</small>
               {% else %}
-              <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.product.product_price }} VND</p>
+              <p class="formattedPrice" class="cart-price mb-0">{{ cart_item.sub_total }} VND</p>
               <small class="formattedPrice text-muted">{{ cart_item.product.product_price }} VND</small>
               {% endif %}
                 </div>

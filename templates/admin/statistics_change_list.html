@@ -6,9 +6,11 @@
 
 <div>
     <ul>
-        <li><strong>Chi phí tổng:</strong> {{ total_cost }} VND</li>
-        <li><strong>Doanh thu tổng:</strong> {{ total_revenue }} VND</li>
-        <li><strong>Lợi nhuận tổng:</strong> {{ total_profit }} VND</li>
+        {% for stat in yearly_statistics %}
+        <li><strong>Chi phí tổng:</strong> {{ stat.total_cost }} VND</li>
+        <li><strong>Doanh thu tổng:</strong> {{ stat.total_revenue }} VND</li>
+        <li><strong>Lợi nhuận tổng:</strong> {{ stat.total_profit }} VND</li>
+        {% endfor %}
     </ul>
 </div>
 
