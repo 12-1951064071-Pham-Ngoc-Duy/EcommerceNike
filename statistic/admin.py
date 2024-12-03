@@ -223,7 +223,7 @@ class ChartStatisticsAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         # Thống kê theo ngày
         stock_data = (
-            StockEntry.objects.values("entry_date__date", "product", "unit_price")
+            StockEntry.objects.values("entry_date__date")
             .annotate(total_cost=Sum((F("quantity") - F("remaining_quantity")) * F("unit_price")))
             .order_by("entry_date__date")
         )

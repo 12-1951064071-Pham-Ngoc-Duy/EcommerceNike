@@ -6,31 +6,55 @@ from suppliers.forms import StockEntryForm, SupplierForm
 from .models import Supplier, StockEntry
 from django.db.models import Sum
 from django.utils.timezone import now
-from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
+from django.db.models.functions import TruncDay, TruncMonth, TruncYear
+from django.db.models import F, ExpressionWrapper, DecimalField
 # Register your models here.
 def export_daily_monthly_yearly_costs_to_excel(modeladmin, request, queryset):
     # Lấy năm hiện tại để đặt tên file
     current_year = now().year
 
     # Nhóm dữ liệu theo ngày, tháng và năm rồi tính tổng chi tiêu
+    # Tính tổng chi phí theo ngày
     daily_data = (
-        queryset
-        .annotate(day=ExtractDay('entry_date'))
-        .values('day')
-        .annotate(total_cost=Sum('total_value'))
-    )
+            queryset
+            .annotate(day=TruncDay('entry_date'))  # Truncation theo ngày
+            .annotate(
+                    cost_per_entry=ExpressionWrapper(
+                    F('quantity') - F('remaining_quantity'),
+                    output_field=DecimalField()
+                    ) * F('unit_price')  # Tính chi phí cho mỗi mục nhập
+            )
+            .values('day')
+            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng ngày
+        )
+
+# Tính tổng chi phí theo tháng
     monthly_data = (
-        queryset
-        .annotate(month=ExtractMonth('entry_date'))
-        .values('month')
-        .annotate(total_cost=Sum('total_value'))
-    )
+            queryset
+            .annotate(month=TruncMonth('entry_date'))  # Truncation theo tháng
+            .annotate(
+                cost_per_entry=ExpressionWrapper(
+                    F('quantity') - F('remaining_quantity'),
+                    output_field=DecimalField()
+                ) * F('unit_price')  # Tính chi phí cho mỗi mục nhập
+            )
+            .values('month')
+            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng tháng
+        )
+
+# Tính tổng chi phí theo năm
     yearly_data = (
-        queryset
-        .annotate(year=ExtractYear('entry_date'))
-        .values('year')
-        .annotate(total_cost=Sum('total_value'))
-    )
+            queryset
+            .annotate(year=TruncYear('entry_date'))  # Truncation theo năm
+            .annotate(
+                cost_per_entry=ExpressionWrapper(
+                    F('quantity') - F('remaining_quantity'),
+                    output_field=DecimalField()
+                ) * F('unit_price')  # Tính chi phí cho mỗi mục nhập
+            )
+            .values('year')
+            .annotate(total_cost=Sum('cost_per_entry'))  # Tổng chi phí cho từng năm
+        )
 
     # Tạo workbook mới
     workbook = openpyxl.Workbook()
