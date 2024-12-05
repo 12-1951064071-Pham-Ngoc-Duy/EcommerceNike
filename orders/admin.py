@@ -204,7 +204,7 @@ class OrderAdmin(admin.ModelAdmin):
         return False
     
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff

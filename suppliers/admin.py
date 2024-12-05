@@ -86,7 +86,7 @@ class StockEntryAdmin(admin.ModelAdmin):
     search_fields = ['supplier__supplier_name']
     actions = [export_daily_monthly_yearly_costs_to_excel]  # Thêm action vào admin
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
     def formatted_total_value(self, obj):
         return "{:,.0f}".format(obj.total_value)  # Định dạng với dấu phẩy
     formatted_total_value.short_description = 'Tổng giá'

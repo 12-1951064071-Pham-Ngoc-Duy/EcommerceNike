@@ -1,6 +1,7 @@
 from django.db import models
 from django.apps import apps
 from django.core.exceptions import ValidationError
+from django.db.models import Sum
 
 # Create your models here.
 NIKE_FACTORY_CHOICES = [
@@ -65,52 +66,45 @@ class StockEntry(models.Model):
         verbose_name_plural = 'Nhập kho'
 
     def save(self, *args, **kwargs):
-    # Tính tổng giá trị
+    # Tính tổng giá trị cho stock entry
         self.total_value = self.unit_price * self.quantity
 
-        if not self.pk:  # Nếu là bản ghi mới
+    # Nếu là bản ghi mới, đặt remaining_quantity bằng quantity
+        if not self.pk:
             self.remaining_quantity = self.quantity
 
-    # Lấy model Variation để tránh vòng lặp import
+        super().save(*args, **kwargs)  # Lưu bản ghi kho trước
+
+    # Cập nhật lại stock trong Variation
+        self.update_variation_stock()
+
+    # Cập nhật tổng tồn kho trong Product
+        self.product.update_total_stock()
+
+    def update_variation_stock(self):
         Variation = apps.get_model('store', 'Variation')
 
-    # Tính toán chênh lệch tồn kho
-        stock_difference = self.quantity - self._get_previous_quantity()
+    # Tìm biến thể tương ứng với màu sắc và kích cỡ
+        variation = Variation.objects.filter(
+        product=self.product,
+        variation_category='color',
+        variation_color=self.stock_color,
+        variation_value='size',
+        variation_size=self.stock_size,
+        variation_is_active=True
+    ).first()
 
-    # Xử lý cho màu sắc và kích cỡ
-        if self.stock_color and self.stock_size:
-        # Tìm kiếm biến thể với cả màu sắc và kích cỡ
-            variation = Variation.objects.filter(
+        if variation:
+        # Tổng hợp tất cả remaining_quantity từ StockEntry tương ứng với biến thể này
+            total_remaining_quantity = StockEntry.objects.filter(
                 product=self.product,
-                variation_category='color',
-                variation_color=self.stock_color,
-                variation_value='size',
-                variation_size=self.stock_size,
-                variation_is_active=True
-            ).first()
+                stock_color=self.stock_color,
+                stock_size=self.stock_size
+            ).aggregate(total_remaining=Sum('remaining_quantity'))['total_remaining'] or 0
 
-            if not variation:
-                raise ValidationError(
-                    f"Biến thể với màu '{self.stock_color}' và kích cỡ '{self.stock_size}' không hợp lệ!"
-                )
-            variation.stock += stock_difference
+        # Cập nhật giá trị tồn kho cho biến thể
+            variation.stock = total_remaining_quantity
             variation.save()
-        self.product.update_total_stock()
-        self.product.save()
-        super().save(*args, **kwargs)
-
-
-    def _get_previous_quantity(self):
-        """
-        Lấy số lượng của StockEntry trước đó để tính toán chênh lệch tồn kho.
-        """
-        if self.pk:
-            try:
-                previous_entry = StockEntry.objects.get(pk=self.pk)
-                return previous_entry.quantity
-            except StockEntry.DoesNotExist:
-                return 0
-        return 0
 
     def __str__(self):
         return f"{self.product} - {self.quantity}"

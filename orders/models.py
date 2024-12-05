@@ -3,6 +3,9 @@ from accounts.models import Account
 from store.models import Product, Variation
 from django.db.models import Sum
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
+from django.db.models import F
+from django.db import transaction
+from suppliers.models import StockEntry
 
 COUNTRY_CHOICES = [
     ('Vietnam', 'Vietnam')
@@ -227,6 +230,77 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Đơn hàng'
         verbose_name_plural = 'Đơn hàng'
+
+    def save(self, *args, **kwargs):
+      if self.pk:  # Chỉ chạy khi cập nhật, không phải khi tạo mới
+        old_order = Order.objects.get(pk=self.pk)
+
+        # Kiểm tra nếu trạng thái đã thay đổi
+        if (self.order_status == "Giao hàng không thành công" and not self.order_is_ordered) or \
+           (old_order.order_status != self.order_status or old_order.order_is_ordered != self.order_is_ordered):
+
+            # Lấy các sản phẩm trong đơn hàng
+            order_products = OrderProduct.objects.filter(order=self)
+
+            # Duyệt qua các sản phẩm trong đơn hàng
+            for order_product in order_products:
+                remaining_qty = order_product.order_product_quantity
+
+                # Tìm các bản ghi kho tương ứng, sắp xếp theo ngày nhập (mới nhất trước)
+                stock_entries = StockEntry.objects.filter(
+                    product=order_product.product,
+                    stock_color=order_product.variations.filter(variation_category='color').first().variation_color,
+                    stock_size=order_product.variations.filter(variation_value='size').first().variation_size
+                ).order_by('-entry_date')  # Sắp xếp theo ngày nhập, bản ghi mới nhập trước
+
+                # Cập nhật kho
+                for stock_entry in stock_entries:
+                    if remaining_qty <= 0:
+                        break
+
+                    if self.order_status == "Giao hàng không thành công" and not self.order_is_ordered:
+                        # Cộng số lượng vào kho (sử dụng bản ghi nhập kho mới nhất)
+                        available_qty = stock_entry.quantity - stock_entry.remaining_quantity
+                        update_qty = min(available_qty, remaining_qty)
+                        stock_entry.remaining_quantity = F('remaining_quantity') + update_qty  # Cộng vào kho
+                        remaining_qty -= update_qty
+
+                        # Nếu số lượng còn lại trong kho = số lượng nhập (kho đã đầy), cộng vào bản ghi nhập sau
+                        if stock_entry.remaining_quantity == stock_entry.quantity and remaining_qty > 0:
+                            # Tìm bản ghi nhập kho sau (bản ghi nhập kho cũ nhất)
+                            next_stock_entry = stock_entries.last()  # Lấy bản ghi nhập kho mới nhất
+                            if next_stock_entry:
+                                next_stock_entry.remaining_quantity = F('remaining_quantity') + remaining_qty
+                                next_stock_entry.save()  # Cộng vào bản ghi nhập kho sau
+                                remaining_qty = 0  # Đảm bảo rằng số lượng còn lại được đặt về 0
+
+                    elif self.order_is_ordered:
+                            update_qty = min(stock_entry.remaining_quantity, remaining_qty)
+                            stock_entry.remaining_quantity = F('remaining_quantity') - update_qty  # Trừ từ kho
+                            remaining_qty -= update_qty
+
+                    stock_entry.save()  # Lưu lại bản ghi kho đã thay đổi
+
+            # Tính toán lại chi phí
+            self.update_statistics()
+
+      super(Order, self).save(*args, **kwargs)
+
+
+
+
+
+    
+    def update_statistics(self):
+        # Tính lại tổng doanh thu và chi phí
+        total_revenue = Order.objects.filter(order_is_ordered=True).aggregate(total_revenue=Sum('order_total'))['total_revenue'] or 0
+        total_cost = StockEntry.objects.aggregate(
+            total_cost=Sum((F('quantity') - F('remaining_quantity')) * F('unit_price'))
+        )['total_cost'] or 0
+        
+        # Tính lợi nhuận
+        total_profit = total_revenue - total_cost
+        # Cập nhật vào bảng thống kê hoặc gửi dữ liệu tới admin
 
     def full_name(self):
         return f'{self.order_first_name} {self.order_last_name}'
