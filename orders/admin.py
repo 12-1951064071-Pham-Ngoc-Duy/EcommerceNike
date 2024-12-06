@@ -1,13 +1,14 @@
 from django.contrib import admin
 from orders.forms import OrderFormAdmin
 from suppliers.models import StockEntry
-from .models import Payment, Order, OrderProduct
+from .models import Payment, Order, OrderProduct, ReturnRequest, ReturnRequestImage
 from django.http import HttpResponse
 from openpyxl import Workbook
 from django.db.models import Sum,F
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from datetime import timezone
 from decimal import Decimal
+from django.utils.html import mark_safe
 
 def format_number_cells(sheet, row_start, column_indices):
     for row in sheet.iter_rows(min_row=row_start, max_row=sheet.max_row):
@@ -208,5 +209,15 @@ class OrderAdmin(admin.ModelAdmin):
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
+    
+class ReturnRequestImageInline(admin.TabularInline):
+    model = ReturnRequestImage
+    extra = 1
+    
+class ReturnRequestAdmin(admin.ModelAdmin):
+    list_display = ['order', 'return_reason', 'status', 'created_at', 'updated_at']
+    inlines = [ReturnRequestImageInline]
 
 admin.site.register(Order, OrderAdmin)
+admin.site.register(ReturnRequest, ReturnRequestAdmin)
+

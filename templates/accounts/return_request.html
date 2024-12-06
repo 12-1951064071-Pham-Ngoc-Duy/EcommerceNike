@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    {% csrf_token %}
+    <div class="container-cart w-50">
+        <div class="cart-products-checkout">
+            <h5>Thông tin yêu cầu trả hàng</h5>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'handle_return_request' order.order_number %}">
+				{% csrf_token %}
+				
+				<!-- Form ReturnRequest -->
+				<div class="mb-3">
+					<strong>Số đơn hàng cần trả: </strong><p class="mb-0">{{  order.order_number }}</p>
+					<strong>Số tiền hoàn lại: </strong><p class="formattedPrice mb-0">{{ order.order_total }} VND</p>
+					<div class="input-group-register">
+						<strong for="return_reason">Lý do trả hàng</strong>
+						<textarea class="form-control {% if return_request_form.return_reason.errors %}is-invalid{% endif %}" 
+								  name="return_reason" id="return_reason" row="6"
+								  value="{{ return_request_form.return_reason.value|default_if_none:'' }}"></textarea>
+						<!-- Hiển thị lỗi -->
+						{% if return_request_form.return_reason.errors %}
+						  <div class="error-text">{{ return_request_form.return_reason.errors }}</div>
+						{% endif %}
+					  </div>
+				</div>
+				
+				<!-- Form ReturnRequestImage -->
+				<div class="mb-3">
+					<div class="input-group-register">
+                        <strong for="profile-picture">Hình ảnh minh họa</strong>
+                        <input type="file" name="image" id="image"
+                               class="form-control {% if return_image_form.image.errors %}is-invalid{% endif %}"
+                               value="{{ return_image_form.image.value|default_if_none:'' }}">
+                               {% if return_image_form.image.errors %}
+                          <div class="error-text">{{ return_image_form.image.errors }}</div>
+                        {% endif %}
+                      </div>
+				</div>
+				{% include 'includes/alerts.html' %}
+				<button type="submit" class="btn btn-dark w-100">Gửi yêu cầu</button>
+			</form>
+        </div>
+    </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      // Lấy tất cả các phần tử có class 'formattedPrice'
+      var priceElements = document.querySelectorAll('.formattedPrice');
+    
+      // Duyệt qua tất cả các phần tử và thay đổi giá trị
+      priceElements.forEach(function(priceElement) {
+        var priceValue = parseFloat(priceElement.innerText.replace(' VND', '').replace(',', '')); // Xóa dấu `,` cũ nếu có
+        priceElement.innerText = priceValue.toLocaleString('en-US').replace(/\./g, ',') + ' VND';  // Đổi `.` thành `,`
+      });
+    });
+</script>
+
+{% endblock content %}

@@ -22,6 +22,8 @@
                             <th scope="col">Số điện thoại</th>
                             <th scope="col">Tổng đơn hàng</th>
                             <th scope="col">Ngày tạo đơn hàng</th>
+                            <th scope="col">Yêu cầu trả hàng</th>
+                            <th scope="col">Trạng thái yêu cầu trả hàng</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -32,6 +34,14 @@
                             <td>{{ order.order_phone }}</td>
                             <td class="formattedPrice">{{ order.order_total }}</td>
                             <td>{{ order.order_created_at }}</td>
+                            <td><a class="btn btn-dark" href="{% url 'return_request' order.order_number %}">Yêu cầu trả hàng</a></td>
+                            <td>
+                              {% if order.return_request %}
+                              {{ order.return_request.status }}  <!-- Hiển thị trạng thái yêu cầu trả hàng -->
+                            {% else %}
+                              Chưa có yêu cầu trả hàng
+                            {% endif %}  
+                            <td>
                           </tr>
                           {% endfor %}
                         </tbody>

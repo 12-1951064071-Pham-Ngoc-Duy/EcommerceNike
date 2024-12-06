@@ -1,9 +1,9 @@
 import datetime
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from carts.models import CartItem
-from orders.forms import OrderForm
-from orders.models import Order, OrderProduct, Payment
+from orders.forms import OrderForm, ReturnRequestForm, ReturnRequestImageForm
+from orders.models import Order, OrderProduct, Payment, ReturnRequest, ReturnRequestImage
 import json
 from store.models import Product
 from django.core.mail import EmailMessage
@@ -208,3 +208,49 @@ def order_complete(request):
     except (Payment.DoesNotExist, Order.DoesNotExist):
         return redirect('home')
 
+def return_request(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number)
+
+    context = {
+        'order': order,
+    }
+    return render(request, "accounts/return_request.html", context)
+
+def handle_return_request(request, order_number):
+    # Lấy thông tin đơn hàng
+    order = get_object_or_404(Order, order_number=order_number)
+
+    # Kiểm tra xem đã có yêu cầu trả hàng cho đơn hàng này chưa
+    return_request = ReturnRequest.objects.filter(order=order).first()
+
+    if request.method == 'POST':
+        return_reason = request.POST.get('return_reason')
+        image = request.FILES.get('image')
+
+        if return_request:
+            # Nếu đã có yêu cầu trả hàng, cập nhật yêu cầu
+            return_request.return_reason = return_reason
+            return_request.save()
+            messages.success(request, 'Yêu cầu đã được cập nhật')
+        else:
+            # Nếu chưa có yêu cầu trả hàng, tạo yêu cầu mới
+            return_request = ReturnRequest.objects.create(
+                order=order,
+                return_reason=return_reason
+            )
+            messages.success(request, 'Yêu cầu đã được gửi')
+
+        # Nếu có hình ảnh đính kèm, tạo bản ghi hình ảnh cho yêu cầu trả hàng
+        if image:
+            ReturnRequestImage.objects.create(
+                return_request=return_request,
+                image=image
+            )
+
+        return redirect('return_request', order_number=order.order_number)
+
+    context = {
+        'order': order,
+        'return_request': return_request,  # Truyền thông tin yêu cầu trả hàng nếu có
+    }
+    return render(request, "accounts/return_request.html", context)

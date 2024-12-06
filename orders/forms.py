@@ -1,6 +1,7 @@
 from django import forms
-from .models import Order
+from .models import Order, ReturnRequest, ReturnRequestImage
 from .models import Account
+from django.forms import modelformset_factory
 import re
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
@@ -134,11 +135,24 @@ class OrderFormAdmin(forms.ModelForm):
         model = Order
         fields = '__all__'  # Hoặc bạn có thể chỉ định các trường cụ thể
 
+    def __init__(self, *args, **kwargs):
+        super(OrderFormAdmin, self).__init__(*args, **kwargs)
+        # Lưu giá trị ban đầu của order_is_ordered để so sánh sau này
+        if self.instance:
+            self.initial_order_is_ordered = self.instance.order_is_ordered
+        else:
+            self.initial_order_is_ordered = False 
+
     def clean(self):
         cleaned_data = super().clean()
         order_status = cleaned_data.get("order_status")
         order_is_ordered = cleaned_data.get("order_is_ordered")
+        
+        # Kiểm tra nếu đơn hàng ban đầu chưa được đặt hàng
+        if not self.initial_order_is_ordered and order_status != self.instance.order_status:
+            raise forms.ValidationError("Không thể thay đổi trạng thái đơn hàng khi 'Được đặt hàng' đang có giá trị bân đầu không được chọn.")
 
+        # Các kiểm tra khác như bạn đã có
         if order_status == "Giao hàng không thành công" and order_is_ordered:
             raise forms.ValidationError("Đơn hàng không được phép tính phí khi trạng thái là 'Giao hàng không thành công'.")
 
@@ -146,3 +160,31 @@ class OrderFormAdmin(forms.ModelForm):
             raise forms.ValidationError("Đơn hàng phải được tích nếu trạng thái không phải là 'Giao hàng không thành công'.")
 
         return cleaned_data
+
+class ReturnRequestForm(forms.ModelForm):
+    class Meta:
+        model = ReturnRequest
+        fields = ['order', 'return_reason', 'status']
+
+    def __init__(self, *args, **kwargs):
+        super(ReturnRequestForm, self).__init__(*args, **kwargs)
+        for field_name in ['return_reason']:
+            self.fields[field_name].required = False
+
+    def clean_return_reason(self):
+        return_reason = self.cleaned_data.get('return_reason')
+        if not return_reason:
+            raise forms.ValidationError("Chưa điền giá trị")
+        return return_reason
+
+
+class ReturnRequestImageForm(forms.ModelForm):
+    image = forms.ImageField(required=False, error_messages= {'invalid':("Image files only")}, widget=forms.FileInput)
+    class Meta:
+        model = ReturnRequestImage
+        fields = ['image']
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if not image:
+            raise forms.ValidationError("Chưa điền giá trị")
+        return image

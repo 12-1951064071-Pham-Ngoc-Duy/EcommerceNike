@@ -309,7 +309,7 @@ class Order(models.Model):
         return f'{self.order_country} - {self.order_city} - {self.order_village}'
 
     def __str__(self):
-        return self.order_first_name
+        return self.order_number
     
     @classmethod
     def doanh_thu_hang_ngay(cls):
@@ -341,3 +341,36 @@ class OrderProduct(models.Model):
     def __str__(self):
         return self.product.product_name
 
+class ReturnRequest(models.Model):
+
+    RETURN_STATUS_CHOICES = [
+        ("Đang xử lý", "Đang xử lý"),
+        ("Đã chấp nhận", "Đã chấp nhận"),
+        ("Đã từ chối", "Đã từ chối"),
+        ("Hoàn thành", "Hoàn thành"),
+    ]
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='return_requests', verbose_name="Đơn hàng")
+    return_reason = models.TextField(max_length=255, verbose_name="Lý do trả hàng")
+    status = models.CharField(max_length=50, choices=RETURN_STATUS_CHOICES, default="Đang xử lý", verbose_name="Trạng thái")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày yêu cầu")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Ngày cập nhật")
+
+    class Meta:
+        verbose_name = 'Yêu cầu trả hàng'
+        verbose_name_plural = 'Yêu cầu trả hàng'
+
+    def __str__(self):
+        return f"Yêu cầu trả hàng #{self.id} - Đơn hàng: {self.order.order_number}"
+    
+class ReturnRequestImage(models.Model):
+    return_request = models.ForeignKey(ReturnRequest, on_delete=models.CASCADE, related_name='images', verbose_name="Yêu cầu trả hàng")
+    image = models.ImageField(upload_to='return_request_images/', verbose_name="Ảnh minh họa")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tải lên")
+
+    class Meta:
+        verbose_name = 'Ảnh minh họa'
+        verbose_name_plural = 'Ảnh minh họa'
+
+    def __str__(self):
+        return f"Ảnh minh họa cho yêu cầu #{self.return_request.id}"

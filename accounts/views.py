@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from carts.models import Cart, CartItem
 from carts.views import _cart_id
-from orders.models import Order, OrderProduct
+from orders.models import Order, OrderProduct, ReturnRequest
 from .forms import ChangePasswordForm, RegistrationForm, ResetPasswordForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
 from django.http import JsonResponse
@@ -264,6 +264,8 @@ def resetPassword(request):
 @login_required(login_url= 'login')  
 def my_orders(request):
     orders = Order.objects.filter(user=request.user, order_is_ordered=True).order_by('-order_created_at')
+    for order in orders:
+        order.return_request = ReturnRequest.objects.filter(order=order).first()
     context = {
         'orders': orders,
     }
