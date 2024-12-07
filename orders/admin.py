@@ -205,7 +205,7 @@ class OrderAdmin(admin.ModelAdmin):
         return False
     
     def has_delete_permission(self, request, obj=None):
-        return True
+        return False
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_staff
@@ -213,10 +213,28 @@ class OrderAdmin(admin.ModelAdmin):
 class ReturnRequestImageInline(admin.TabularInline):
     model = ReturnRequestImage
     extra = 1
+    def has_add_permission(self, request, obj=None):
+        return False
+    def has_delete_permission(self, request, obj=None):
+        return False
+    def has_change_permission(self, request, obj=None):
+        return False
     
 class ReturnRequestAdmin(admin.ModelAdmin):
     list_display = ['order', 'return_reason', 'status', 'created_at', 'updated_at']
     inlines = [ReturnRequestImageInline]
+    search_fields = ['order']
+    list_filter = ['status']
+    def get_readonly_fields(self, request, obj=None):
+        # Nếu đang chỉnh sửa (không phải tạo mới), chỉ cho phép thay đổi order_status
+        if obj:
+            return [field.name for field in self.model._meta.fields if field.name != 'status']
+        return super().get_readonly_fields(request, obj)
+    def has_add_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(ReturnRequest, ReturnRequestAdmin)

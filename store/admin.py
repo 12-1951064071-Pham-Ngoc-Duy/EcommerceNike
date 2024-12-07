@@ -35,7 +35,7 @@ class ProductAdmin(admin.ModelAdmin):
       form = ProductForm
       list_display = ('product_name', 'formatted_price','discount_code', 'product_stock', 'category', 'product_gender', 'product_modifield_date', 'product_is_availabel')
       search_fields = ['product_name']
-      # readonly_fields = ['product_stock']
+      readonly_fields = ['product_stock']
       prepopulated_fields = {'product_slug': ('product_name',)}
       inlines = [ProductGalleryInline, ReviewRatingInline]
       def has_view_permission(self, request, obj=None):
@@ -55,7 +55,7 @@ class ProductAdmin(admin.ModelAdmin):
 class VariationAdmin(admin.ModelAdmin):
       form = VariationForm
       fields = ['product', 'variation_category','variation_color', 'variation_value','variation_size', 'variation_is_active','stock']
-      # readonly_fields = ['stock']
+      readonly_fields = ['stock']
       list_display = ('product', 'variation_color', 'variation_size','stock', 'variation_is_active')
       list_editable = ('variation_is_active',)
       list_filter = ('product',)
