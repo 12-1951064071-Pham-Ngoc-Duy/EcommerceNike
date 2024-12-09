@@ -29,7 +29,7 @@
 							{% if userprofile.user_profile_picture %}
 							<img src="{{ userprofile.user_profile_picture.url }}" alt="Ảnh người dùng" width="50" height="50" style="border-radius:50%">
 						    {% else %}
-							<img src="" alt="Ảnh mặc định người dùng" width="50" height="50" style="border-radius:50%">
+							<img src="{% static 'images/anh-dai-dien-mac-dinh.jpg' %}" alt="" width="50" height="50" style="border-radius:50%">
 					     	{% endif %}
 							
 							<p class="mb-0">{{ user.email }}</p>

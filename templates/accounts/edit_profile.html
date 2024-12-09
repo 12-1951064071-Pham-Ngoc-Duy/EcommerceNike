@@ -15,7 +15,7 @@
                 {% if userprofile.user_profile_picture %}
 							<img src="{{ userprofile.user_profile_picture.url }}" alt="User Profile Picture" width="50" height="50" style="border-radius:50%">
 						    {% else %}
-							<img src="" alt="Default Profile Picture" width="50" height="50" style="border-radius:50%">
+                <img src="{% static 'images/anh-dai-dien-mac-dinh.jpg' %}" alt="" width="50" height="50" style="border-radius:50%">
 					     	{% endif %}
       </div>
       <hr>
