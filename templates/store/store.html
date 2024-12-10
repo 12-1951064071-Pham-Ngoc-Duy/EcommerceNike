@@ -12,7 +12,7 @@
                   <strong style="font-size:13px">Danh mục sản phẩm</strong>
                 </button>
               </h2>
-              <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+              <div id="panelsStayOpen-collapseOne" class="accordion-collapse colapse show">
                 <div class="accordion-body">
                             <ul class="category-list fw-bold" style="font-size:13px">
                                 <li>
@@ -35,7 +35,7 @@
                     <strong style="font-size:13px">Giới tính</strong>
                 </button>
               </h2>
-              <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+              <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show">
                 <div class="accordion-body">
                             <ul class="category-list fw-bold" style="font-size:13px">
                                 {% for value, name in GENDER_CHOICES %}
@@ -55,7 +55,7 @@
                     <strong style="font-size:13px">Màu sắc</strong>
                   </button>
                 </h2>
-                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show">
                   <div class="accordion-body">
                     <ul class="category-list fw-bold" style="font-size:13px">
                         {% for color in unique_colors %}
@@ -74,7 +74,7 @@
                     <strong style="font-size:13px">Mức giá</strong>
                   </button>
                 </h2>
-                <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+                <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show">
                   <div class="accordion-body">
                     <div>
                         <input type="checkbox" name="price" value="0-500000" id="price_0_500000" {% if '0-500000' in selected_prices %}checked{% endif %} onchange="filterPrice()">
